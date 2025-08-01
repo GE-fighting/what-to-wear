@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What to Wear - UI 预览导航</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #64748b;
+            margin-bottom: 24px;
+        }
+
+        .description {
+            font-size: 16px;
+            color: #64748b;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .section {
+            margin-bottom: 48px;
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            font-size: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .card-image {
+            height: 200px;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            position: relative;
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #667eea;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .card-badge.recommended {
+            background: #10b981;
+        }
+
+        .card-content {
+            padding: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .card-description {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 16px;
+        }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status.complete {
+            color: #10b981;
+        }
+
+        .status.wip {
+            color: #f59e0b;
+        }
+
+        .status.planned {
+            color: #64748b;
+        }
+
+        .quick-links {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            padding: 24px;
+            margin-bottom: 32px;
+        }
+
+        .quick-links-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .quick-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 16px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #64748b;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .quick-link:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+            border-color: #667eea;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 60px;
+        }
+
+        .footer-text {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+            
+            .title {
+                font-size: 28px;
+            }
+            
+            .grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="logo">
+                <div class="logo-icon">👗</div>
+            </div>
+            <h1 class="title">What to Wear</h1>
+            <p class="subtitle">UI 设计预览中心</p>
+            <p class="description">
+                这里包含了项目的所有UI设计预览，帮助团队进行设计开发和协作。
+                所有预览都基于现代化设计原则，支持响应式布局。
+            </p>
+        </header>
+
+        <div class="quick-links">
+            <h3 class="quick-links-title">🚀 快速导航</h3>
+            <div class="links-grid">
+                <a href="pages/main-page-sidebar.html" class="quick-link">
+                    <span>🏠</span>
+                    <span>主页面 (推荐)</span>
+                </a>
+                <a href="pages/login-page.html" class="quick-link">
+                    <span>🔐</span>
+                    <span>登录页面</span>
+                </a>
+                <a href="pages/register-page.html" class="quick-link">
+                    <span>📝</span>
+                    <span>注册页面</span>
+                </a>
+                <a href="design-tokens/colors.html" class="quick-link">
+                    <span>🎨</span>
+                    <span>设计系统</span>
+                </a>
+            </div>
+        </div>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">📄</span>
+                页面预览
+            </h2>
+            <div class="grid">
+                <a href="pages/main-page-sidebar.html" class="card">
+                    <div class="card-image">
+                        🏠
+                        <div class="card-badge recommended">推荐</div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">主页面 - 侧边导航</h3>
+                        <p class="card-description">现代化的侧边导航布局，参考Discord、Notion等应用的设计模式</p>
+                        <div class="card-meta">
+                            <span class="status complete">
+                                <span>✅</span>
+                                <span>已完成</span>
+                            </span>
+                            <span>最新版本</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/main-page-top-nav.html" class="card">
+                    <div class="card-image">
+                        📱
+                        <div class="card-badge">备选</div>
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">主页面 - 顶部导航</h3>
+                        <p class="card-description">传统的顶部导航布局，适合移动端优先的设计</p>
+                        <div class="card-meta">
+                            <span class="status complete">
+                                <span>✅</span>
+                                <span>已完成</span>
+                            </span>
+                            <span>v1.0</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/login-page.html" class="card">
+                    <div class="card-image">
+                        🔐
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">登录页面</h3>
+                        <p class="card-description">简洁现代的登录界面，支持浮动标签和交互效果</p>
+                        <div class="card-meta">
+                            <span class="status complete">
+                                <span>✅</span>
+                                <span>已完成</span>
+                            </span>
+                            <span>v1.0</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="pages/register-page.html" class="card">
+                    <div class="card-image">
+                        📝
+                    </div>
+                    <div class="card-content">
+                        <h3 class="card-title">注册页面</h3>
+                        <p class="card-description">用户注册界面，包含密码强度检测和表单验证</p>
+                        <div class="card-meta">
+                            <span class="status complete">
+                                <span>✅</span>
+                                <span>已完成</span>
+                            </span>
+                            <span>v1.0</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🧩</span>
+                组件预览
+            </h2>
+            <div class="grid">
+                <a href="components/navigation.html" class="card">
+                    <div class="card-image">🧭</div>
+                    <div class="card-content">
+                        <h3 class="card-title">导航组件</h3>
+                        <p class="card-description">侧边导航栏和顶部导航的独立组件预览</p>
+                        <div class="card-meta">
+                            <span class="status wip">
+                                <span>🚧</span>
+                                <span>开发中</span>
+                            </span>
+                            <span>组件库</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="components/weather-card.html" class="card">
+                    <div class="card-image">🌤️</div>
+                    <div class="card-content">
+                        <h3 class="card-title">天气卡片</h3>
+                        <p class="card-description">显示天气信息的卡片组件，支持多种样式</p>
+                        <div class="card-meta">
+                            <span class="status planned">
+                                <span>📋</span>
+                                <span>计划中</span>
+                            </span>
+                            <span>组件库</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="components/outfit-suggestion.html" class="card">
+                    <div class="card-image">👗</div>
+                    <div class="card-content">
+                        <h3 class="card-title">穿搭建议</h3>
+                        <p class="card-description">穿搭推荐组件，包含建议列表和交互效果</p>
+                        <div class="card-meta">
+                            <span class="status planned">
+                                <span>📋</span>
+                                <span>计划中</span>
+                            </span>
+                            <span>组件库</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="components/quick-actions.html" class="card">
+                    <div class="card-image">⚡</div>
+                    <div class="card-content">
+                        <h3 class="card-title">快捷操作</h3>
+                        <p class="card-description">快捷功能按钮组件，支持网格和列表布局</p>
+                        <div class="card-meta">
+                            <span class="status planned">
+                                <span>📋</span>
+                                <span>计划中</span>
+                            </span>
+                            <span>组件库</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <section class="section">
+            <h2 class="section-title">
+                <span class="section-icon">🎨</span>
+                设计系统
+            </h2>
+            <div class="grid">
+                <a href="design-tokens/colors.html" class="card">
+                    <div class="card-image">🎨</div>
+                    <div class="card-content">
+                        <h3 class="card-title">颜色系统</h3>
+                        <p class="card-description">项目的完整配色方案和使用指南</p>
+                        <div class="card-meta">
+                            <span class="status planned">
+                                <span>📋</span>
+                                <span>计划中</span>
+                            </span>
+                            <span>设计令牌</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="design-tokens/typography.html" class="card">
+                    <div class="card-image">📝</div>
+                    <div class="card-content">
+                        <h3 class="card-title">字体系统</h3>
+                        <p class="card-description">字体大小、行高、字重的规范定义</p>
+                        <div class="card-meta">
+                            <span class="status planned">
+                                <span>📋</span>
+                                <span>计划中</span>
+                            </span>
+                            <span>设计令牌</span>
+                        </div>
+                    </div>
+                </a>
+
+                <a href="design-tokens/spacing.html" class="card">
+                    <div class="card-image">📏</div>
+                    <div class="card-content">
+                        <h3 class="card-title">间距系统</h3>
+                        <p class="card-description">统一的间距规范和使用示例</p>
+                        <div class="card-meta">
+                            <span class="status planned">
+                                <span>📋</span>
+                                <span>计划中</span>
+                            </span>
+                            <span>设计令牌</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <p class="footer-text">
+                What to Wear UI 预览中心 · 
+                <a href="../README.md" style="color: #667eea;">项目文档</a> · 
+                <a href="../client/what-to-wear-client/" style="color: #667eea;">前端代码</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为卡片添加点击统计
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.card-title').textContent;
+                    console.log(`访问了: ${title}`);
+                });
+            });
+
+            // 检查链接是否可用
+            const links = document.querySelectorAll('a[href$=".html"]');
+            links.forEach(link => {
+                const href = link.getAttribute('href');
+                if (href && !href.startsWith('http')) {
+                    // 这里可以添加链接检查逻辑
+                }
+            });
+        });
+    </script>
+</body>
+</html>

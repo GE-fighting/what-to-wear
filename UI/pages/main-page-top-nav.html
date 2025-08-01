@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What to Wear - 主界面预览</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* 基础样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #fafafa;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* 主容器 */
+        .main-container {
+            background: #fafafa;
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* 顶部导航栏 */
+        .main-header {
+            background: #ffffff;
+            border-bottom: 1px solid #e1e5e9;
+            padding: 16px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            font-size: 24px;
+        }
+
+        .app-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0;
+        }
+
+        .user-greeting {
+            color: #8e8e8e;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            padding: 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            color: #262626;
+        }
+
+        .header-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .logout-btn {
+            background: #262626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-weight: 500;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #1a1a1a;
+            transform: translateY(-1px);
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+
+        .content-wrapper {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 32px;
+        }
+
+        /* 今日概览 */
+        .today-overview {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .overview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .overview-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0;
+        }
+
+        .date {
+            color: #8e8e8e;
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        /* 天气卡片 */
+        .weather-card {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #e8ecf7;
+        }
+
+        .weather-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .weather-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0;
+        }
+
+        .weather-icon {
+            font-size: 24px;
+        }
+
+        .weather-content {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .temperature {
+            font-size: 36px;
+            font-weight: 700;
+            color: #262626;
+        }
+
+        .weather-details {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .condition {
+            font-size: 16px;
+            font-weight: 500;
+            color: #262626;
+        }
+
+        .humidity {
+            font-size: 14px;
+            color: #8e8e8e;
+        }
+
+        /* 穿搭建议 */
+        .outfit-suggestion {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .suggestion-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .suggestion-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0;
+        }
+
+        .refresh-btn {
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .refresh-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .suggestion-content {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .suggestion-text p {
+            margin: 0 0 16px 0;
+            color: #262626;
+            font-size: 14px;
+        }
+
+        .outfit-list {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+        }
+
+        .outfit-list li {
+            padding: 8px 0;
+            color: #262626;
+            font-size: 14px;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .outfit-list li::before {
+            content: '•';
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        .tip {
+            margin: 16px 0 0 0 !important;
+            color: #8e8e8e !important;
+            font-size: 13px !important;
+        }
+
+        /* 快捷功能 */
+        .quick-actions {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .quick-actions h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0 0 20px 0;
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .action-card {
+            background: #fafafa;
+            border: 1px solid #e1e5e9;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .action-card:hover {
+            background: #f5f5f5;
+            transform: translateY(-2px);
+            border-color: #d1d5db;
+        }
+
+        .action-card.primary {
+            background: #262626;
+            color: white;
+            border-color: #262626;
+        }
+
+        .action-card.primary:hover {
+            background: #1a1a1a;
+        }
+
+        .action-icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .action-title {
+            font-weight: 600;
+            font-size: 14px;
+            color: inherit;
+        }
+
+        .action-desc {
+            font-size: 12px;
+            color: #8e8e8e;
+            margin-top: 4px;
+        }
+
+        .action-card.primary .action-desc {
+            color: #d1d5db;
+        }
+
+        /* 最近活动 */
+        .recent-activity {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0;
+        }
+
+        .view-all-btn {
+            background: none;
+            border: none;
+            color: #667eea;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .view-all-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
+
+        .activity-item:hover {
+            background: #f8f9fa;
+        }
+
+        .activity-icon {
+            font-size: 20px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5f5;
+            border-radius: 10px;
+        }
+
+        .activity-content {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .activity-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #262626;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            color: #8e8e8e;
+        }
+
+        /* 个人信息卡片 */
+        .profile-summary {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid #e1e5e9;
+        }
+
+        .profile-summary h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0 0 20px 0;
+        }
+
+        .profile-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+
+        .profile-avatar {
+            width: 48px;
+            height: 48px;
+            background: #e1e5e9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .profile-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .profile-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #262626;
+            margin: 0;
+        }
+
+        .profile-id {
+            font-size: 12px;
+            color: #8e8e8e;
+        }
+
+        .edit-profile-btn {
+            background: none;
+            border: 1px solid #e1e5e9;
+            color: #262626;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .edit-profile-btn:hover {
+            background: #f5f5f5;
+            border-color: #d1d5db;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 16px;
+            }
+
+            .header-left {
+                gap: 16px;
+            }
+
+            .app-name {
+                font-size: 18px;
+            }
+
+            .user-greeting {
+                display: none;
+            }
+
+            .main-content {
+                padding: 24px 16px;
+            }
+
+            .content-wrapper {
+                gap: 24px;
+            }
+
+            .overview-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .weather-main {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .actions-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .action-card {
+                padding: 16px;
+            }
+
+            .profile-card {
+                flex-direction: column;
+                text-align: center;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-right {
+                gap: 8px;
+            }
+
+            .logout-btn {
+                padding: 6px 12px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- 顶部导航栏 -->
+        <header class="main-header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="app-logo">
+                        <span class="logo-icon">👗</span>
+                        <h1 class="app-name">What to Wear</h1>
+                    </div>
+                    <div class="user-greeting">
+                        <span>Hi, 用户名</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="header-btn notification-btn">
+                        <span>🔔</span>
+                    </button>
+                    <button class="header-btn profile-btn">
+                        <span>👤</span>
+                    </button>
+                    <button class="logout-btn">
+                        退出
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- 今日概览 -->
+                <section class="today-overview">
+                    <div class="overview-header">
+                        <h2>今日概览</h2>
+                        <span class="date">2024年8月1日 星期四</span>
+                    </div>
+                    
+                    <!-- 天气卡片 -->
+                    <div class="weather-card">
+                        <div class="weather-header">
+                            <h3>天气状况</h3>
+                            <span class="weather-icon">🌤️</span>
+                        </div>
+                        <div class="weather-content">
+                            <div class="weather-main">
+                                <span class="temperature">25°</span>
+                                <div class="weather-details">
+                                    <span class="condition">晴朗</span>
+                                    <span class="humidity">湿度 60%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 穿搭建议 -->
+                <section class="outfit-suggestion">
+                    <div class="suggestion-header">
+                        <h3>今日穿搭建议</h3>
+                        <button class="refresh-btn">🔄</button>
+                    </div>
+                    <div class="suggestion-content">
+                        <div class="suggestion-text">
+                            <p>根据今日天气，为您推荐以下搭配：</p>
+                            <ul class="outfit-list">
+                                <li>轻薄长袖衬衫</li>
+                                <li>休闲长裤</li>
+                                <li>舒适运动鞋</li>
+                            </ul>
+                            <p class="tip">💡 建议携带薄外套备用</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 快捷功能 -->
+                <section class="quick-actions">
+                    <h3>快捷功能</h3>
+                    <div class="actions-grid">
+                        <button class="action-card primary">
+                            <span class="action-icon">📸</span>
+                            <span class="action-title">记录穿搭</span>
+                            <span class="action-desc">拍照记录今日搭配</span>
+                        </button>
+
+                        <button class="action-card">
+                            <span class="action-icon">👗</span>
+                            <span class="action-title">我的衣橱</span>
+                            <span class="action-desc">管理服装单品</span>
+                        </button>
+
+                        <button class="action-card">
+                            <span class="action-icon">🎨</span>
+                            <span class="action-title">风格推荐</span>
+                            <span class="action-desc">发现新风格</span>
+                        </button>
+
+                        <button class="action-card">
+                            <span class="action-icon">📊</span>
+                            <span class="action-title">穿搭统计</span>
+                            <span class="action-desc">查看数据分析</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 最近活动 -->
+                <section class="recent-activity">
+                    <div class="section-header">
+                        <h3>最近活动</h3>
+                        <button class="view-all-btn">查看全部</button>
+                    </div>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-icon">📸</div>
+                            <div class="activity-content">
+                                <span class="activity-title">记录了今日穿搭</span>
+                                <span class="activity-time">2小时前</span>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon">👗</div>
+                            <div class="activity-content">
+                                <span class="activity-title">添加了新的衣服</span>
+                                <span class="activity-time">昨天</span>
+                            </div>
+                        </div>
+
+                        <div class="activity-item">
+                            <div class="activity-icon">🎨</div>
+                            <div class="activity-content">
+                                <span class="activity-title">收藏了穿搭灵感</span>
+                                <span class="activity-time">3天前</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 个人信息 -->
+                <section class="profile-summary">
+                    <h3>个人信息</h3>
+                    <div class="profile-card">
+                        <div class="profile-avatar">
+                            <span>👤</span>
+                        </div>
+                        <div class="profile-info">
+                            <h4>用户名</h4>
+                            <span class="profile-id">ID: 12345</span>
+                        </div>
+                        <button class="edit-profile-btn">编辑</button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 添加一些简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 刷新按钮点击效果
+            const refreshBtn = document.querySelector('.refresh-btn');
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', function() {
+                    this.style.transform = 'rotate(180deg)';
+                    setTimeout(() => {
+                        this.style.transform = 'rotate(0deg)';
+                    }, 300);
+                });
+            }
+
+            // 快捷功能卡片点击效果
+            const actionCards = document.querySelectorAll('.action-card');
+            actionCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const title = this.querySelector('.action-title').textContent;
+                    alert(`点击了：${title}`);
+                });
+            });
+
+            // 活动项目悬停效果
+            const activityItems = document.querySelectorAll('.activity-item');
+            activityItems.forEach(item => {
+                item.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#f8f9fa';
+                });
+                item.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = 'transparent';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

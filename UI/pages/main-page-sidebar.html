@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What to Wear - 现代侧边导航</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+
+        .app-layout {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* 侧边导航栏 */
+        .sidebar {
+            width: 280px;
+            background: #ffffff;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            z-index: 100;
+        }
+
+        .sidebar-header {
+            padding: 24px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .app-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+        }
+
+        .app-name {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-profile:hover {
+            background: #e2e8f0;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: #e2e8f0;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .user-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+        }
+
+        .user-info span {
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        /* 导航菜单 */
+        .sidebar-nav {
+            flex: 1;
+            padding: 24px 0;
+            overflow-y: auto;
+        }
+
+        .nav-section {
+            margin-bottom: 32px;
+        }
+
+        .nav-section-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding: 0 20px;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #64748b;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-right: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: #f8fafc;
+            color: #1e293b;
+        }
+
+        .nav-item.active {
+            background: #f1f5f9;
+            color: #667eea;
+            border-right-color: #667eea;
+        }
+
+        .nav-icon {
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        .nav-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .nav-badge {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+            margin-left: auto;
+        }
+
+        /* 侧边栏底部 */
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .logout-btn {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            background: #1e293b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .logout-btn:hover {
+            background: #334155;
+            transform: translateY(-1px);
+        }
+
+        /* 主内容区域 */
+        .main-content {
+            flex: 1;
+            margin-left: 280px;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            background: white;
+            padding: 24px 32px;
+            border-bottom: 1px solid #e2e8f0;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .page-subtitle {
+            font-size: 16px;
+            color: #64748b;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            margin-left: auto;
+        }
+
+        .header-btn {
+            padding: 8px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+        }
+
+        .header-btn:hover {
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+
+        .header-btn.primary {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .header-btn.primary:hover {
+            background: #5a67d8;
+        }
+
+        /* 内容区域 */
+        .content-body {
+            padding: 32px;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 32px;
+            max-width: 1400px;
+        }
+
+        .main-column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .side-column {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* 卡片样式 */
+        .card {
+            background: white;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .card-body {
+            padding: 24px;
+        }
+
+        /* 天气卡片 */
+        .weather-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+        }
+
+        .weather-main {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .temperature {
+            font-size: 48px;
+            font-weight: 700;
+        }
+
+        .weather-details h3 {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .weather-details p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .weather-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .weather-stat {
+            text-align: center;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+        }
+
+        .weather-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .weather-stat-label {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* 快捷操作 */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .action-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 20px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .action-btn:hover {
+            background: #e2e8f0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn.primary {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .action-btn.primary:hover {
+            background: #5a67d8;
+        }
+
+        .action-icon {
+            font-size: 24px;
+        }
+
+        .action-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .action-desc {
+            font-size: 12px;
+            opacity: 0.7;
+            text-align: center;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .sidebar.open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .content-body {
+                padding: 20px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .weather-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-layout">
+        <!-- 侧边导航栏 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="app-logo">
+                    <div class="logo-icon">👗</div>
+                    <div class="app-name">What to Wear</div>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="user-avatar">👤</div>
+                    <div class="user-info">
+                        <h4>用户名</h4>
+                        <span>在线</span>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">主要功能</div>
+                    <a href="#" class="nav-item active">
+                        <span class="nav-icon">🏠</span>
+                        <span class="nav-text">今日概览</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">📸</span>
+                        <span class="nav-text">记录穿搭</span>
+                        <span class="nav-badge">3</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">👗</span>
+                        <span class="nav-text">我的衣橱</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🎨</span>
+                        <span class="nav-text">风格推荐</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">数据分析</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">穿搭统计</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">趋势分析</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🌟</span>
+                        <span class="nav-text">搭配灵感</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">设置</div>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">个人设置</span>
+                    </a>
+                    <a href="#" class="nav-item">
+                        <span class="nav-icon">🔔</span>
+                        <span class="nav-text">通知设置</span>
+                    </a>
+                </div>
+            </nav>
+
+            <div class="sidebar-footer">
+                <button class="logout-btn">
+                    <span>🚪</span>
+                    <span>退出登录</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <header class="content-header">
+                <div class="header-top">
+                    <div>
+                        <h1 class="page-title">今日概览</h1>
+                        <p class="page-subtitle">2024年8月1日 星期四 · 北京</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="header-btn">🔄 刷新</button>
+                        <button class="header-btn primary">📸 记录穿搭</button>
+                    </div>
+                </div>
+            </header>
+
+            <div class="content-body">
+                <div class="content-grid">
+                    <div class="main-column">
+                        <!-- 天气卡片 -->
+                        <div class="weather-card">
+                            <div class="weather-main">
+                                <div class="temperature">25°</div>
+                                <div class="weather-details">
+                                    <h3>晴朗</h3>
+                                    <p>今天是个好天气，适合外出</p>
+                                </div>
+                            </div>
+                            <div class="weather-stats">
+                                <div class="weather-stat">
+                                    <div class="weather-stat-value">60%</div>
+                                    <div class="weather-stat-label">湿度</div>
+                                </div>
+                                <div class="weather-stat">
+                                    <div class="weather-stat-value">5km/h</div>
+                                    <div class="weather-stat-label">风速</div>
+                                </div>
+                                <div class="weather-stat">
+                                    <div class="weather-stat-value">良好</div>
+                                    <div class="weather-stat-label">空气质量</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 穿搭建议 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">今日穿搭建议</h3>
+                                <button class="header-btn">🔄</button>
+                            </div>
+                            <div class="card-body">
+                                <p style="margin-bottom: 16px; color: #64748b;">根据今日天气，为您推荐以下搭配：</p>
+                                <ul style="list-style: none; padding: 0;">
+                                    <li style="padding: 8px 0; border-left: 3px solid #667eea; padding-left: 12px; margin-bottom: 8px;">轻薄长袖衬衫</li>
+                                    <li style="padding: 8px 0; border-left: 3px solid #667eea; padding-left: 12px; margin-bottom: 8px;">休闲长裤</li>
+                                    <li style="padding: 8px 0; border-left: 3px solid #667eea; padding-left: 12px; margin-bottom: 8px;">舒适运动鞋</li>
+                                </ul>
+                                <p style="margin-top: 16px; font-size: 14px; color: #64748b;">💡 建议携带薄外套备用</p>
+                            </div>
+                        </div>
+
+                        <!-- 快捷操作 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">快捷操作</h3>
+                            </div>
+                            <div class="card-body">
+                                <div class="quick-actions">
+                                    <a href="#" class="action-btn primary">
+                                        <span class="action-icon">📸</span>
+                                        <span class="action-title">记录穿搭</span>
+                                        <span class="action-desc">拍照记录今日搭配</span>
+                                    </a>
+                                    <a href="#" class="action-btn">
+                                        <span class="action-icon">👗</span>
+                                        <span class="action-title">添加衣物</span>
+                                        <span class="action-desc">管理衣橱物品</span>
+                                    </a>
+                                    <a href="#" class="action-btn">
+                                        <span class="action-icon">🎨</span>
+                                        <span class="action-title">风格推荐</span>
+                                        <span class="action-desc">发现新搭配</span>
+                                    </a>
+                                    <a href="#" class="action-btn">
+                                        <span class="action-icon">📊</span>
+                                        <span class="action-title">查看统计</span>
+                                        <span class="action-desc">分析穿搭数据</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="side-column">
+                        <!-- 最近活动 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">最近活动</h3>
+                                <button class="header-btn">查看全部</button>
+                            </div>
+                            <div class="card-body">
+                                <div style="display: flex; flex-direction: column; gap: 16px;">
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <div style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center;">📸</div>
+                                        <div>
+                                            <div style="font-size: 14px; font-weight: 500; margin-bottom: 2px;">记录了今日穿搭</div>
+                                            <div style="font-size: 12px; color: #64748b;">2小时前</div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <div style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center;">👗</div>
+                                        <div>
+                                            <div style="font-size: 14px; font-weight: 500; margin-bottom: 2px;">添加了新衣服</div>
+                                            <div style="font-size: 12px; color: #64748b;">昨天</div>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 12px; align-items: center;">
+                                        <div style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center;">🎨</div>
+                                        <div>
+                                            <div style="font-size: 14px; font-weight: 500; margin-bottom: 2px;">收藏了搭配灵感</div>
+                                            <div style="font-size: 12px; color: #64748b;">3天前</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 个人统计 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h3 class="card-title">本月统计</h3>
+                            </div>
+                            <div class="card-body">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <div style="text-align: center; padding: 16px; background: #f8fafc; border-radius: 8px;">
+                                        <div style="font-size: 24px; font-weight: 700; color: #667eea; margin-bottom: 4px;">23</div>
+                                        <div style="font-size: 12px; color: #64748b;">穿搭记录</div>
+                                    </div>
+                                    <div style="text-align: center; padding: 16px; background: #f8fafc; border-radius: 8px;">
+                                        <div style="font-size: 24px; font-weight: 700; color: #667eea; margin-bottom: 4px;">8</div>
+                                        <div style="font-size: 12px; color: #64748b;">新增衣物</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 简单的交互效果
+        document.addEventListener('DOMContentLoaded', function() {
+            // 导航项目点击效果
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    navItems.forEach(nav => nav.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+
+            // 快捷操作点击效果
+            const actionBtns = document.querySelectorAll('.action-btn');
+            actionBtns.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const title = this.querySelector('.action-title').textContent;
+                    alert(`点击了：${title}`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
