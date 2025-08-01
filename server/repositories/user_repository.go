@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"errors"
+	"what-to-wear/server/logger"
 	"what-to-wear/server/models"
 
 	"gorm.io/gorm"
@@ -19,9 +20,23 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 
 // Create 创建用户
 func (r *userRepository) Create(user *models.User) error {
+	logger.Debug("Creating user in database", logger.Fields{
+		"username": user.Username,
+		"email":    user.Email,
+	})
+
 	if err := r.db.Create(user).Error; err != nil {
+		logger.ErrorWithErr(err, "Failed to create user in database", logger.Fields{
+			"username": user.Username,
+			"email":    user.Email,
+		})
 		return err
 	}
+
+	logger.Debug("User created successfully in database", logger.Fields{
+		"user_id":  user.ID,
+		"username": user.Username,
+	})
 	return nil
 }
 
