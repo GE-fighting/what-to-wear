@@ -1,44 +1,41 @@
 package routes
 
 import (
-	"what-to-wear/server/controllers"
+	"what-to-wear/server/container"
 	"what-to-wear/server/middleware"
 
 	"github.com/gin-gonic/gin"
 )
 
 // SetupRoutes 配置所有路由
-func SetupRoutes(r *gin.Engine) {
-	// 创建控制器实例
-	authController := &controllers.AuthController{}
-
+func SetupRoutes(r *gin.Engine, container *container.Container) {
 	// API路由组
 	api := r.Group("/api")
 	{
 		// 设置公开路由（不需要认证）
-		setupPublicRoutes(api, authController)
+		setupPublicRoutes(api, container)
 
 		// 设置需要认证的路由
-		setupProtectedRoutes(api)
+		setupProtectedRoutes(api, container)
 	}
 }
 
 // setupPublicRoutes 设置公开路由
-func setupPublicRoutes(api *gin.RouterGroup, authController *controllers.AuthController) {
+func setupPublicRoutes(api *gin.RouterGroup, container *container.Container) {
 	// 认证相关路由
-	setupAuthRoutes(api, authController)
+	setupAuthRoutes(api, container.GetAuthController())
 
 	// 其他公开路由
 	setupPublicAPIRoutes(api)
 }
 
 // setupProtectedRoutes 设置需要认证的路由
-func setupProtectedRoutes(api *gin.RouterGroup) {
+func setupProtectedRoutes(api *gin.RouterGroup, container *container.Container) {
 	protected := api.Group("/")
 	protected.Use(middleware.AuthMiddleware())
 	{
 		// 用户相关路由
-		setupUserRoutes(protected)
+		setupUserRoutes(protected, container.GetUserController())
 
 		// 天气相关路由
 		setupWeatherRoutes(protected)

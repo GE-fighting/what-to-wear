@@ -2,6 +2,7 @@ package main
 
 import (
 	"what-to-wear/server/config"
+	"what-to-wear/server/container"
 	"what-to-wear/server/routes"
 
 	"github.com/gin-contrib/cors"
@@ -11,6 +12,9 @@ import (
 func main() {
 	// 连接数据库
 	config.ConnectDatabase()
+
+	// 创建依赖注入容器
+	appContainer := container.NewContainer(config.DB)
 
 	// 创建Gin引擎
 	r := gin.Default()
@@ -25,7 +29,7 @@ func main() {
 	}))
 
 	// 配置路由
-	routes.SetupRoutes(r)
+	routes.SetupRoutes(r, appContainer)
 
 	// 启动服务
 	r.Run(":8080")
