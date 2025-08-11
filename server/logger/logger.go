@@ -16,7 +16,7 @@ func Init(config *Config) {
 		if config == nil {
 			config = DefaultConfig()
 		}
-		defaultLogger = NewLogrusLogger(config)
+		defaultLogger = NewSlogLogger(config)
 	})
 }
 
@@ -26,6 +26,11 @@ func GetLogger() Logger {
 		Init(DefaultConfig())
 	}
 	return defaultLogger
+}
+
+// FromContext 从 context 中获取带 requestID 的 logger
+func FromContext(ctx context.Context) Logger {
+	return GetLogger().WithContext(ctx)
 }
 
 // 全局日志方法，方便直接使用
@@ -98,11 +103,6 @@ func WithField(key string, value interface{}) Logger {
 // WithError 创建带错误的子日志器
 func WithError(err error) Logger {
 	return GetLogger().WithError(err)
-}
-
-// WithContext 创建带上下文的子日志器
-func WithContext(ctx context.Context) Logger {
-	return GetLogger().WithContext(ctx)
 }
 
 // SetLevel 设置日志级别

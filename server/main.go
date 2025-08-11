@@ -14,15 +14,16 @@ import (
 func main() {
 	// 初始化日志系统
 	config.InitLogger()
-	logger.Info("Starting What-to-Wear server")
+	log := logger.GetLogger()
+	log.Info("Starting What-to-Wear server")
 
 	// 连接数据库
 	config.ConnectDatabase()
-	logger.Info("Database connected successfully")
+	log.Info("Database connected successfully")
 
 	// 创建依赖注入容器
 	appContainer := container.NewContainer(config.DB)
-	logger.Info("Dependency injection container initialized")
+	log.Info("Dependency injection container initialized")
 
 	// 创建Gin引擎
 	r := gin.New() // 使用gin.New()而不是gin.Default()来避免默认日志
@@ -44,12 +45,12 @@ func main() {
 
 	// 配置路由
 	routes.SetupRoutes(r, appContainer)
-	logger.Info("Routes configured successfully")
+	log.Info("Routes configured successfully")
 
 	// 启动服务
-	logger.Info("Server starting on port 8080")
+	log.Info("Server starting on port 8080")
 	if err := r.Run(":8080"); err != nil {
-		logger.Fatal("Failed to start server", logger.Fields{
+		log.Fatal("Failed to start server", logger.Fields{
 			"error": err.Error(),
 		})
 	}

@@ -2,7 +2,8 @@ package controllers
 
 import (
 	"what-to-wear/server/common"
-	"what-to-wear/server/logger"
+	"what-to-wear/server/dto"
+	"what-to-wear/server/errors"
 	"what-to-wear/server/services"
 
 	"github.com/gin-gonic/gin"
@@ -28,57 +29,32 @@ type LoginRequest struct {
 
 // Register 用户注册
 func (ac *AuthController) Register(c *gin.Context) {
-	requestID := c.GetString("request_id")
-
-	var req services.RegisterRequest
+	var req dto.RegisterRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		logger.Warn("Invalid registration request", logger.Fields{
-			"request_id": requestID,
-			"error":      err.Error(),
-		})
-		common.HandleError(c, common.ErrInvalidRequest)
+		common.Error(c, errors.ErrInvalidRequest("无效的注册请求", err.Error()))
 		return
 	}
-
-	logger.Info("Processing user registration", logger.Fields{
-		"request_id": requestID,
-		"username":   req.Username,
-		"email":      req.Email,
-	})
-
 	user, err := ac.authService.Register(&req)
 	if err != nil {
-		logger.Error("User registration failed", logger.Fields{
-			"request_id": requestID,
-			"username":   req.Username,
-			"error":      err.Error(),
-		})
-		common.HandleError(c, err)
+		common.Error(c, err)
 		return
 	}
-
-	logger.Info("User registration successful", logger.Fields{
-		"request_id": requestID,
-		"user_id":    user.ID,
-		"username":   user.Username,
-	})
-
-	common.CreatedResponse(c, user, "User created successfully")
+	common.Success(c, user, "User created successfully")
 }
 
 // Login 用户登录
 func (ac *AuthController) Login(c *gin.Context) {
 	var req LoginRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		common.HandleError(c, common.ErrInvalidRequest)
+		common.Error(c, errors.ErrInvalidRequest("无效的登录请求", err.Error()))
 		return
 	}
 
 	token, err := ac.authService.Login(req.Username, req.Password)
 	if err != nil {
-		common.HandleError(c, err)
+		common.Error(c, err)
 		return
 	}
 
-	common.SuccessResponse(c, gin.H{"token": token}, "Login successful")
+	common.Success(c, gin.H{"token": token}, "Login successful")
 }

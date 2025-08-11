@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"time"
+	"what-to-wear/server/dto"
 	"what-to-wear/server/models"
 	"what-to-wear/server/repositories"
 	"what-to-wear/server/utils"
@@ -33,7 +34,7 @@ func (s *userService) GetProfile(userID uint) (*models.User, error) {
 }
 
 // UpdateProfile 更新用户资料
-func (s *userService) UpdateProfile(userID uint, req *UpdateProfileRequest) (*models.User, error) {
+func (s *userService) UpdateProfile(userID uint, req *dto.UpdateProfileRequest) (*models.User, error) {
 	// 获取现有用户信息
 	user, err := s.userRepo.GetByID(userID)
 	if err != nil {
