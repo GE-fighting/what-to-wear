@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './styles/modern.css';
+import './styles/sidebar-layout.css';
 
 interface MainPageProps {
   onLogout: () => void;
@@ -10,6 +10,7 @@ export function MainPage({ onLogout }: MainPageProps) {
   const [userProfile, setUserProfile] = useState<any>(null);
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [activeNav, setActiveNav] = useState('overview');
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -65,6 +66,10 @@ export function MainPage({ onLogout }: MainPageProps) {
     onLogout();
   };
 
+  const handleNavClick = (navId: string) => {
+    setActiveNav(navId);
+  };
+
   if (loading) {
     return (
       <div className="main-loading">
@@ -75,169 +80,282 @@ export function MainPage({ onLogout }: MainPageProps) {
   }
 
   return (
-    <div className="main-container">
-      {/* 顶部导航栏 */}
-      <header className="main-header">
-        <div className="header-content">
-          <div className="header-left">
-            <div className="app-logo">
-              <span className="logo-icon">👗</span>
-              <h1 className="app-name">What to Wear</h1>
-            </div>
-            <div className="user-greeting">
-              <span>Hi, {username}</span>
-            </div>
+    <div className="app-layout">
+      {/* 侧边导航栏 */}
+      <aside className="sidebar">
+        <div className="sidebar-header">
+          <div className="app-logo">
+            <div className="logo-icon">👗</div>
+            <div className="app-name">What to Wear</div>
           </div>
-          <div className="header-right">
-            <button className="header-btn notification-btn">
-              <span>🔔</span>
-            </button>
-            <button className="header-btn profile-btn">
-              <span>👤</span>
-            </button>
-            <button onClick={handleLogout} className="logout-btn">
-              退出
-            </button>
+          
+          <div className="user-profile">
+            <div className="user-avatar">👤</div>
+            <div className="user-info">
+              <h4>{username || '用户名'}</h4>
+              <span>在线</span>
+            </div>
           </div>
         </div>
-      </header>
 
+        <nav className="sidebar-nav">
+          <div className="nav-section">
+            <div className="nav-section-title">主要功能</div>
+            <div 
+              className={`nav-item ${activeNav === 'overview' ? 'active' : ''}`}
+              onClick={() => handleNavClick('overview')}
+            >
+              <span className="nav-icon">🏠</span>
+              <span className="nav-text">今日概览</span>
+            </div>
+            <div 
+              className={`nav-item ${activeNav === 'record' ? 'active' : ''}`}
+              onClick={() => handleNavClick('record')}
+            >
+              <span className="nav-icon">📸</span>
+              <span className="nav-text">记录穿搭</span>
+              <span className="nav-badge">3</span>
+            </div>
+            <div 
+              className={`nav-item ${activeNav === 'wardrobe' ? 'active' : ''}`}
+              onClick={() => handleNavClick('wardrobe')}
+            >
+              <span className="nav-icon">👗</span>
+              <span className="nav-text">我的衣橱</span>
+            </div>
+            <div 
+              className={`nav-item ${activeNav === 'style' ? 'active' : ''}`}
+              onClick={() => handleNavClick('style')}
+            >
+              <span className="nav-icon">🎨</span>
+              <span className="nav-text">风格推荐</span>
+            </div>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-section-title">数据分析</div>
+            <div 
+              className={`nav-item ${activeNav === 'stats' ? 'active' : ''}`}
+              onClick={() => handleNavClick('stats')}
+            >
+              <span className="nav-icon">📊</span>
+              <span className="nav-text">穿搭统计</span>
+            </div>
+            <div 
+              className={`nav-item ${activeNav === 'trends' ? 'active' : ''}`}
+              onClick={() => handleNavClick('trends')}
+            >
+              <span className="nav-icon">📈</span>
+              <span className="nav-text">趋势分析</span>
+            </div>
+            <div 
+              className={`nav-item ${activeNav === 'inspiration' ? 'active' : ''}`}
+              onClick={() => handleNavClick('inspiration')}
+            >
+              <span className="nav-icon">🌟</span>
+              <span className="nav-text">搭配灵感</span>
+            </div>
+          </div>
+
+          <div className="nav-section">
+            <div className="nav-section-title">设置</div>
+            <div 
+              className={`nav-item ${activeNav === 'settings' ? 'active' : ''}`}
+              onClick={() => handleNavClick('settings')}
+            >
+              <span className="nav-icon">⚙️</span>
+              <span className="nav-text">个人设置</span>
+            </div>
+            <div 
+              className={`nav-item ${activeNav === 'notifications' ? 'active' : ''}`}
+              onClick={() => handleNavClick('notifications')}
+            >
+              <span className="nav-icon">🔔</span>
+              <span className="nav-text">通知设置</span>
+            </div>
+          </div>
+        </nav>
+
+        <div className="sidebar-footer">
+          <button className="sidebar-logout-btn" onClick={handleLogout}>
+            <span>🚪</span>
+            <span>退出登录</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* 主内容区域 */}
       <main className="main-content">
-        <div className="content-wrapper">
-          {/* 今日概览 */}
-          <section className="today-overview">
-            <div className="overview-header">
-              <h2>今日概览</h2>
-              <span className="date">{new Date().toLocaleDateString('zh-CN', {
+        <header className="content-header">
+          <div className="header-top">
+            <div>
+              <h1 className="page-title">今日概览</h1>
+              <p className="page-subtitle">{new Date().toLocaleDateString('zh-CN', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',
                 weekday: 'long'
-              })}</span>
+              })} · 北京</p>
+            </div>
+            <div className="header-actions">
+              <button className="header-btn">🔄 刷新</button>
+              <button className="header-btn primary">📸 记录穿搭</button>
+            </div>
+          </div>
+        </header>
+
+        <div className="content-body">
+          <div className="content-grid">
+            <div className="main-column">
+              {/* 天气卡片 */}
+              <div className="weather-card">
+                <div className="weather-main">
+                  <div className="temperature">{weather?.temperature || '25'}°</div>
+                  <div className="weather-details">
+                    <h3>{weather?.condition || '晴朗'}</h3>
+                    <p>今天是个好天气，适合外出</p>
+                  </div>
+                </div>
+                <div className="weather-stats">
+                  <div className="weather-stat">
+                    <div className="weather-stat-value">{weather?.humidity || '60'}%</div>
+                    <div className="weather-stat-label">湿度</div>
+                  </div>
+                  <div className="weather-stat">
+                    <div className="weather-stat-value">5km/h</div>
+                    <div className="weather-stat-label">风速</div>
+                  </div>
+                  <div className="weather-stat">
+                    <div className="weather-stat-value">良好</div>
+                    <div className="weather-stat-label">空气质量</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 穿搭建议 */}
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">今日穿搭建议</h3>
+                  <button className="header-btn">🔄</button>
+                </div>
+                <div className="card-body">
+                  <p style={{ marginBottom: '16px', color: '#64748b' }}>根据今日天气，为您推荐以下搭配：</p>
+                  <ul style={{ listStyle: 'none', padding: 0 }}>
+                    <li style={{ padding: '8px 0', borderLeft: '3px solid #667eea', paddingLeft: '12px', marginBottom: '8px' }}>轻薄长袖衬衫</li>
+                    <li style={{ padding: '8px 0', borderLeft: '3px solid #667eea', paddingLeft: '12px', marginBottom: '8px' }}>休闲长裤</li>
+                    <li style={{ padding: '8px 0', borderLeft: '3px solid #667eea', paddingLeft: '12px', marginBottom: '8px' }}>舒适运动鞋</li>
+                  </ul>
+                  <p style={{ marginTop: '16px', fontSize: '14px', color: '#64748b' }}>💡 建议携带薄外套备用</p>
+                </div>
+              </div>
+
+              {/* 快捷操作 */}
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">快捷操作</h3>
+                </div>
+                <div className="card-body">
+                  <div className="quick-actions">
+                    <button className="action-btn primary">
+                      <span className="action-icon">📸</span>
+                      <span className="action-title">记录穿搭</span>
+                      <span className="action-desc">拍照记录今日搭配</span>
+                    </button>
+                    <button className="action-btn">
+                      <span className="action-icon">👗</span>
+                      <span className="action-title">添加衣物</span>
+                      <span className="action-desc">管理衣橱物品</span>
+                    </button>
+                    <button className="action-btn">
+                      <span className="action-icon">🎨</span>
+                      <span className="action-title">风格推荐</span>
+                      <span className="action-desc">发现新搭配</span>
+                    </button>
+                    <button className="action-btn">
+                      <span className="action-icon">📊</span>
+                      <span className="action-title">查看统计</span>
+                      <span className="action-desc">分析穿搭数据</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            {/* 天气卡片 */}
-            <div className="weather-card">
-              <div className="weather-header">
-                <h3>天气状况</h3>
-                <span className="weather-icon">🌤️</span>
-              </div>
-              {weather ? (
-                <div className="weather-content">
-                  <div className="weather-main">
-                    <span className="temperature">{weather.temperature}°</span>
-                    <div className="weather-details">
-                      <span className="condition">{weather.condition}</span>
-                      <span className="humidity">湿度 {weather.humidity}%</span>
+            <div className="side-column">
+              {/* 最近活动 */}
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">最近活动</h3>
+                  <button className="header-btn">查看全部</button>
+                </div>
+                <div className="card-body">
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <div style={{ width: '32px', height: '32px', background: '#f1f5f9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>📸</div>
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '2px' }}>记录了今日穿搭</div>
+                        <div style={{ fontSize: '12px', color: '#64748b' }}>2小时前</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <div style={{ width: '32px', height: '32px', background: '#f1f5f9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>👗</div>
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '2px' }}>添加了新衣服</div>
+                        <div style={{ fontSize: '12px', color: '#64748b' }}>昨天</div>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <div style={{ width: '32px', height: '32px', background: '#f1f5f9', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>🎨</div>
+                      <div>
+                        <div style={{ fontSize: '14px', fontWeight: '500', marginBottom: '2px' }}>收藏了搭配灵感</div>
+                        <div style={{ fontSize: '12px', color: '#64748b' }}>3天前</div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="weather-placeholder">
-                  <span>暂无天气数据</span>
+              </div>
+
+              {/* 个人统计 */}
+              <div className="card">
+                <div className="card-header">
+                  <h3 className="card-title">本月统计</h3>
+                </div>
+                <div className="card-body">
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                    <div style={{ textAlign: 'center', padding: '16px', background: '#f8fafc', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '24px', fontWeight: '700', color: '#667eea', marginBottom: '4px' }}>23</div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>穿搭记录</div>
+                    </div>
+                    <div style={{ textAlign: 'center', padding: '16px', background: '#f8fafc', borderRadius: '8px' }}>
+                      <div style={{ fontSize: '24px', fontWeight: '700', color: '#667eea', marginBottom: '4px' }}>8</div>
+                      <div style={{ fontSize: '12px', color: '#64748b' }}>新增衣物</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* 个人信息卡片 */}
+              {userProfile && (
+                <div className="card">
+                  <div className="card-header">
+                    <h3 className="card-title">个人信息</h3>
+                  </div>
+                  <div className="card-body">
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px', padding: '16px', background: '#f8fafc', borderRadius: '12px' }}>
+                      <div style={{ width: '48px', height: '48px', background: '#e2e8f0', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                        👤
+                      </div>
+                      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <h4 style={{ fontSize: '16px', fontWeight: '600', color: '#1e293b', margin: 0 }}>{userProfile.username}</h4>
+                        <span style={{ fontSize: '12px', color: '#64748b' }}>ID: {userProfile.user_id}</span>
+                      </div>
+                      <button style={{ background: 'none', border: '1px solid #e2e8f0', color: '#1e293b', padding: '8px 16px', borderRadius: '8px', fontSize: '14px', fontWeight: '500', cursor: 'pointer' }}>编辑</button>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
-          </section>
-
-          {/* 穿搭建议 */}
-          <section className="outfit-suggestion">
-            <div className="suggestion-header">
-              <h3>今日穿搭建议</h3>
-              <button className="refresh-btn">🔄</button>
-            </div>
-            <div className="suggestion-content">
-              <div className="suggestion-text">
-                <p>根据今日天气，为您推荐以下搭配：</p>
-                <ul className="outfit-list">
-                  <li>轻薄长袖衬衫</li>
-                  <li>休闲长裤</li>
-                  <li>舒适运动鞋</li>
-                </ul>
-                <p className="tip">💡 建议携带薄外套备用</p>
-              </div>
-            </div>
-          </section>
-
-          {/* 快捷功能 */}
-          <section className="quick-actions">
-            <h3>快捷功能</h3>
-            <div className="actions-grid">
-              <button className="action-card primary">
-                <span className="action-icon">📸</span>
-                <span className="action-title">记录穿搭</span>
-                <span className="action-desc">拍照记录今日搭配</span>
-              </button>
-
-              <button className="action-card">
-                <span className="action-icon">👗</span>
-                <span className="action-title">我的衣橱</span>
-                <span className="action-desc">管理服装单品</span>
-              </button>
-
-              <button className="action-card">
-                <span className="action-icon">🎨</span>
-                <span className="action-title">风格推荐</span>
-                <span className="action-desc">发现新风格</span>
-              </button>
-
-              <button className="action-card">
-                <span className="action-icon">📊</span>
-                <span className="action-title">穿搭统计</span>
-                <span className="action-desc">查看数据分析</span>
-              </button>
-            </div>
-          </section>
-
-          {/* 最近活动 */}
-          <section className="recent-activity">
-            <div className="section-header">
-              <h3>最近活动</h3>
-              <button className="view-all-btn">查看全部</button>
-            </div>
-            <div className="activity-list">
-              <div className="activity-item">
-                <div className="activity-icon">📸</div>
-                <div className="activity-content">
-                  <span className="activity-title">记录了今日穿搭</span>
-                  <span className="activity-time">2小时前</span>
-                </div>
-              </div>
-
-              <div className="activity-item">
-                <div className="activity-icon">👗</div>
-                <div className="activity-content">
-                  <span className="activity-title">添加了新的衣服</span>
-                  <span className="activity-time">昨天</span>
-                </div>
-              </div>
-
-              <div className="activity-item">
-                <div className="activity-icon">🎨</div>
-                <div className="activity-content">
-                  <span className="activity-title">收藏了穿搭灵感</span>
-                  <span className="activity-time">3天前</span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* 个人信息卡片 */}
-          {userProfile && (
-            <section className="profile-summary">
-              <h3>个人信息</h3>
-              <div className="profile-card">
-                <div className="profile-avatar">
-                  <span>👤</span>
-                </div>
-                <div className="profile-info">
-                  <h4>{userProfile.username}</h4>
-                  <span className="profile-id">ID: {userProfile.user_id}</span>
-                </div>
-                <button className="edit-profile-btn">编辑</button>
-              </div>
-            </section>
-          )}
+          </div>
         </div>
       </main>
     </div>
