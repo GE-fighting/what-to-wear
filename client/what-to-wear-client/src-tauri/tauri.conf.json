@@ -13,8 +13,12 @@
     "windows": [
       {
         "title": "what-to-wear-client",
-        "width": 800,
-        "height": 600
+        "width": 1280,
+        "height": 854,
+        "center": true,
+        "resizable": true,
+        "minWidth": 800,
+        "minHeight": 600
       }
     ],
     "security": {
