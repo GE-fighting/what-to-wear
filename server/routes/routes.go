@@ -37,9 +37,6 @@ func setupProtectedRoutes(api *gin.RouterGroup, container *container.Container) 
 		// 用户相关路由
 		setupUserRoutes(protected, container.GetUserController())
 
-		// 天气相关路由
-		setupWeatherRoutes(protected)
-
 		// 其他需要认证的路由可以在这里添加
 		// setupClothingRoutes(protected)
 	}

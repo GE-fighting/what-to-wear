@@ -69,9 +69,32 @@ func ConnectDatabase() {
 	}
 
 	// 自动迁移
-	err = database.AutoMigrate(&models.User{})
+	err = database.AutoMigrate(
+		&models.User{},
+		&models.ClothingCategory{},
+		&models.ClothingTag{},
+		&models.ClothingItem{},
+		&models.ClothingItemTag{},
+		&models.PurchaseRecord{},
+		&models.MaintenanceRecord{},
+		&models.WearRecord{},
+		&models.Outfit{},
+		&models.OutfitItem{},
+		&models.OutfitRecommendation{},
+	)
 	if err != nil {
 		log.Fatal("Failed to migrate database:", err)
+	}
+
+	// 初始化系统预设数据
+	err = models.SeedSystemCategories(database)
+	if err != nil {
+		log.Printf("Warning: Failed to seed system categories: %v", err)
+	}
+
+	err = models.SeedSystemTags(database)
+	if err != nil {
+		log.Printf("Warning: Failed to seed system tags: %v", err)
 	}
 
 	DB = database

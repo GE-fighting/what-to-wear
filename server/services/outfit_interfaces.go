@@ -14,7 +14,7 @@ type OutfitService interface {
 	GetUserOutfits(userID uint, page, pageSize int) ([]*models.Outfit, int64, error)
 
 	// 获取穿搭推荐
-	GetOutfitRecommendation(userID uint, weather *models.Weather) (*models.OutfitRecommendation, error)
+	GetOutfitRecommendation(userID uint, weather string) (*models.OutfitRecommendation, error)
 
 	// 评价穿搭
 	RateOutfit(userID, outfitID uint, rating int, notes string) error
