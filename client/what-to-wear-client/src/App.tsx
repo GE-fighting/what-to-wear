@@ -17,7 +17,7 @@ function App() {
     }
   }, []);
 
-  const handleLoginSuccess = () => {
+  const handleLoginSuccess = (token?: string) => {
     setCurrentPage('main');
   };
 

@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { Modal } from './components/Modal';
+import { AddClothingItem } from './components/AddClothingItem';
 import './styles/sidebar-layout.css';
 
 interface MainPageProps {
@@ -11,6 +13,7 @@ export function MainPage({ onLogout }: MainPageProps) {
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [activeNav, setActiveNav] = useState('overview');
+  const [isAddClothingModalOpen, setIsAddClothingModalOpen] = useState(false);
 
   useEffect(() => {
     const storedUsername = localStorage.getItem('username');
@@ -26,6 +29,22 @@ export function MainPage({ onLogout }: MainPageProps) {
     const token = localStorage.getItem('token');
     if (!token) {
       onLogout();
+      return;
+    }
+
+    // 检查是否为演示模式
+    if (token === 'demo-token') {
+      // 演示模式，使用模拟数据
+      setUserProfile({
+        username: '演示用户',
+        user_id: 'demo-001'
+      });
+      setWeather({
+        temperature: 25,
+        condition: '晴朗',
+        humidity: 60
+      });
+      setLoading(false);
       return;
     }
 
@@ -68,6 +87,51 @@ export function MainPage({ onLogout }: MainPageProps) {
 
   const handleNavClick = (navId: string) => {
     setActiveNav(navId);
+  };
+
+  const handleAddClothingClick = () => {
+    setIsAddClothingModalOpen(true);
+  };
+
+  const handleCloseAddClothingModal = () => {
+    setIsAddClothingModalOpen(false);
+  };
+
+  const handleAddClothingSubmit = async (data: any) => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      onLogout();
+      return;
+    }
+
+    // 检查是否为演示模式
+    if (token === 'demo-token') {
+      // 演示模式，模拟成功
+      console.log('演示模式：衣物添加成功', data);
+      setIsAddClothingModalOpen(false);
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:8080/api/clothing-items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        console.log('衣物添加成功');
+        setIsAddClothingModalOpen(false);
+        // 可以在这里添加成功提示或刷新数据
+      } else {
+        console.error('添加衣物失败');
+      }
+    } catch (error) {
+      console.error('添加衣物时发生错误:', error);
+    }
   };
 
   if (loading) {
@@ -199,6 +263,7 @@ export function MainPage({ onLogout }: MainPageProps) {
             </div>
             <div className="header-actions">
               <button className="header-btn">🔄 刷新</button>
+              <button className="header-btn" onClick={handleAddClothingClick}>👗 添加衣物</button>
               <button className="header-btn primary">📸 记录穿搭</button>
             </div>
           </div>
@@ -261,7 +326,7 @@ export function MainPage({ onLogout }: MainPageProps) {
                       <span className="action-title">记录穿搭</span>
                       <span className="action-desc">拍照记录今日搭配</span>
                     </button>
-                    <button className="action-btn">
+                    <button className="action-btn" onClick={handleAddClothingClick}>
                       <span className="action-icon">👗</span>
                       <span className="action-title">添加衣物</span>
                       <span className="action-desc">管理衣橱物品</span>
@@ -358,6 +423,19 @@ export function MainPage({ onLogout }: MainPageProps) {
           </div>
         </div>
       </main>
+
+      {/* 添加衣物模态框 */}
+      <Modal
+        isOpen={isAddClothingModalOpen}
+        onClose={handleCloseAddClothingModal}
+        title="添加新衣物"
+        size="large"
+      >
+        <AddClothingItem
+          onSubmit={handleAddClothingSubmit}
+          onCancel={handleCloseAddClothingModal}
+        />
+      </Modal>
     </div>
   );
 }

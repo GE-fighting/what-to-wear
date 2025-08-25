@@ -3,7 +3,7 @@ import './styles/modern.css';
 
 interface LoginPageProps {
   onSwitchToRegister: () => void;
-  onLoginSuccess: (token: string) => void;
+  onLoginSuccess: (token?: string) => void;
 }
 
 export function LoginPage({ onSwitchToRegister, onLoginSuccess }: LoginPageProps) {
@@ -48,6 +48,13 @@ export function LoginPage({ onSwitchToRegister, onLoginSuccess }: LoginPageProps
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSkipLogin = () => {
+    // 设置一个临时的用户名和token用于演示
+    localStorage.setItem('username', '演示用户');
+    localStorage.setItem('token', 'demo-token');
+    onLoginSuccess();
   };
 
   return (
@@ -104,6 +111,22 @@ export function LoginPage({ onSwitchToRegister, onLoginSuccess }: LoginPageProps
           >
             立即注册
           </button>
+        </div>
+
+        <div className="demo-section">
+          <div className="demo-divider">
+            <span>演示模式</span>
+          </div>
+          <button
+            type="button"
+            onClick={handleSkipLogin}
+            className="btn btn-demo"
+          >
+            🚀 跳过登录，直接体验
+          </button>
+          <p className="demo-hint">
+            * 演示模式下部分功能可能无法正常使用
+          </p>
         </div>
 
         {message && (
