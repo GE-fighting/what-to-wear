@@ -1,10 +1,33 @@
 package repositories
 
 import (
+	"context"
+	"what-to-wear/server/api"
 	"what-to-wear/server/models"
 
 	"gorm.io/gorm"
 )
+
+// ClothingTagRepository 衣物标签仓库接口
+type ClothingTagRepository interface {
+	// 基础CRUD操作
+	Create(ctx context.Context, tag *models.ClothingTag) error
+	GetByID(ctx context.Context, id uint) (*models.ClothingTag, error)
+	GetAll(ctx context.Context) ([]models.ClothingTag, error)
+	GetByUserID(ctx context.Context, userID uint) ([]models.ClothingTag, error)
+	Update(ctx context.Context, tag *models.ClothingTag) error
+	Delete(ctx context.Context, id uint) error
+
+	// 按类型查询
+	GetByType(ctx context.Context, tagType api.TagType, userID *uint) ([]models.ClothingTag, error)
+	GetSystemTags(ctx context.Context) ([]models.ClothingTag, error)
+	GetUserTags(ctx context.Context, userID uint) ([]models.ClothingTag, error)
+
+	// 统计
+	GetTagItemCount(ctx context.Context, tagID uint) (int64, error)
+	GetPopularTags(ctx context.Context, userID uint, limit int) ([]models.ClothingTag, error)
+	GetTagUsageStats(ctx context.Context, userID uint) (map[uint]int64, error)
+}
 
 // clothingTagRepository 衣物标签仓库实现
 type clothingTagRepository struct {
@@ -17,14 +40,14 @@ func NewClothingTagRepository(db *gorm.DB) ClothingTagRepository {
 }
 
 // Create 创建标签
-func (r *clothingTagRepository) Create(tag *models.ClothingTag) error {
-	return r.db.Create(tag).Error
+func (r *clothingTagRepository) Create(ctx context.Context, tag *models.ClothingTag) error {
+	return r.db.WithContext(ctx).Create(tag).Error
 }
 
 // GetByID 根据ID获取标签
-func (r *clothingTagRepository) GetByID(id uint) (*models.ClothingTag, error) {
+func (r *clothingTagRepository) GetByID(ctx context.Context, id uint) (*models.ClothingTag, error) {
 	var tag models.ClothingTag
-	err := r.db.First(&tag, id).Error
+	err := r.db.WithContext(ctx).First(&tag, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -32,39 +55,39 @@ func (r *clothingTagRepository) GetByID(id uint) (*models.ClothingTag, error) {
 }
 
 // GetAll 获取所有标签
-func (r *clothingTagRepository) GetAll() ([]models.ClothingTag, error) {
+func (r *clothingTagRepository) GetAll(ctx context.Context) ([]models.ClothingTag, error) {
 	var tags []models.ClothingTag
-	err := r.db.Where("is_active = ?", true).
+	err := r.db.WithContext(ctx).Where("is_active = ?", true).
 		Order("sort_order ASC, name ASC").
 		Find(&tags).Error
 	return tags, err
 }
 
 // GetByUserID 根据用户ID获取标签（包括系统标签和用户自定义标签）
-func (r *clothingTagRepository) GetByUserID(userID uint) ([]models.ClothingTag, error) {
+func (r *clothingTagRepository) GetByUserID(ctx context.Context, userID uint) ([]models.ClothingTag, error) {
 	var tags []models.ClothingTag
-	err := r.db.Where("is_active = ? AND (is_system = ? OR user_id = ?)", true, true, userID).
+	err := r.db.WithContext(ctx).Where("is_active = ? AND (is_system = ? OR user_id = ?)", true, true, userID).
 		Order("is_system DESC, sort_order ASC, name ASC").
 		Find(&tags).Error
 	return tags, err
 }
 
 // Update 更新标签
-func (r *clothingTagRepository) Update(tag *models.ClothingTag) error {
-	return r.db.Save(tag).Error
+func (r *clothingTagRepository) Update(ctx context.Context, tag *models.ClothingTag) error {
+	return r.db.WithContext(ctx).Save(tag).Error
 }
 
 // Delete 删除标签
-func (r *clothingTagRepository) Delete(id uint) error {
-	return r.db.Model(&models.ClothingTag{}).
+func (r *clothingTagRepository) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Model(&models.ClothingTag{}).
 		Where("id = ?", id).
 		Update("is_active", false).Error
 }
 
 // GetByType 根据类型获取标签
-func (r *clothingTagRepository) GetByType(tagType models.TagType, userID *uint) ([]models.ClothingTag, error) {
+func (r *clothingTagRepository) GetByType(ctx context.Context, tagType api.TagType, userID *uint) ([]models.ClothingTag, error) {
 	var tags []models.ClothingTag
-	query := r.db.Where("type = ? AND is_active = ?", tagType, true)
+	query := r.db.WithContext(ctx).Where("type = ? AND is_active = ?", tagType, true)
 
 	// 包含系统标签和用户自定义标签
 	if userID != nil {
@@ -78,27 +101,27 @@ func (r *clothingTagRepository) GetByType(tagType models.TagType, userID *uint) 
 }
 
 // GetSystemTags 获取系统标签
-func (r *clothingTagRepository) GetSystemTags() ([]models.ClothingTag, error) {
+func (r *clothingTagRepository) GetSystemTags(ctx context.Context) ([]models.ClothingTag, error) {
 	var tags []models.ClothingTag
-	err := r.db.Where("is_system = ? AND is_active = ?", true, true).
+	err := r.db.WithContext(ctx).Where("is_system = ? AND is_active = ?", true, true).
 		Order("type ASC, sort_order ASC, name ASC").
 		Find(&tags).Error
 	return tags, err
 }
 
 // GetUserTags 获取用户自定义标签
-func (r *clothingTagRepository) GetUserTags(userID uint) ([]models.ClothingTag, error) {
+func (r *clothingTagRepository) GetUserTags(ctx context.Context, userID uint) ([]models.ClothingTag, error) {
 	var tags []models.ClothingTag
-	err := r.db.Where("user_id = ? AND is_active = ?", userID, true).
+	err := r.db.WithContext(ctx).Where("user_id = ? AND is_active = ?", userID, true).
 		Order("type ASC, sort_order ASC, name ASC").
 		Find(&tags).Error
 	return tags, err
 }
 
 // GetTagItemCount 获取标签关联的衣物数量
-func (r *clothingTagRepository) GetTagItemCount(tagID uint) (int64, error) {
+func (r *clothingTagRepository) GetTagItemCount(ctx context.Context, tagID uint) (int64, error) {
 	var count int64
-	err := r.db.Model(&models.ClothingItemTag{}).
+	err := r.db.WithContext(ctx).Model(&models.ClothingItemTag{}).
 		Joins("JOIN clothing_items ON clothing_item_tags.clothing_item_id = clothing_items.id").
 		Where("clothing_item_tags.clothing_tag_id = ? AND clothing_items.is_active = ?", tagID, true).
 		Count(&count).Error
@@ -106,10 +129,10 @@ func (r *clothingTagRepository) GetTagItemCount(tagID uint) (int64, error) {
 }
 
 // GetPopularTags 获取热门标签（按使用频率排序）
-func (r *clothingTagRepository) GetPopularTags(userID uint, limit int) ([]models.ClothingTag, error) {
+func (r *clothingTagRepository) GetPopularTags(ctx context.Context, userID uint, limit int) ([]models.ClothingTag, error) {
 	var tags []models.ClothingTag
 
-	query := r.db.Model(&models.ClothingTag{}).
+	query := r.db.WithContext(ctx).Model(&models.ClothingTag{}).
 		Select("clothing_tags.*, COUNT(clothing_item_tags.clothing_tag_id) as usage_count").
 		Joins("LEFT JOIN clothing_item_tags ON clothing_tags.id = clothing_item_tags.clothing_tag_id").
 		Joins("LEFT JOIN clothing_items ON clothing_item_tags.clothing_item_id = clothing_items.id").
@@ -127,9 +150,9 @@ func (r *clothingTagRepository) GetPopularTags(userID uint, limit int) ([]models
 }
 
 // GetTagsByNames 根据标签名称批量获取标签
-func (r *clothingTagRepository) GetTagsByNames(names []string, userID *uint) ([]models.ClothingTag, error) {
+func (r *clothingTagRepository) GetTagsByNames(ctx context.Context, names []string, userID *uint) ([]models.ClothingTag, error) {
 	var tags []models.ClothingTag
-	query := r.db.Where("name IN ? AND is_active = ?", names, true)
+	query := r.db.WithContext(ctx).Where("name IN ? AND is_active = ?", names, true)
 
 	if userID != nil {
 		query = query.Where("is_system = ? OR user_id = ?", true, *userID)
@@ -142,32 +165,35 @@ func (r *clothingTagRepository) GetTagsByNames(names []string, userID *uint) ([]
 }
 
 // CreateSystemTagIfNotExists 创建系统标签（如果不存在）
-func (r *clothingTagRepository) CreateSystemTagIfNotExists(tag *models.ClothingTag) error {
+func (r *clothingTagRepository) CreateSystemTagIfNotExists(ctx context.Context, tag *models.ClothingTag) error {
 	var existingTag models.ClothingTag
-	err := r.db.Where("name = ? AND type = ? AND is_system = ?", tag.Name, tag.Type, true).
+	err := r.db.WithContext(ctx).Where("name = ? AND type = ? AND is_system = ?", tag.Name, tag.Type, true).
 		First(&existingTag).Error
 
 	if err == gorm.ErrRecordNotFound {
 		// 标签不存在，创建新标签
 		tag.IsSystem = true
-		return r.db.Create(tag).Error
+		return r.db.WithContext(ctx).Create(tag).Error
 	}
 
 	return err
 }
 
 // GetTagUsageStats 获取标签使用统计
-func (r *clothingTagRepository) GetTagUsageStats(userID uint) (map[uint]int64, error) {
+func (r *clothingTagRepository) GetTagUsageStats(ctx context.Context, userID uint) (map[uint]int64, error) {
 	var results []struct {
 		TagID uint  `json:"tag_id"`
 		Count int64 `json:"count"`
 	}
 
-	err := r.db.Model(&models.ClothingItemTag{}).
+	err := r.db.WithContext(ctx).Model(&models.ClothingItemTag{}).
 		Select("clothing_tag_id as tag_id, COUNT(*) as count").
 		Joins("JOIN clothing_items ON clothing_item_tags.clothing_item_id = clothing_items.id").
-		Where("clothing_items.user_id = ? AND clothing_items.is_active = ?", userID, true).
+		Joins("JOIN clothing_tags ON clothing_item_tags.clothing_tag_id = clothing_tags.id").
+		Where("clothing_items.user_id = ? AND clothing_items.is_active = ? AND clothing_tags.is_active = ?", userID, true, true).
+		Where("clothing_tags.is_system = ? OR clothing_tags.user_id = ?", true, userID).
 		Group("clothing_tag_id").
+		Order("count DESC").
 		Scan(&results).Error
 
 	if err != nil {

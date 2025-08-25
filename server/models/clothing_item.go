@@ -5,18 +5,7 @@ import (
 	"time"
 
 	"gorm.io/gorm"
-)
-
-// ClothingCondition 衣物状态枚举
-type ClothingCondition string
-
-const (
-	ConditionNew       ClothingCondition = "new"       // 全新
-	ConditionExcellent ClothingCondition = "excellent" // 极佳
-	ConditionGood      ClothingCondition = "good"      // 良好
-	ConditionFair      ClothingCondition = "fair"      // 一般
-	ConditionPoor      ClothingCondition = "poor"      // 较差
-	ConditionDamaged   ClothingCondition = "damaged"   // 损坏
+	"what-to-wear/server/api"
 )
 
 // ClothingSize 衣物尺码
@@ -59,21 +48,19 @@ type ClothingItem struct {
 	CategoryID         uint               `json:"category_id" gorm:"not null;index"`
 	Name               string             `json:"name" gorm:"not null"`
 	Brand              string             `json:"brand"`
-	ProductModel       string             `json:"product_model"` // 重命名避免与gorm.Model冲突
 	Color              string             `json:"color" gorm:"not null"`
 	Size               ClothingSize       `json:"size" gorm:"type:json"`
 	Material           string             `json:"material"`
 	Price              float64            `json:"price" gorm:"type:decimal(10,2)"`
 	PurchaseDate       *time.Time         `json:"purchase_date"`
-	Condition          ClothingCondition  `json:"condition" gorm:"default:'new'"`
+	Condition          api.ClothingStatus `json:"condition" gorm:"default:'active'"`
 	WearCount          int                `json:"wear_count" gorm:"default:0"`
 	DurabilityScore    float64            `json:"durability_score" gorm:"default:100.0"`
 	LastWornDate       *time.Time         `json:"last_worn_date"`
 	SpecificAttributes SpecificAttributes `json:"specific_attributes" gorm:"type:json"`
-	// ImageURLs 字段已移除，改用附件系统管理图片
-	Notes      string `json:"notes"`
-	IsActive   bool   `json:"is_active" gorm:"default:true"`
-	IsFavorite bool   `json:"is_favorite" gorm:"default:false"`
+	Notes              string             `json:"notes"`
+	IsActive           bool               `json:"is_active" gorm:"default:true"`
+	IsFavorite         bool               `json:"is_favorite" gorm:"default:false"`
 }
 
 // TableName 指定表名
@@ -192,15 +179,5 @@ func (c *ClothingItem) GetCostPerWear() float64 {
 
 // IsValidCondition 检查状态是否有效
 func IsValidCondition(condition string) bool {
-	validConditions := []ClothingCondition{
-		ConditionNew, ConditionExcellent, ConditionGood,
-		ConditionFair, ConditionPoor, ConditionDamaged,
-	}
-
-	for _, validCondition := range validConditions {
-		if ClothingCondition(condition) == validCondition {
-			return true
-		}
-	}
-	return false
+	return api.ClothingStatus(condition).IsValid()
 }

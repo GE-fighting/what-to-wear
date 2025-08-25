@@ -3,41 +3,37 @@ package models
 import (
 	"time"
 
+	"what-to-wear/server/api"
+
 	"gorm.io/gorm"
 )
 
 // Outfit 穿搭记录模型
 type Outfit struct {
 	gorm.Model
-	UserID      uint      `json:"user_id" gorm:"not null;index"`
-	Date        time.Time `json:"date" gorm:"not null"`
-	Temperature float64   `json:"temperature"`
-	Weather     string    `json:"weather"`
-	TopType     string    `json:"top_type"`
-	TopColor    string    `json:"top_color"`
-	BottomType  string    `json:"bottom_type"`
-	BottomColor string    `json:"bottom_color"`
-	ShoesType   string    `json:"shoes_type"`
-	ShoesColor  string    `json:"shoes_color"`
-	Accessories string    `json:"accessories"`
-	Rating      int       `json:"rating" gorm:"default:0"`
-	Notes       string    `json:"notes"`
-	// PhotoURL 字段将被附件系统替代，移除此字段
+	UserID      uint              `json:"user_id" gorm:"not null;index"`
+	Name        string            `json:"name" gorm:"not null"`
+	Date        time.Time         `json:"date" gorm:"not null"`
+	Temperature *float64          `json:"temperature"`
+	Weather     *api.WeatherType  `json:"weather"`
+	Occasion    string            `json:"occasion"`
+	Location    string            `json:"location"`
+	Rating      *api.OutfitRating `json:"rating"`
+	RatingNotes string            `json:"rating_notes"`
+	Notes       string            `json:"notes"`
+	Tags        []string          `json:"tags" gorm:"type:json"`
+	IsPublic    bool              `json:"is_public" gorm:"default:false"`
 }
 
 // OutfitRecommendation 穿搭推荐模型
 type OutfitRecommendation struct {
 	gorm.Model
-	UserID      uint    `json:"user_id" gorm:"not null;index"`
-	Temperature float64 `json:"temperature" gorm:"not null"`
-	Weather     string  `json:"weather" gorm:"not null"`
-	TopType     string  `json:"top_type"`
-	TopColor    string  `json:"top_color"`
-	BottomType  string  `json:"bottom_type"`
-	BottomColor string  `json:"bottom_color"`
-	ShoesType   string  `json:"shoes_type"`
-	ShoesColor  string  `json:"shoes_color"`
-	Accessories string  `json:"accessories"`
-	Reason      string  `json:"reason"`
-	Confidence  float64 `json:"confidence" gorm:"default:0"`
+	UserID           uint             `json:"user_id" gorm:"not null;index"`
+	RecommendedItems []uint           `json:"recommended_items" gorm:"type:json"` // 推荐的衣物ID列表
+	Weather          *api.WeatherType `json:"weather"`
+	Temperature      *float64         `json:"temperature"`
+	Occasion         string           `json:"occasion"`
+	Confidence       float64          `json:"confidence"`                         // 推荐置信度
+	Reason           string           `json:"reason"`                             // 推荐理由
+	AlternativeItems [][]uint         `json:"alternative_items" gorm:"type:json"` // 替代选择的衣物ID列表
 }

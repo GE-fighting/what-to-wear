@@ -1,11 +1,12 @@
-package models
+package database
 
 import (
 	"gorm.io/gorm"
+	"what-to-wear/server/models"
 )
 
-// SystemCategory 系统预设分类结构
-type SystemCategory struct {
+// CategorySeed 分类种子数据结构
+type CategorySeed struct {
 	Name        string
 	Description string
 	ParentName  string // 父分类名称，用于建立层级关系
@@ -13,9 +14,9 @@ type SystemCategory struct {
 	SortOrder   int
 }
 
-// GetSystemCategories 获取系统预设分类
-func GetSystemCategories() []SystemCategory {
-	return []SystemCategory{
+// GetCategorySeeds 获取分类种子数据
+func GetCategorySeeds() []CategorySeed {
+	return []CategorySeed{
 		// 一级分类
 		{Name: "上衣", Description: "各类上身衣物", Icon: "👕", SortOrder: 1},
 		{Name: "下装", Description: "各类下身衣物", Icon: "👖", SortOrder: 2},
@@ -73,54 +74,54 @@ func GetSystemCategories() []SystemCategory {
 	}
 }
 
-// SeedSystemCategories 初始化系统预设分类
-func SeedSystemCategories(db *gorm.DB) error {
-	systemCategories := GetSystemCategories()
+// SeedCategories 初始化分类数据
+func SeedCategories(db *gorm.DB) error {
+	categorySeeds := GetCategorySeeds()
 	categoryMap := make(map[string]uint) // 用于存储分类名称到ID的映射
 
 	// 首先创建所有一级分类
-	for _, category := range systemCategories {
-		if category.ParentName == "" { // 一级分类
-			var existingCategory ClothingCategory
-			err := db.Where("name = ? AND parent_id IS NULL", category.Name).First(&existingCategory).Error
+	for _, seed := range categorySeeds {
+		if seed.ParentName == "" { // 一级分类
+			var existingCategory models.ClothingCategory
+			err := db.Where("name = ? AND parent_id IS NULL", seed.Name).First(&existingCategory).Error
 
 			if err == gorm.ErrRecordNotFound {
-				newCategory := ClothingCategory{
-					Name:        category.Name,
-					Description: category.Description,
-					Icon:        category.Icon,
-					SortOrder:   category.SortOrder,
+				newCategory := models.ClothingCategory{
+					Name:        seed.Name,
+					Description: seed.Description,
+					Icon:        seed.Icon,
+					SortOrder:   seed.SortOrder,
 					IsActive:    true,
 				}
 
 				if err := db.Create(&newCategory).Error; err != nil {
 					return err
 				}
-				categoryMap[category.Name] = newCategory.ID
+				categoryMap[seed.Name] = newCategory.ID
 			} else {
-				categoryMap[category.Name] = existingCategory.ID
+				categoryMap[seed.Name] = existingCategory.ID
 			}
 		}
 	}
 
 	// 然后创建所有二级分类
-	for _, category := range systemCategories {
-		if category.ParentName != "" { // 二级分类
-			parentID, exists := categoryMap[category.ParentName]
+	for _, seed := range categorySeeds {
+		if seed.ParentName != "" { // 二级分类
+			parentID, exists := categoryMap[seed.ParentName]
 			if !exists {
 				continue // 父分类不存在，跳过
 			}
 
-			var existingCategory ClothingCategory
-			err := db.Where("name = ? AND parent_id = ?", category.Name, parentID).First(&existingCategory).Error
+			var existingCategory models.ClothingCategory
+			err := db.Where("name = ? AND parent_id = ?", seed.Name, parentID).First(&existingCategory).Error
 
 			if err == gorm.ErrRecordNotFound {
-				newCategory := ClothingCategory{
-					Name:        category.Name,
-					Description: category.Description,
+				newCategory := models.ClothingCategory{
+					Name:        seed.Name,
+					Description: seed.Description,
 					ParentID:    &parentID,
-					Icon:        category.Icon,
-					SortOrder:   category.SortOrder,
+					Icon:        seed.Icon,
+					SortOrder:   seed.SortOrder,
 					IsActive:    true,
 				}
 
@@ -134,10 +135,10 @@ func SeedSystemCategories(db *gorm.DB) error {
 	return nil
 }
 
-// GetSystemCategoriesByParent 根据父分类获取子分类
-func GetSystemCategoriesByParent(parentName string) []SystemCategory {
-	allCategories := GetSystemCategories()
-	var filteredCategories []SystemCategory
+// GetCategoriesByParent 根据父分类获取子分类
+func GetCategoriesByParent(parentName string) []CategorySeed {
+	allCategories := GetCategorySeeds()
+	var filteredCategories []CategorySeed
 
 	for _, category := range allCategories {
 		if category.ParentName == parentName {

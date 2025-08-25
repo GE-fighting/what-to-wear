@@ -3,6 +3,7 @@ package main
 import (
 	"what-to-wear/server/config"
 	"what-to-wear/server/container"
+	"what-to-wear/server/database"
 	"what-to-wear/server/logger"
 	"what-to-wear/server/middleware"
 	"what-to-wear/server/routes"
@@ -17,12 +18,16 @@ func main() {
 	log := logger.GetLogger()
 	log.Info("Starting What-to-Wear server")
 
-	// 连接数据库
-	config.ConnectDatabase()
-	log.Info("Database connected successfully")
+	// 初始化数据库（连接 + 迁移 + 种子数据）
+	if err := database.Initialize(); err != nil {
+		log.Fatal("Database initialization failed", logger.Fields{
+			"error": err.Error(),
+		})
+	}
+	log.Info("Database initialized successfully")
 
 	// 创建依赖注入容器
-	appContainer := container.NewContainer(config.DB)
+	appContainer := container.NewContainer(database.GetDB())
 	log.Info("Dependency injection container initialized")
 
 	// 创建Gin引擎

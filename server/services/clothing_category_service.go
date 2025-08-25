@@ -1,28 +1,42 @@
 package services
 
 import (
+	"context"
 	"fmt"
-	"what-to-wear/server/dto"
+	"what-to-wear/server/api/dto"
 	"what-to-wear/server/models"
 	"what-to-wear/server/repositories"
 )
 
-// CategoryService 分类服务实现
-type CategoryService struct {
+// CategoryService分类服务接口
+type ClothingCategoryService interface {
+	GetCategoryTree(ctx context.Context) ([]dto.CategoryTreeNode, error)
+	GetCategoryPath(ctx context.Context, categoryID uint) (string, error)
+	GetAllCategories(ctx context.Context) ([]dto.CategoryDTO, error)
+	GetRootCategories(ctx context.Context) ([]dto.CategoryDTO, error)
+	GetCategory(ctx context.Context, categoryID uint) (*dto.CategoryDTO, error)
+	CreateCategory(ctx context.Context, createCategoryDTO *dto.CreateCategoryDTO) (*dto.CategoryDTO, error)
+	UpdateCategory(ctx context.Context, categoryID uint, updateCategoryDTO *dto.UpdateCategoryDTO) (*dto.CategoryDTO, error)
+	DeleteCategory(ctx context.Context, categoryID uint) error
+	GetCategoryStats(ctx context.Context) ([]dto.CategoryStatsItem, error)
+}
+
+// CategoryServiceImpl 分类服务实现
+type CategoryServiceImpl struct {
 	categoryRepo repositories.ClothingCategoryRepository
 }
 
 // NewCategoryService 创建分类服务
-func NewCategoryService(categoryRepo repositories.ClothingCategoryRepository) *CategoryService {
-	return &CategoryService{
+func NewCategoryService(categoryRepo repositories.ClothingCategoryRepository) ClothingCategoryService {
+	return &CategoryServiceImpl{
 		categoryRepo: categoryRepo,
 	}
 }
 
 // GetCategoryTree 获取分类树结构
-func (s *CategoryService) GetCategoryTree() ([]dto.CategoryTreeNode, error) {
+func (s *CategoryServiceImpl) GetCategoryTree(ctx context.Context) ([]dto.CategoryTreeNode, error) {
 	// 获取所有分类
-	categories, err := s.categoryRepo.GetAll()
+	categories, err := s.categoryRepo.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -34,7 +48,7 @@ func (s *CategoryService) GetCategoryTree() ([]dto.CategoryTreeNode, error) {
 	// 先创建所有节点
 	for _, category := range categories {
 		node := &dto.CategoryTreeNode{
-			CategoryResponse: dto.CategoryResponse{
+			CategoryDTO: dto.CategoryDTO{
 				ID:          category.ID,
 				Name:        category.Name,
 				Description: category.Description,
@@ -69,8 +83,8 @@ func (s *CategoryService) GetCategoryTree() ([]dto.CategoryTreeNode, error) {
 }
 
 // GetCategoryPath 获取分类的完整路径
-func (s *CategoryService) GetCategoryPath(categoryID uint) (string, error) {
-	category, err := s.categoryRepo.GetByID(categoryID)
+func (s *CategoryServiceImpl) GetCategoryPath(ctx context.Context, categoryID uint) (string, error) {
+	category, err := s.categoryRepo.GetByID(ctx, categoryID)
 	if err != nil {
 		return "", err
 	}
@@ -79,7 +93,7 @@ func (s *CategoryService) GetCategoryPath(categoryID uint) (string, error) {
 
 	// 递归获取父分类路径
 	for category.HasParent() {
-		parentCategory, err := s.categoryRepo.GetByID(*category.ParentID)
+		parentCategory, err := s.categoryRepo.GetByID(ctx, *category.ParentID)
 		if err != nil {
 			break
 		}
@@ -91,15 +105,15 @@ func (s *CategoryService) GetCategoryPath(categoryID uint) (string, error) {
 }
 
 // GetAllCategories 获取所有分类
-func (s *CategoryService) GetAllCategories() ([]dto.CategoryResponse, error) {
-	categories, err := s.categoryRepo.GetAll()
+func (s *CategoryServiceImpl) GetAllCategories(ctx context.Context) ([]dto.CategoryDTO, error) {
+	categories, err := s.categoryRepo.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var responses []dto.CategoryResponse
+	var responses []dto.CategoryDTO
 	for _, category := range categories {
-		response := dto.CategoryResponse{
+		response := dto.CategoryDTO{
 			ID:          category.ID,
 			Name:        category.Name,
 			Description: category.Description,
@@ -111,7 +125,7 @@ func (s *CategoryService) GetAllCategories() ([]dto.CategoryResponse, error) {
 
 		// 如果有父分类，获取父分类名称
 		if category.HasParent() {
-			if parentPath, err := s.GetCategoryPath(*category.ParentID); err == nil {
+			if parentPath, err := s.GetCategoryPath(ctx, *category.ParentID); err == nil {
 				response.ParentName = parentPath
 			}
 		}
@@ -123,15 +137,15 @@ func (s *CategoryService) GetAllCategories() ([]dto.CategoryResponse, error) {
 }
 
 // GetRootCategories 获取根分类
-func (s *CategoryService) GetRootCategories() ([]dto.CategoryResponse, error) {
-	categories, err := s.categoryRepo.GetRootCategories()
+func (s *CategoryServiceImpl) GetRootCategories(ctx context.Context) ([]dto.CategoryDTO, error) {
+	categories, err := s.categoryRepo.GetRootCategories(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	var responses []dto.CategoryResponse
+	var responses []dto.CategoryDTO
 	for _, category := range categories {
-		responses = append(responses, dto.CategoryResponse{
+		responses = append(responses, dto.CategoryDTO{
 			ID:          category.ID,
 			Name:        category.Name,
 			Description: category.Description,
@@ -146,13 +160,13 @@ func (s *CategoryService) GetRootCategories() ([]dto.CategoryResponse, error) {
 }
 
 // GetCategory 获取单个分类
-func (s *CategoryService) GetCategory(categoryID uint) (*dto.CategoryResponse, error) {
-	category, err := s.categoryRepo.GetByID(categoryID)
+func (s *CategoryServiceImpl) GetCategory(ctx context.Context, categoryID uint) (*dto.CategoryDTO, error) {
+	category, err := s.categoryRepo.GetByID(ctx, categoryID)
 	if err != nil {
 		return nil, err
 	}
 
-	response := &dto.CategoryResponse{
+	categoryDTO := &dto.CategoryDTO{
 		ID:          category.ID,
 		Name:        category.Name,
 		Description: category.Description,
@@ -164,24 +178,24 @@ func (s *CategoryService) GetCategory(categoryID uint) (*dto.CategoryResponse, e
 
 	// 获取父分类名称
 	if category.HasParent() {
-		if parentPath, err := s.GetCategoryPath(*category.ParentID); err == nil {
-			response.ParentName = parentPath
+		if parentPath, err := s.GetCategoryPath(ctx, *category.ParentID); err == nil {
+			categoryDTO.ParentName = parentPath
 		}
 	}
 
 	// 获取关联的衣物数量
-	if count, err := s.categoryRepo.GetCategoryItemCount(categoryID); err == nil {
-		response.ItemCount = count
+	if count, err := s.categoryRepo.GetCategoryItemCount(ctx, categoryID); err == nil {
+		categoryDTO.ItemCount = count
 	}
 
-	return response, nil
+	return categoryDTO, nil
 }
 
 // CreateCategory 创建分类
-func (s *CategoryService) CreateCategory(req *dto.CreateCategoryRequest) (*dto.CategoryResponse, error) {
+func (s *CategoryServiceImpl) CreateCategory(ctx context.Context, req *dto.CreateCategoryDTO) (*dto.CategoryDTO, error) {
 	// 验证父分类是否存在
 	if req.ParentID != nil {
-		if _, err := s.categoryRepo.GetByID(*req.ParentID); err != nil {
+		if _, err := s.categoryRepo.GetByID(ctx, *req.ParentID); err != nil {
 			return nil, fmt.Errorf("父分类不存在")
 		}
 	}
@@ -195,16 +209,16 @@ func (s *CategoryService) CreateCategory(req *dto.CreateCategoryRequest) (*dto.C
 		IsActive:    true,
 	}
 
-	if err := s.categoryRepo.Create(category); err != nil {
+	if err := s.categoryRepo.Create(ctx, category); err != nil {
 		return nil, err
 	}
 
-	return s.GetCategory(category.ID)
+	return s.GetCategory(ctx, category.ID)
 }
 
 // UpdateCategory 更新分类
-func (s *CategoryService) UpdateCategory(categoryID uint, req *dto.UpdateCategoryRequest) (*dto.CategoryResponse, error) {
-	category, err := s.categoryRepo.GetByID(categoryID)
+func (s *CategoryServiceImpl) UpdateCategory(ctx context.Context, categoryID uint, req *dto.UpdateCategoryDTO) (*dto.CategoryDTO, error) {
+	category, err := s.categoryRepo.GetByID(ctx, categoryID)
 	if err != nil {
 		return nil, err
 	}
@@ -214,7 +228,7 @@ func (s *CategoryService) UpdateCategory(categoryID uint, req *dto.UpdateCategor
 		if *req.ParentID == categoryID {
 			return nil, fmt.Errorf("不能将分类设为自己的父分类")
 		}
-		if _, err := s.categoryRepo.GetByID(*req.ParentID); err != nil {
+		if _, err := s.categoryRepo.GetByID(ctx, *req.ParentID); err != nil {
 			return nil, fmt.Errorf("父分类不存在")
 		}
 	}
@@ -243,17 +257,17 @@ func (s *CategoryService) UpdateCategory(categoryID uint, req *dto.UpdateCategor
 		category.IsActive = *req.IsActive
 	}
 
-	if err := s.categoryRepo.Update(category); err != nil {
+	if err := s.categoryRepo.Update(ctx, category); err != nil {
 		return nil, err
 	}
 
-	return s.GetCategory(categoryID)
+	return s.GetCategory(ctx, categoryID)
 }
 
 // DeleteCategory 删除分类
-func (s *CategoryService) DeleteCategory(categoryID uint) error {
+func (s *CategoryServiceImpl) DeleteCategory(ctx context.Context, categoryID uint) error {
 	// 检查是否有子分类
-	children, err := s.categoryRepo.GetChildCategories(categoryID)
+	children, err := s.categoryRepo.GetChildCategories(ctx, categoryID)
 	if err != nil {
 		return err
 	}
@@ -262,7 +276,7 @@ func (s *CategoryService) DeleteCategory(categoryID uint) error {
 	}
 
 	// 检查是否有关联的衣物
-	count, err := s.categoryRepo.GetCategoryItemCount(categoryID)
+	count, err := s.categoryRepo.GetCategoryItemCount(ctx, categoryID)
 	if err != nil {
 		return err
 	}
@@ -270,24 +284,23 @@ func (s *CategoryService) DeleteCategory(categoryID uint) error {
 		return fmt.Errorf("不能删除有关联衣物的分类")
 	}
 
-	return s.categoryRepo.Delete(categoryID)
+	return s.categoryRepo.Delete(ctx, categoryID)
 }
 
 // GetCategoryStats 获取分类统计
-func (s *CategoryService) GetCategoryStats() ([]dto.CategoryStatsItem, error) {
-	categories, err := s.categoryRepo.GetAll()
+func (s *CategoryServiceImpl) GetCategoryStats(ctx context.Context) ([]dto.CategoryStatsItem, error) {
+	categories, err := s.categoryRepo.GetAll(ctx)
 	if err != nil {
 		return nil, err
 	}
 
 	var stats []dto.CategoryStatsItem
 	for _, category := range categories {
-		count, _ := s.categoryRepo.GetCategoryItemCount(category.ID)
+		count, _ := s.categoryRepo.GetCategoryItemCount(ctx, category.ID)
 
 		stats = append(stats, dto.CategoryStatsItem{
 			CategoryName: category.Name,
 			Count:        count,
-			// TODO: 添加更多统计信息
 		})
 	}
 

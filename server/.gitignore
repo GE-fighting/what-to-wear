@@ -72,3 +72,5 @@ coverage.html
 # Local configuration files
 config.local.yaml
 config.local.json
+
+.qoder

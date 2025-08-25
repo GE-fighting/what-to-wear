@@ -26,9 +26,6 @@ func SetupClothingRoutes(router *gin.Engine, clothingController *controllers.Clo
 		// 穿着记录
 		clothingAPI.POST("/items/:id/wear", clothingController.RecordWear)
 
-		// 收藏管理
-		clothingAPI.POST("/items/:id/favorite", clothingController.ToggleFavorite)
-
 		// 分类管理
 		clothingAPI.GET("/categories", clothingController.GetCategories)
 		clothingAPI.GET("/categories/tree", clothingController.GetCategoryTree)
@@ -54,13 +51,11 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 	{
 		// 高级搜索和筛选
 		clothingAPI.GET("/search", func(c *gin.Context) {
-			// TODO: 实现搜索功能
 			c.JSON(200, gin.H{"message": "搜索功能待实现"})
 		})
 
 		// 推荐系统
 		clothingAPI.GET("/recommendations", func(c *gin.Context) {
-			// TODO: 实现推荐功能
 			c.JSON(200, gin.H{"message": "推荐功能待实现"})
 		})
 
@@ -68,15 +63,12 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 		maintenanceGroup := clothingAPI.Group("/maintenance")
 		{
 			maintenanceGroup.POST("/items/:id/records", func(c *gin.Context) {
-				// TODO: 添加保养记录
 				c.JSON(200, gin.H{"message": "保养记录功能待实现"})
 			})
 			maintenanceGroup.GET("/items/:id/records", func(c *gin.Context) {
-				// TODO: 获取保养记录
 				c.JSON(200, gin.H{"message": "保养记录功能待实现"})
 			})
 			maintenanceGroup.GET("/reminders", func(c *gin.Context) {
-				// TODO: 获取保养提醒
 				c.JSON(200, gin.H{"message": "保养提醒功能待实现"})
 			})
 		}
@@ -85,15 +77,12 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 		analyticsGroup := clothingAPI.Group("/analytics")
 		{
 			analyticsGroup.GET("/wear-frequency", func(c *gin.Context) {
-				// TODO: 穿着频率分析
 				c.JSON(200, gin.H{"message": "穿着频率分析待实现"})
 			})
 			analyticsGroup.GET("/comfort-analysis", func(c *gin.Context) {
-				// TODO: 舒适度分析
 				c.JSON(200, gin.H{"message": "舒适度分析待实现"})
 			})
 			analyticsGroup.GET("/cost-per-wear", func(c *gin.Context) {
-				// TODO: 每次穿着成本分析
 				c.JSON(200, gin.H{"message": "成本分析待实现"})
 			})
 		}
@@ -102,15 +91,12 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 		purchaseGroup := clothingAPI.Group("/purchases")
 		{
 			purchaseGroup.POST("/items/:id/records", func(c *gin.Context) {
-				// TODO: 添加购买记录
 				c.JSON(200, gin.H{"message": "购买记录功能待实现"})
 			})
 			purchaseGroup.GET("/records", func(c *gin.Context) {
-				// TODO: 获取购买记录列表
 				c.JSON(200, gin.H{"message": "购买记录功能待实现"})
 			})
 			purchaseGroup.GET("/stats", func(c *gin.Context) {
-				// TODO: 购买统计
 				c.JSON(200, gin.H{"message": "购买统计功能待实现"})
 			})
 		}
@@ -119,15 +105,12 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 		tagGroup := clothingAPI.Group("/tags")
 		{
 			tagGroup.POST("", func(c *gin.Context) {
-				// TODO: 创建自定义标签
 				c.JSON(200, gin.H{"message": "创建标签功能待实现"})
 			})
 			tagGroup.PUT("/:id", func(c *gin.Context) {
-				// TODO: 更新标签
 				c.JSON(200, gin.H{"message": "更新标签功能待实现"})
 			})
 			tagGroup.DELETE("/:id", func(c *gin.Context) {
-				// TODO: 删除标签
 				c.JSON(200, gin.H{"message": "删除标签功能待实现"})
 			})
 		}
@@ -136,15 +119,12 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 		categoryGroup := clothingAPI.Group("/categories")
 		{
 			categoryGroup.POST("", func(c *gin.Context) {
-				// TODO: 创建分类（需要管理员权限）
 				c.JSON(200, gin.H{"message": "创建分类功能待实现"})
 			})
 			categoryGroup.PUT("/:id", func(c *gin.Context) {
-				// TODO: 更新分类（需要管理员权限）
 				c.JSON(200, gin.H{"message": "更新分类功能待实现"})
 			})
 			categoryGroup.DELETE("/:id", func(c *gin.Context) {
-				// TODO: 删除分类（需要管理员权限）
 				c.JSON(200, gin.H{"message": "删除分类功能待实现"})
 			})
 		}
@@ -153,19 +133,15 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 		batchGroup := clothingAPI.Group("/batch")
 		{
 			batchGroup.POST("/items/tags", func(c *gin.Context) {
-				// TODO: 批量添加标签
 				c.JSON(200, gin.H{"message": "批量标签功能待实现"})
 			})
 			batchGroup.DELETE("/items/tags", func(c *gin.Context) {
-				// TODO: 批量移除标签
 				c.JSON(200, gin.H{"message": "批量标签功能待实现"})
 			})
 			batchGroup.PUT("/items/category", func(c *gin.Context) {
-				// TODO: 批量更改分类
 				c.JSON(200, gin.H{"message": "批量分类功能待实现"})
 			})
 			batchGroup.DELETE("/items", func(c *gin.Context) {
-				// TODO: 批量删除
 				c.JSON(200, gin.H{"message": "批量删除功能待实现"})
 			})
 		}
@@ -174,11 +150,9 @@ func SetupExtendedClothingRoutes(router *gin.Engine, clothingController *control
 		importExportGroup := clothingAPI.Group("/import-export")
 		{
 			importExportGroup.POST("/import", func(c *gin.Context) {
-				// TODO: 导入衣物数据
 				c.JSON(200, gin.H{"message": "导入功能待实现"})
 			})
 			importExportGroup.GET("/export", func(c *gin.Context) {
-				// TODO: 导出衣物数据
 				c.JSON(200, gin.H{"message": "导出功能待实现"})
 			})
 		}

@@ -1,11 +1,11 @@
 package controllers
 
 import (
-	"strconv"
-	"what-to-wear/server/common"
-	"what-to-wear/server/errors"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
+	"what-to-wear/server/api"
+	"what-to-wear/server/api/errors"
 )
 
 // getUserID 从上下文获取用户ID
@@ -27,7 +27,7 @@ func getUserID(c *gin.Context) uint {
 func getUserIDRequired(c *gin.Context) (uint, bool) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return 0, false
 	}
 	return userID, true
@@ -52,7 +52,7 @@ func parseUintParam(c *gin.Context, paramName string) (uint, error) {
 func parseUintParamRequired(c *gin.Context, paramName string) (uint, bool) {
 	value, err := parseUintParam(c, paramName)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(http.StatusBadRequest, api.BadRequest(err.Error()))
 		return 0, false
 	}
 	return value, true

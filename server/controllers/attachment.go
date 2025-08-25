@@ -2,13 +2,11 @@ package controllers
 
 import (
 	"fmt"
-	"what-to-wear/server/common"
-	"what-to-wear/server/dto"
-	"what-to-wear/server/errors"
-	"what-to-wear/server/models"
-	"what-to-wear/server/services"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"what-to-wear/server/api"
+	"what-to-wear/server/api/dto"
+	"what-to-wear/server/services"
 )
 
 // AttachmentController 附件控制器
@@ -30,58 +28,35 @@ func (ac *AttachmentController) UploadAttachment(c *gin.Context) {
 		return
 	}
 
-	var req dto.UploadAttachmentRequest
+	var req dto.UploadAttachmentDTO
 	if err := c.ShouldBind(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("请求参数错误", err.Error()))
+		c.JSON(api.StatusBadRequest, api.BadRequest("请求参数错误: "+err.Error()))
 		return
 	}
 
 	req.UserID = userID
 
 	// 验证实体类型
-	if !models.IsValidEntityType(string(req.EntityType)) {
-		common.Error(c, errors.ErrInvalidRequest("无效的实体类型"))
+	if !req.EntityType.IsValid() {
+		c.JSON(api.StatusBadRequest, api.BadRequest("无效的实体类型"))
 		return
 	}
 
-	response, err := ac.attachmentService.UploadAttachment(&req)
+	response, err := ac.attachmentService.UploadAttachment(c.Request.Context(), &req)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(api.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
 
-	common.Created(c, response, "附件上传成功")
-}
-
-// BatchUploadAttachments 批量上传附件
-func (ac *AttachmentController) BatchUploadAttachments(c *gin.Context) {
-	userID, ok := getUserIDRequired(c)
-	if !ok {
-		return
-	}
-
-	var req dto.BatchUploadRequest
-	if err := c.ShouldBind(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("请求参数错误", err.Error()))
-		return
-	}
-
-	req.UserID = userID
-
-	response, err := ac.attachmentService.BatchUploadAttachments(&req)
-	if err != nil {
-		common.Error(c, err)
-		return
-	}
-
-	common.Created(c, response, "批量上传完成")
+	c.JSON(http.StatusCreated, api.Success(response, "附件上传成功"))
 }
 
 // GetAttachmentsByEntity 获取指定实体的附件列表
 func (ac *AttachmentController) GetAttachmentsByEntity(c *gin.Context) {
 	entityTypeStr := c.Param("entity_type")
-	if !models.IsValidEntityType(entityTypeStr) {
-		common.Error(c, errors.ErrInvalidRequest("无效的实体类型"))
+	entityType := api.EntityType(entityTypeStr)
+	if !entityType.IsValid() {
+		c.JSON(http.StatusBadRequest, api.BadRequest("无效的实体类型"))
 		return
 	}
 
@@ -90,41 +65,13 @@ func (ac *AttachmentController) GetAttachmentsByEntity(c *gin.Context) {
 		return
 	}
 
-	attachments, err := ac.attachmentService.GetAttachmentsByEntity(
-		models.EntityType(entityTypeStr), entityID)
+	attachments, err := ac.attachmentService.GetAttachmentsByEntity(c.Request.Context(), entityType, entityID)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
 
-	common.Success(c, attachments, "获取附件列表成功")
-}
-
-// GetUserAttachments 获取用户的附件列表
-func (ac *AttachmentController) GetUserAttachments(c *gin.Context) {
-	userID, ok := getUserIDRequired(c)
-	if !ok {
-		return
-	}
-
-	limit := parseIntQuery(c, "limit", 20)
-	offset := parseIntQuery(c, "offset", 0)
-
-	// 验证分页参数
-	if limit <= 0 || limit > 100 {
-		limit = 20
-	}
-	if offset < 0 {
-		offset = 0
-	}
-
-	response, err := ac.attachmentService.GetAttachmentsByUser(userID, limit, offset)
-	if err != nil {
-		common.Error(c, err)
-		return
-	}
-
-	common.Success(c, response, "获取用户附件成功")
+	c.JSON(http.StatusOK, api.Success(attachments, "获取附件列表成功"))
 }
 
 // DeleteAttachment 删除附件
@@ -139,35 +86,12 @@ func (ac *AttachmentController) DeleteAttachment(c *gin.Context) {
 		return
 	}
 
-	err := ac.attachmentService.DeleteAttachment(attachmentID, userID)
+	err := ac.attachmentService.DeleteAttachment(c.Request.Context(), attachmentID, userID)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(api.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
-
-	common.Success(c, nil, "附件删除成功")
-}
-
-// UpdateAttachmentOrder 更新附件排序
-func (ac *AttachmentController) UpdateAttachmentOrder(c *gin.Context) {
-	userID, ok := getUserIDRequired(c)
-	if !ok {
-		return
-	}
-
-	var req dto.UpdateAttachmentOrderRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("请求参数错误", err.Error()))
-		return
-	}
-
-	err := ac.attachmentService.UpdateAttachmentOrder(req.AttachmentID, req.SortOrder, userID)
-	if err != nil {
-		common.Error(c, err)
-		return
-	}
-
-	common.Success(c, nil, "排序更新成功")
+	c.JSON(http.StatusOK, api.Success(nil, "附件删除成功"))
 }
 
 // GetAttachmentInfo 获取附件详细信息
@@ -178,13 +102,13 @@ func (ac *AttachmentController) GetAttachmentInfo(c *gin.Context) {
 	}
 
 	// 获取基本附件信息
-	attachment, err := ac.attachmentService.GetAttachment(attachmentID)
+	attachment, err := ac.attachmentService.GetAttachment(c.Request.Context(), attachmentID)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
 
-	common.Success(c, attachment, "获取附件信息成功")
+	c.JSON(http.StatusOK, api.Success(attachment, "获取附件信息成功"))
 }
 
 // UpdateAttachmentInfo 更新附件信息
@@ -199,19 +123,19 @@ func (ac *AttachmentController) UpdateAttachmentInfo(c *gin.Context) {
 		return
 	}
 
-	var req dto.UpdateAttachmentRequest
+	var req dto.UpdateAttachmentDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("请求参数错误", err.Error()))
+		c.JSON(http.StatusBadRequest, api.BadRequest("请求参数错误: "+err.Error()))
 		return
 	}
 
-	attachment, err := ac.attachmentService.UpdateAttachment(attachmentID, userID, &req)
+	attachment, err := ac.attachmentService.UpdateAttachment(c.Request.Context(), attachmentID, userID, &req)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(api.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
 
-	common.Success(c, attachment, "附件信息更新成功")
+	c.JSON(http.StatusOK, api.Success(attachment, "附件信息更新成功"))
 }
 
 // BatchDeleteAttachments 批量删除附件
@@ -227,7 +151,7 @@ func (ac *AttachmentController) BatchDeleteAttachments(c *gin.Context) {
 
 	var req BatchDeleteRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("请求参数错误", err.Error()))
+		c.JSON(http.StatusBadRequest, api.BadRequest("请求参数错误: "+err.Error()))
 		return
 	}
 
@@ -236,7 +160,7 @@ func (ac *AttachmentController) BatchDeleteAttachments(c *gin.Context) {
 	var deleteErrors []string
 
 	for _, id := range req.AttachmentIDs {
-		if err := ac.attachmentService.DeleteAttachment(id, userID); err != nil {
+		if err := ac.attachmentService.DeleteAttachment(c.Request.Context(), id, userID); err != nil {
 			deleteErrors = append(deleteErrors, fmt.Sprintf("删除附件 %d 失败: %v", id, err))
 		} else {
 			successCount++
@@ -249,18 +173,5 @@ func (ac *AttachmentController) BatchDeleteAttachments(c *gin.Context) {
 		"errors":        deleteErrors,
 	}
 
-	common.Success(c, result, "批量删除完成")
-}
-
-// GetAttachmentStats 获取附件统计信息
-func (ac *AttachmentController) GetAttachmentStats(c *gin.Context) {
-	// 暂时返回基础统计信息
-	stats := map[string]interface{}{
-		"total_attachments": 0,
-		"total_size":        0,
-		"by_type":           map[string]int{},
-		"by_entity":         map[string]int{},
-	}
-
-	common.Success(c, stats, "获取附件统计成功")
+	c.JSON(http.StatusOK, api.Success(result, "批量删除完成"))
 }

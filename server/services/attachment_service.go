@@ -1,15 +1,40 @@
 package services
 
 import (
+	"context"
 	"fmt"
 	"mime/multipart"
 	"path/filepath"
 	"strings"
 	"time"
-	"what-to-wear/server/dto"
+	"what-to-wear/server/api"
+	"what-to-wear/server/api/dto"
 	"what-to-wear/server/models"
 	"what-to-wear/server/repositories"
 )
+
+type AttachmentServiceInterface interface {
+	// 上传单个附件
+	UploadAttachment(ctx context.Context, req *dto.UploadAttachmentDTO) (*dto.AttachmentDTO, error)
+
+	// 根据实体获取附件列表
+	GetAttachmentsByEntity(ctx context.Context, entityType api.EntityType, entityID uint) ([]dto.AttachmentDTO, error)
+
+	// 获取单个附件信息
+	GetAttachment(ctx context.Context, id uint) (*dto.AttachmentDTO, error)
+
+	// 删除附件
+	DeleteAttachment(ctx context.Context, id uint, userID uint) error
+
+	// 更新附件排序
+	UpdateAttachmentOrder(ctx context.Context, attachmentID uint, sortOrder int, userID uint) error
+
+	// 更新附件信息
+	UpdateAttachment(ctx context.Context, id uint, userID uint, req *dto.UpdateAttachmentDTO) (*dto.AttachmentDTO, error)
+
+	// 获取附件统计信息
+	GetAttachmentStats(ctx context.Context, userID uint) (*dto.AttachmentStatsDTO, error)
+}
 
 type AttachmentService struct {
 	attachmentRepo repositories.AttachmentRepository
@@ -21,7 +46,7 @@ func NewAttachmentService(attachmentRepo repositories.AttachmentRepository) Atta
 	}
 }
 
-func (s *AttachmentService) UploadAttachment(req *dto.UploadAttachmentRequest) (*dto.AttachmentResponse, error) {
+func (s *AttachmentService) UploadAttachment(ctx context.Context, req *dto.UploadAttachmentDTO) (*dto.AttachmentDTO, error) {
 	// 验证文件类型
 	if !s.isValidFileType(req.File) {
 		return nil, fmt.Errorf("不支持的文件类型")
@@ -64,7 +89,7 @@ func (s *AttachmentService) UploadAttachment(req *dto.UploadAttachmentRequest) (
 	}
 
 	// 保存到数据库
-	if err := s.attachmentRepo.Create(attachment); err != nil {
+	if err := s.attachmentRepo.Create(ctx, attachment); err != nil {
 		return nil, fmt.Errorf("保存附件记录失败: %v", err)
 	}
 
@@ -72,46 +97,13 @@ func (s *AttachmentService) UploadAttachment(req *dto.UploadAttachmentRequest) (
 	return s.convertToAttachmentResponse(attachment), nil
 }
 
-func (s *AttachmentService) BatchUploadAttachments(req *dto.BatchUploadRequest) (*dto.BatchUploadResponse, error) {
-	var attachments []dto.AttachmentResponse
-	var errors []string
-	successCount := 0
-
-	for _, file := range req.Files {
-		uploadReq := &dto.UploadAttachmentRequest{
-			File:        file,
-			EntityType:  req.EntityType,
-			EntityID:    req.EntityID,
-			UserID:      req.UserID,
-			Description: req.Description,
-			Tags:        req.Tags,
-			IsPublic:    req.IsPublic,
-		}
-
-		attachment, err := s.UploadAttachment(uploadReq)
-		if err != nil {
-			errors = append(errors, fmt.Sprintf("文件 %s 上传失败: %v", file.Filename, err))
-		} else {
-			attachments = append(attachments, *attachment)
-			successCount++
-		}
-	}
-
-	return &dto.BatchUploadResponse{
-		SuccessCount: successCount,
-		FailureCount: len(req.Files) - successCount,
-		Attachments:  attachments,
-		Errors:       errors,
-	}, nil
-}
-
-func (s *AttachmentService) GetAttachmentsByEntity(entityType models.EntityType, entityID uint) ([]dto.AttachmentResponse, error) {
-	attachments, err := s.attachmentRepo.GetByEntityID(entityType, entityID)
+func (s *AttachmentService) GetAttachmentsByEntity(ctx context.Context, entityType api.EntityType, entityID uint) ([]dto.AttachmentDTO, error) {
+	attachments, err := s.attachmentRepo.GetByEntityID(ctx, entityType, entityID)
 	if err != nil {
 		return nil, fmt.Errorf("获取附件列表失败: %v", err)
 	}
 
-	var responses []dto.AttachmentResponse
+	var responses []dto.AttachmentDTO
 	for _, attachment := range attachments {
 		responses = append(responses, *s.convertToAttachmentResponse(&attachment))
 	}
@@ -119,46 +111,8 @@ func (s *AttachmentService) GetAttachmentsByEntity(entityType models.EntityType,
 	return responses, nil
 }
 
-func (s *AttachmentService) GetAttachmentsByUser(userID uint, limit, offset int) (*dto.AttachmentListResponse, error) {
-	attachments, err := s.attachmentRepo.GetByUserID(userID, limit)
-	if err != nil {
-		return nil, fmt.Errorf("获取用户附件失败: %v", err)
-	}
-
-	var responses []dto.AttachmentResponse
-	for _, attachment := range attachments {
-		responses = append(responses, *s.convertToAttachmentResponse(&attachment))
-	}
-
-	return &dto.AttachmentListResponse{
-		Attachments: responses,
-		Total:       len(responses),
-		Page:        offset/limit + 1,
-		PageSize:    limit,
-	}, nil
-}
-
-func (s *AttachmentService) GetAttachmentsByType(attachmentType models.AttachmentType, limit, offset int) (*dto.AttachmentListResponse, error) {
-	attachments, err := s.attachmentRepo.GetByType(attachmentType, limit)
-	if err != nil {
-		return nil, fmt.Errorf("获取附件列表失败: %v", err)
-	}
-
-	var responses []dto.AttachmentResponse
-	for _, attachment := range attachments {
-		responses = append(responses, *s.convertToAttachmentResponse(&attachment))
-	}
-
-	return &dto.AttachmentListResponse{
-		Attachments: responses,
-		Total:       len(responses),
-		Page:        offset/limit + 1,
-		PageSize:    limit,
-	}, nil
-}
-
-func (s *AttachmentService) GetAttachment(id uint) (*dto.AttachmentResponse, error) {
-	attachment, err := s.attachmentRepo.GetByID(id)
+func (s *AttachmentService) GetAttachment(ctx context.Context, id uint) (*dto.AttachmentDTO, error) {
+	attachment, err := s.attachmentRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("获取附件信息失败: %v", err)
 	}
@@ -166,9 +120,9 @@ func (s *AttachmentService) GetAttachment(id uint) (*dto.AttachmentResponse, err
 	return s.convertToAttachmentResponse(attachment), nil
 }
 
-func (s *AttachmentService) DeleteAttachment(id uint, userID uint) error {
+func (s *AttachmentService) DeleteAttachment(ctx context.Context, id uint, userID uint) error {
 	// 获取附件信息
-	attachment, err := s.attachmentRepo.GetByID(id)
+	attachment, err := s.attachmentRepo.GetByID(ctx, id)
 	if err != nil {
 		return fmt.Errorf("附件不存在: %v", err)
 	}
@@ -179,7 +133,7 @@ func (s *AttachmentService) DeleteAttachment(id uint, userID uint) error {
 	}
 
 	// 软删除附件记录
-	if err := s.attachmentRepo.Delete(id); err != nil {
+	if err := s.attachmentRepo.Delete(ctx, id); err != nil {
 		return fmt.Errorf("删除附件失败: %v", err)
 	}
 
@@ -189,9 +143,9 @@ func (s *AttachmentService) DeleteAttachment(id uint, userID uint) error {
 	return nil
 }
 
-func (s *AttachmentService) UpdateAttachmentOrder(attachmentID uint, sortOrder int, userID uint) error {
+func (s *AttachmentService) UpdateAttachmentOrder(ctx context.Context, attachmentID uint, sortOrder int, userID uint) error {
 	// 获取附件信息
-	attachment, err := s.attachmentRepo.GetByID(attachmentID)
+	attachment, err := s.attachmentRepo.GetByID(ctx, attachmentID)
 	if err != nil {
 		return fmt.Errorf("附件不存在: %v", err)
 	}
@@ -203,11 +157,11 @@ func (s *AttachmentService) UpdateAttachmentOrder(attachmentID uint, sortOrder i
 
 	// 更新排序字段
 	attachment.SortOrder = sortOrder
-	return s.attachmentRepo.Update(attachment)
+	return s.attachmentRepo.Update(ctx, attachment)
 }
 
-func (s *AttachmentService) UpdateAttachment(id uint, userID uint, req *dto.UpdateAttachmentRequest) (*dto.AttachmentResponse, error) {
-	attachment, err := s.attachmentRepo.GetByID(id)
+func (s *AttachmentService) UpdateAttachment(ctx context.Context, id uint, userID uint, req *dto.UpdateAttachmentDTO) (*dto.AttachmentDTO, error) {
+	attachment, err := s.attachmentRepo.GetByID(ctx, id)
 	if err != nil {
 		return nil, fmt.Errorf("附件不存在: %v", err)
 	}
@@ -231,103 +185,27 @@ func (s *AttachmentService) UpdateAttachment(id uint, userID uint, req *dto.Upda
 		attachment.SortOrder = *req.SortOrder
 	}
 
-	if err := s.attachmentRepo.Update(attachment); err != nil {
+	if err := s.attachmentRepo.Update(ctx, attachment); err != nil {
 		return nil, fmt.Errorf("更新附件失败: %v", err)
 	}
 
 	return s.convertToAttachmentResponse(attachment), nil
 }
 
-// GetAttachmentInfo 获取附件详细信息
-func (s *AttachmentService) GetAttachmentInfo(attachmentID uint, userID uint) (*dto.AttachmentInfoResponse, error) {
-	attachment, err := s.attachmentRepo.GetByID(attachmentID)
-	if err != nil {
-		return nil, fmt.Errorf("附件不存在: %v", err)
-	}
-
-	// 检查权限
-	if attachment.UserID != userID {
-		return nil, fmt.Errorf("没有权限访问此附件")
-	}
-
-	return &dto.AttachmentInfoResponse{
-		AttachmentResponse: *s.convertToAttachmentResponse(attachment),
-		Metadata:           attachment.Metadata,
-		UploadedBy:         fmt.Sprintf("用户%d", attachment.UserID),
-		StorageInfo: dto.StorageInfo{
-			Provider:   attachment.StorageProvider,
-			BucketName: attachment.BucketName,
-			ObjectKey:  attachment.ObjectKey,
-			PrivateURL: attachment.PrivateURL,
-		},
-	}, nil
-}
-
-// UpdateAttachmentInfo 更新附件详细信息
-func (s *AttachmentService) UpdateAttachmentInfo(attachmentID uint, userID uint, req *dto.UpdateAttachmentInfoRequest) (*dto.AttachmentInfoResponse, error) {
-	attachment, err := s.attachmentRepo.GetByID(attachmentID)
-	if err != nil {
-		return nil, fmt.Errorf("附件不存在: %v", err)
-	}
-
-	// 检查权限
-	if attachment.UserID != userID {
-		return nil, fmt.Errorf("没有权限修改此附件")
-	}
-
-	// 更新字段
-	if req.FileName != nil {
-		attachment.OriginalName = *req.FileName
-	}
-	if req.Description != nil {
-		attachment.Description = *req.Description
-	}
-	if req.Tags != nil {
-		attachment.Tags = req.Tags
-	}
-
-	if err := s.attachmentRepo.Update(attachment); err != nil {
-		return nil, fmt.Errorf("更新附件失败: %v", err)
-	}
-
-	return s.GetAttachmentInfo(attachmentID, userID)
-}
-
-// BatchDeleteAttachments 批量删除附件
-func (s *AttachmentService) BatchDeleteAttachments(attachmentIDs []uint, userID uint) (*dto.BatchUploadResponse, error) {
-	var errors []string
-	successCount := 0
-
-	for _, id := range attachmentIDs {
-		if err := s.DeleteAttachment(id, userID); err != nil {
-			errors = append(errors, fmt.Sprintf("删除附件 %d 失败: %v", id, err))
-		} else {
-			successCount++
-		}
-	}
-
-	return &dto.BatchUploadResponse{
-		SuccessCount: successCount,
-		FailureCount: len(attachmentIDs) - successCount,
-		Attachments:  []dto.AttachmentResponse{}, // 删除操作不返回附件列表
-		Errors:       errors,
-	}, nil
-}
-
 // GetAttachmentStats 获取附件统计信息
-func (s *AttachmentService) GetAttachmentStats(userID uint) (*dto.AttachmentStatsResponse, error) {
+func (s *AttachmentService) GetAttachmentStats(ctx context.Context, userID uint) (*dto.AttachmentStatsDTO, error) {
 	// 这里应该实现实际的统计逻辑
 	// 目前返回基础统计信息
-	attachments, err := s.attachmentRepo.GetByUserID(userID, 1000) // 获取用户所有附件
+	attachments, err := s.attachmentRepo.GetByUserID(ctx, userID, 1000) // 获取用户所有附件
 	if err != nil {
 		return nil, fmt.Errorf("获取附件统计失败: %v", err)
 	}
 
-	stats := &dto.AttachmentStatsResponse{
+	stats := &dto.AttachmentStatsDTO{
 		TotalAttachments: int64(len(attachments)),
 		TotalSize:        0,
-		ByType:           make(map[string]int64),
-		ByEntity:         make(map[string]int64),
+		ByType:           make(map[api.AttachmentType]int64),
+		ByEntity:         make(map[api.EntityType]int64),
 		StorageUsage: dto.StorageUsageStats{
 			Images: 0,
 			Videos: 0,
@@ -338,13 +216,13 @@ func (s *AttachmentService) GetAttachmentStats(userID uint) (*dto.AttachmentStat
 	// 计算统计信息
 	for _, attachment := range attachments {
 		stats.TotalSize += attachment.FileSize
-		stats.ByType[string(attachment.AttachmentType)]++
-		stats.ByEntity[string(attachment.EntityType)]++
+		stats.ByType[api.AttachmentType(string(attachment.AttachmentType))]++
+		stats.ByEntity[api.EntityType(string(attachment.EntityType))]++
 
 		switch attachment.AttachmentType {
-		case models.AttachmentTypeImage:
+		case api.AttachmentTypeImage:
 			stats.StorageUsage.Images += attachment.FileSize
-		case models.AttachmentTypeVideo:
+		case api.AttachmentTypeVideo:
 			stats.StorageUsage.Videos += attachment.FileSize
 		default:
 			stats.StorageUsage.Files += attachment.FileSize
@@ -363,7 +241,7 @@ func (s *AttachmentService) generateFileName(originalName string) string {
 	return fmt.Sprintf("%s_%d%s", baseName, timestamp, ext)
 }
 
-func (s *AttachmentService) generateFilePath(entityType models.EntityType, fileName string) string {
+func (s *AttachmentService) generateFilePath(entityType api.EntityType, fileName string) string {
 	return fmt.Sprintf("uploads/%s/%s", entityType, fileName)
 }
 
@@ -382,25 +260,25 @@ func (s *AttachmentService) isValidFileType(file *multipart.FileHeader) bool {
 	return allowedTypes[mimeType]
 }
 
-func (s *AttachmentService) determineAttachmentType(mimeType string) models.AttachmentType {
+func (s *AttachmentService) determineAttachmentType(mimeType string) api.AttachmentType {
 	if strings.HasPrefix(mimeType, "image/") {
-		return models.AttachmentTypeImage
+		return api.AttachmentTypeImage
 	}
 	if strings.HasPrefix(mimeType, "video/") {
-		return models.AttachmentTypeVideo
+		return api.AttachmentTypeVideo
 	}
-	return models.AttachmentTypeFile
+	return api.AttachmentTypeFile
 }
 
-func (s *AttachmentService) convertToAttachmentResponse(attachment *models.Attachment) *dto.AttachmentResponse {
-	return &dto.AttachmentResponse{
+func (s *AttachmentService) convertToAttachmentResponse(attachment *models.Attachment) *dto.AttachmentDTO {
+	return &dto.AttachmentDTO{
 		ID:             attachment.ID,
 		OriginalName:   attachment.OriginalName,
 		FileName:       attachment.FileName,
 		FileSize:       attachment.FileSize,
 		MimeType:       attachment.MimeType,
-		AttachmentType: string(attachment.AttachmentType),
-		EntityType:     string(attachment.EntityType),
+		AttachmentType: api.AttachmentType(string(attachment.AttachmentType)),
+		EntityType:     api.EntityType(string(attachment.EntityType)),
 		EntityID:       attachment.EntityID,
 		PublicURL:      attachment.GetURL(),
 		Width:          attachment.Width,

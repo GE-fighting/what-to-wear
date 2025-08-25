@@ -1,11 +1,30 @@
 package repositories
 
 import (
+	"context"
 	"time"
 	"what-to-wear/server/models"
 
 	"gorm.io/gorm"
 )
+
+// OutfitRepository 穿搭数据访问接口
+type OutfitRepository interface {
+	// 创建穿搭记录
+	Create(ctx context.Context, outfit *models.Outfit) error
+
+	// 根据用户ID获取穿搭历史
+	GetByUserID(ctx context.Context, userID uint, limit, offset int) ([]*models.Outfit, error)
+
+	// 根据ID获取穿搭记录
+	GetByID(ctx context.Context, id uint) (*models.Outfit, error)
+
+	// 更新穿搭记录
+	Update(ctx context.Context, outfit *models.Outfit) error
+
+	// 删除穿搭记录
+	Delete(ctx context.Context, id uint) error
+}
 
 // outfitRepository 穿搭仓库实现
 type outfitRepository struct {
@@ -18,14 +37,14 @@ func NewOutfitRepository(db *gorm.DB) OutfitRepository {
 }
 
 // Create 创建穿搭记录
-func (r *outfitRepository) Create(outfit *models.Outfit) error {
-	return r.db.Create(outfit).Error
+func (r *outfitRepository) Create(ctx context.Context, outfit *models.Outfit) error {
+	return r.db.WithContext(ctx).Create(outfit).Error
 }
 
 // GetByUserID 根据用户ID获取穿搭历史
-func (r *outfitRepository) GetByUserID(userID uint, limit, offset int) ([]*models.Outfit, error) {
+func (r *outfitRepository) GetByUserID(ctx context.Context, userID uint, limit, offset int) ([]*models.Outfit, error) {
 	var outfits []*models.Outfit
-	query := r.db.Where("user_id = ?", userID).
+	query := r.db.WithContext(ctx).Where("user_id = ?", userID).
 		Order("date DESC, created_at DESC")
 
 	if limit > 0 {
@@ -40,9 +59,9 @@ func (r *outfitRepository) GetByUserID(userID uint, limit, offset int) ([]*model
 }
 
 // GetByID 根据ID获取穿搭记录
-func (r *outfitRepository) GetByID(id uint) (*models.Outfit, error) {
+func (r *outfitRepository) GetByID(ctx context.Context, id uint) (*models.Outfit, error) {
 	var outfit models.Outfit
-	err := r.db.First(&outfit, id).Error
+	err := r.db.WithContext(ctx).First(&outfit, id).Error
 	if err != nil {
 		return nil, err
 	}
@@ -50,46 +69,46 @@ func (r *outfitRepository) GetByID(id uint) (*models.Outfit, error) {
 }
 
 // Update 更新穿搭记录
-func (r *outfitRepository) Update(outfit *models.Outfit) error {
-	return r.db.Save(outfit).Error
+func (r *outfitRepository) Update(ctx context.Context, outfit *models.Outfit) error {
+	return r.db.WithContext(ctx).Save(outfit).Error
 }
 
 // Delete 删除穿搭记录
-func (r *outfitRepository) Delete(id uint) error {
-	return r.db.Delete(&models.Outfit{}, id).Error
+func (r *outfitRepository) Delete(ctx context.Context, id uint) error {
+	return r.db.WithContext(ctx).Delete(&models.Outfit{}, id).Error
 }
 
 // GetByDateRange 根据日期范围获取穿搭记录
-func (r *outfitRepository) GetByDateRange(userID uint, startDate, endDate time.Time) ([]*models.Outfit, error) {
+func (r *outfitRepository) GetByDateRange(ctx context.Context, userID uint, startDate, endDate time.Time) ([]*models.Outfit, error) {
 	var outfits []*models.Outfit
-	err := r.db.Where("user_id = ? AND date BETWEEN ? AND ?", userID, startDate, endDate).
+	err := r.db.WithContext(ctx).Where("user_id = ? AND date BETWEEN ? AND ?", userID, startDate, endDate).
 		Order("date DESC").
 		Find(&outfits).Error
 	return outfits, err
 }
 
 // GetByWeather 根据天气条件获取穿搭记录
-func (r *outfitRepository) GetByWeather(userID uint, weather string) ([]*models.Outfit, error) {
+func (r *outfitRepository) GetByWeather(ctx context.Context, userID uint, weather string) ([]*models.Outfit, error) {
 	var outfits []*models.Outfit
-	err := r.db.Where("user_id = ? AND weather = ?", userID, weather).
+	err := r.db.WithContext(ctx).Where("user_id = ? AND weather = ?", userID, weather).
 		Order("date DESC").
 		Find(&outfits).Error
 	return outfits, err
 }
 
 // GetByTemperatureRange 根据温度范围获取穿搭记录
-func (r *outfitRepository) GetByTemperatureRange(userID uint, minTemp, maxTemp float64) ([]*models.Outfit, error) {
+func (r *outfitRepository) GetByTemperatureRange(ctx context.Context, userID uint, minTemp, maxTemp float64) ([]*models.Outfit, error) {
 	var outfits []*models.Outfit
-	err := r.db.Where("user_id = ? AND temperature BETWEEN ? AND ?", userID, minTemp, maxTemp).
+	err := r.db.WithContext(ctx).Where("user_id = ? AND temperature BETWEEN ? AND ?", userID, minTemp, maxTemp).
 		Order("date DESC").
 		Find(&outfits).Error
 	return outfits, err
 }
 
 // GetHighRatedOutfits 获取高评分穿搭
-func (r *outfitRepository) GetHighRatedOutfits(userID uint, minRating int, limit int) ([]*models.Outfit, error) {
+func (r *outfitRepository) GetHighRatedOutfits(ctx context.Context, userID uint, minRating int, limit int) ([]*models.Outfit, error) {
 	var outfits []*models.Outfit
-	query := r.db.Where("user_id = ? AND rating >= ?", userID, minRating).
+	query := r.db.WithContext(ctx).Where("user_id = ? AND rating >= ?", userID, minRating).
 		Order("rating DESC, date DESC")
 
 	if limit > 0 {
@@ -101,9 +120,9 @@ func (r *outfitRepository) GetHighRatedOutfits(userID uint, minRating int, limit
 }
 
 // GetRecentOutfits 获取最近的穿搭记录
-func (r *outfitRepository) GetRecentOutfits(userID uint, limit int) ([]*models.Outfit, error) {
+func (r *outfitRepository) GetRecentOutfits(ctx context.Context, userID uint, limit int) ([]*models.Outfit, error) {
 	var outfits []*models.Outfit
-	query := r.db.Where("user_id = ?", userID).
+	query := r.db.WithContext(ctx).Where("user_id = ?", userID).
 		Order("date DESC, created_at DESC")
 
 	if limit > 0 {
@@ -115,12 +134,12 @@ func (r *outfitRepository) GetRecentOutfits(userID uint, limit int) ([]*models.O
 }
 
 // GetOutfitStats 获取穿搭统计信息
-func (r *outfitRepository) GetOutfitStats(userID uint) (map[string]interface{}, error) {
+func (r *outfitRepository) GetOutfitStats(ctx context.Context, userID uint) (map[string]interface{}, error) {
 	stats := make(map[string]interface{})
 
 	// 总穿搭数量
 	var totalCount int64
-	err := r.db.Model(&models.Outfit{}).Where("user_id = ?", userID).Count(&totalCount).Error
+	err := r.db.WithContext(ctx).Model(&models.Outfit{}).Where("user_id = ?", userID).Count(&totalCount).Error
 	if err != nil {
 		return nil, err
 	}
@@ -128,7 +147,7 @@ func (r *outfitRepository) GetOutfitStats(userID uint) (map[string]interface{}, 
 
 	// 平均评分
 	var avgRating float64
-	err = r.db.Model(&models.Outfit{}).
+	err = r.db.WithContext(ctx).Model(&models.Outfit{}).
 		Where("user_id = ? AND rating > 0", userID).
 		Select("COALESCE(AVG(rating), 0)").
 		Scan(&avgRating).Error
@@ -139,7 +158,7 @@ func (r *outfitRepository) GetOutfitStats(userID uint) (map[string]interface{}, 
 
 	// 最高评分
 	var maxRating int
-	err = r.db.Model(&models.Outfit{}).
+	err = r.db.WithContext(ctx).Model(&models.Outfit{}).
 		Where("user_id = ?", userID).
 		Select("COALESCE(MAX(rating), 0)").
 		Scan(&maxRating).Error
@@ -154,7 +173,7 @@ func (r *outfitRepository) GetOutfitStats(userID uint) (map[string]interface{}, 
 	endOfMonth := startOfMonth.AddDate(0, 1, -1)
 
 	var monthlyCount int64
-	err = r.db.Model(&models.Outfit{}).
+	err = r.db.WithContext(ctx).Model(&models.Outfit{}).
 		Where("user_id = ? AND date BETWEEN ? AND ?", userID, startOfMonth, endOfMonth).
 		Count(&monthlyCount).Error
 	if err != nil {
@@ -166,13 +185,13 @@ func (r *outfitRepository) GetOutfitStats(userID uint) (map[string]interface{}, 
 }
 
 // GetWeatherStats 获取天气统计
-func (r *outfitRepository) GetWeatherStats(userID uint) (map[string]int64, error) {
+func (r *outfitRepository) GetWeatherStats(ctx context.Context, userID uint) (map[string]int64, error) {
 	var results []struct {
 		Weather string `json:"weather"`
 		Count   int64  `json:"count"`
 	}
 
-	err := r.db.Model(&models.Outfit{}).
+	err := r.db.WithContext(ctx).Model(&models.Outfit{}).
 		Select("weather, COUNT(*) as count").
 		Where("user_id = ? AND weather != ''", userID).
 		Group("weather").
@@ -192,13 +211,13 @@ func (r *outfitRepository) GetWeatherStats(userID uint) (map[string]int64, error
 }
 
 // GetColorCombinationStats 获取颜色搭配统计
-func (r *outfitRepository) GetColorCombinationStats(userID uint) (map[string]int64, error) {
+func (r *outfitRepository) GetColorCombinationStats(ctx context.Context, userID uint) (map[string]int64, error) {
 	var results []struct {
 		ColorCombo string `json:"color_combo"`
 		Count      int64  `json:"count"`
 	}
 
-	err := r.db.Model(&models.Outfit{}).
+	err := r.db.WithContext(ctx).Model(&models.Outfit{}).
 		Select("CONCAT(top_color, '-', bottom_color) as color_combo, COUNT(*) as count").
 		Where("user_id = ? AND top_color != '' AND bottom_color != ''", userID).
 		Group("top_color, bottom_color").
@@ -219,19 +238,18 @@ func (r *outfitRepository) GetColorCombinationStats(userID uint) (map[string]int
 }
 
 // GetOutfitsByMonth 获取按月份分组的穿搭统计
-func (r *outfitRepository) GetOutfitsByMonth(userID uint, year int) (map[string]int64, error) {
+func (r *outfitRepository) GetOutfitsByMonth(ctx context.Context, userID uint, year int) (map[string]int64, error) {
 	var results []struct {
 		Month string `json:"month"`
 		Count int64  `json:"count"`
 	}
 
-	err := r.db.Model(&models.Outfit{}).
+	err := r.db.WithContext(ctx).Model(&models.Outfit{}).
 		Select("DATE_FORMAT(date, '%Y-%m') as month, COUNT(*) as count").
 		Where("user_id = ? AND YEAR(date) = ?", userID, year).
 		Group("DATE_FORMAT(date, '%Y-%m')").
 		Order("month").
 		Scan(&results).Error
-
 	if err != nil {
 		return nil, err
 	}
@@ -245,11 +263,11 @@ func (r *outfitRepository) GetOutfitsByMonth(userID uint, year int) (map[string]
 }
 
 // SearchOutfits 搜索穿搭记录
-func (r *outfitRepository) SearchOutfits(userID uint, query string, limit int) ([]*models.Outfit, error) {
+func (r *outfitRepository) SearchOutfits(ctx context.Context, userID uint, query string, limit int) ([]*models.Outfit, error) {
 	var outfits []*models.Outfit
 	searchTerm := "%" + query + "%"
 
-	dbQuery := r.db.Where("user_id = ?", userID).
+	dbQuery := r.db.WithContext(ctx).Where("user_id = ?", userID).
 		Where("notes LIKE ? OR weather LIKE ? OR top_type LIKE ? OR bottom_type LIKE ? OR shoes_type LIKE ? OR accessories LIKE ?",
 			searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm).
 		Order("date DESC")
@@ -263,8 +281,8 @@ func (r *outfitRepository) SearchOutfits(userID uint, query string, limit int) (
 }
 
 // GetTotalCount 获取用户穿搭总数
-func (r *outfitRepository) GetTotalCount(userID uint) (int64, error) {
+func (r *outfitRepository) GetTotalCount(ctx context.Context, userID uint) (int64, error) {
 	var count int64
-	err := r.db.Model(&models.Outfit{}).Where("user_id = ?", userID).Count(&count).Error
+	err := r.db.WithContext(ctx).Model(&models.Outfit{}).Where("user_id = ?", userID).Count(&count).Error
 	return count, err
 }

@@ -1,13 +1,13 @@
 package controllers
 
 import (
-	"strconv"
-	"what-to-wear/server/common"
-	"what-to-wear/server/dto"
-	"what-to-wear/server/errors"
-	"what-to-wear/server/services"
-
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
+	"what-to-wear/server/api"
+	"what-to-wear/server/api/dto"
+	"what-to-wear/server/api/errors"
+	"what-to-wear/server/services"
 )
 
 // UserController 用户控制器
@@ -26,63 +26,68 @@ func NewUserController(userService services.UserService) *UserController {
 func (uc *UserController) GetProfile(c *gin.Context) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return
 	}
 
-	user, err := uc.userService.GetProfile(userID)
+	user, err := uc.userService.GetProfile(c.Request.Context(), userID)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
-
-	common.Success(c, user, "获取用户资料成功")
+	c.JSON(http.StatusOK, api.Success(user, "获取用户资料成功"))
 }
 
 // UpdateProfile 更新用户资料
 func (uc *UserController) UpdateProfile(c *gin.Context) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return
 	}
 
-	var req dto.UpdateProfileRequest
+	var req dto.UpdateProfileDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("无效的更新资料请求", err.Error()))
+		c.JSON(http.StatusBadRequest, api.BadRequest("请求参数错误: "+err.Error()))
 		return
 	}
 
-	user, err := uc.userService.UpdateProfile(userID, &req)
+	// 验证性别枚举
+	if req.Gender != nil && !req.Gender.IsValid() {
+		c.JSON(http.StatusBadRequest, api.BadRequest("无效的性别类型"))
+		return
+	}
+
+	user, err := uc.userService.UpdateProfile(c.Request.Context(), userID, &req)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
 
-	common.Success(c, user, "用户资料更新成功")
+	c.JSON(http.StatusOK, api.Success(user, "用户资料更新成功"))
 }
 
 // ChangePassword 修改密码
 func (uc *UserController) ChangePassword(c *gin.Context) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return
 	}
 
-	var req dto.ChangePasswordRequest
+	var req dto.ChangePasswordDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("无效的修改密码请求", err.Error()))
+		c.JSON(http.StatusBadRequest, api.BadRequest("请求参数错误: "+err.Error()))
 		return
 	}
 
-	err := uc.userService.ChangePassword(userID, req.OldPassword, req.NewPassword)
+	err := uc.userService.ChangePassword(c.Request.Context(), userID, req.OldPassword, req.NewPassword)
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
 
-	common.Success(c, nil, "密码修改成功")
+	c.JSON(http.StatusOK, api.Success(nil, "密码修改成功"))
 }
 
 // DeleteUser 删除用户
@@ -90,86 +95,86 @@ func (uc *UserController) DeleteUser(c *gin.Context) {
 	userIDStr := c.Param("id")
 	targetUserID, err := strconv.ParseUint(userIDStr, 10, 32)
 	if err != nil {
-		common.Error(c, errors.ErrInvalidRequest("无效的用户ID", err.Error()))
+		c.JSON(http.StatusBadRequest, api.BadRequest("无效的用户ID"))
 		return
 	}
 
 	// 检查是否是用户本人或管理员
 	currentUserID := getUserID(c)
 	if currentUserID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return
 	}
 
 	if currentUserID != uint(targetUserID) {
-		common.Error(c, errors.ErrForbidden("无权限删除该用户"))
+		c.JSON(http.StatusForbidden, api.Forbidden("无权限删除该用户"))
 		return
 	}
 
-	err = uc.userService.DeleteUser(uint(targetUserID))
+	err = uc.userService.DeleteUser(c.Request.Context(), uint(targetUserID))
 	if err != nil {
-		common.Error(c, err)
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
 		return
 	}
 
-	common.Success(c, nil, "用户删除成功")
+	c.JSON(http.StatusOK, api.Success(nil, "用户删除成功"))
 }
 
 // GetUserStats 获取用户统计信息
 func (uc *UserController) GetUserStats(c *gin.Context) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(api.StatusUnauthorized, errors.ErrUnauthorized("未授权访问"))
 		return
 	}
-
-	// TODO: 实现获取用户统计信息的逻辑
-	// stats, err := uc.userService.GetUserStats(userID)
-	// if err != nil {
-	//     common.Error(c, err)
-	//     return
-	// }
-
 	// 暂时返回模拟数据
-	stats := dto.UserStatsResponse{
+	stats := dto.UserStatsDTO{
 		TotalClothingItems: 0,
 		TotalOutfits:       0,
 		TotalSpent:         0.0,
 		AccountAge:         0,
 	}
 
-	common.Success(c, stats, "获取用户统计成功")
+	c.JSON(http.StatusOK, api.Success(stats, "获取用户统计成功"))
 }
 
 // UpdatePreferences 更新用户偏好设置
 func (uc *UserController) UpdatePreferences(c *gin.Context) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return
 	}
 
-	var req dto.UserPreferencesRequest
+	var req dto.UserPreferencesDTO
 	if err := c.ShouldBindJSON(&req); err != nil {
-		common.Error(c, errors.ErrInvalidRequest("无效的偏好设置请求", err.Error()))
+		c.JSON(http.StatusBadRequest, api.BadRequest("请求参数错误: "+err.Error()))
 		return
+	}
+
+	// 验证分页设置
+	if req.DisplaySettings.ItemsPerPage > api.MaxPageSize {
+		req.DisplaySettings.ItemsPerPage = api.MaxPageSize
+	}
+	if req.DisplaySettings.ItemsPerPage <= 0 {
+		req.DisplaySettings.ItemsPerPage = api.DefaultPageSize
 	}
 
 	// TODO: 实现更新用户偏好设置的逻辑
 	// err := uc.userService.UpdatePreferences(userID, &req)
 	// if err != nil {
-	//     common.Error(c, err)
+	//     c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
 	//     return
 	// }
 
-	common.Success(c, nil, "偏好设置更新成功")
+	c.JSON(http.StatusOK, api.Success(nil, "偏好设置更新成功"))
 }
 
 // GetPreferences 获取用户偏好设置
 func (uc *UserController) GetPreferences(c *gin.Context) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return
 	}
 
@@ -181,24 +186,24 @@ func (uc *UserController) GetPreferences(c *gin.Context) {
 	// }
 
 	// 暂时返回默认偏好设置
-	preferences := dto.UserPreferencesRequest{
+	preferences := dto.UserPreferencesDTO{
 		Language: "zh-CN",
 		Timezone: "Asia/Shanghai",
 		Currency: "CNY",
-		Notifications: dto.NotificationPrefs{
+		Notifications: dto.NotificationPrefsDTO{
 			EmailNotifications:   true,
 			PushNotifications:    true,
 			MaintenanceReminders: true,
 			OutfitSuggestions:    true,
 			WeatherAlerts:        true,
 		},
-		PrivacySettings: dto.PrivacySettings{
+		PrivacySettings: dto.PrivacySettingsDTO{
 			ProfileVisibility: "private",
 			ShowRealName:      false,
 			ShowLocation:      false,
 			AllowDataExport:   true,
 		},
-		DisplaySettings: dto.DisplaySettings{
+		DisplaySettings: dto.DisplaySettingsDTO{
 			Theme:         "auto",
 			GridSize:      "medium",
 			ShowPrices:    true,
@@ -208,23 +213,15 @@ func (uc *UserController) GetPreferences(c *gin.Context) {
 		},
 	}
 
-	common.Success(c, preferences, "获取偏好设置成功")
+	c.JSON(http.StatusOK, api.Success(preferences, "获取偏好设置成功"))
 }
 
 // ExportData 导出用户数据
 func (uc *UserController) ExportData(c *gin.Context) {
 	userID := getUserID(c)
 	if userID == 0 {
-		common.Error(c, errors.ErrUnauthorized("未授权访问"))
+		c.JSON(http.StatusUnauthorized, api.Unauthorized("未授权访问"))
 		return
 	}
-
-	// TODO: 实现数据导出逻辑
-	// exportData, err := uc.userService.ExportUserData(userID)
-	// if err != nil {
-	//     common.Error(c, err)
-	//     return
-	// }
-
-	common.Success(c, gin.H{"message": "数据导出请求已提交，将通过邮件发送下载链接"}, "数据导出请求成功")
+	c.JSON(http.StatusOK, api.Success(gin.H{"message": "数据导出请求已提交，将通过邮件发送下载链接"}, "数据导出请求成功"))
 }
