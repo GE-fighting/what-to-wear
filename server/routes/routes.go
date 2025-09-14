@@ -1,10 +1,8 @@
 package routes
 
 import (
-	"what-to-wear/server/container"
-	"what-to-wear/server/middleware"
-
 	"github.com/gin-gonic/gin"
+	"what-to-wear/server/container"
 )
 
 // SetupRoutes 配置所有路由
@@ -29,15 +27,13 @@ func setupPublicRoutes(api *gin.RouterGroup, container *container.Container) {
 	setupPublicAPIRoutes(api)
 }
 
-// setupProtectedRoutes 设置需要认证的路由
+// setupProtectedRoutes 路由认证在不同分类路由内部做
 func setupProtectedRoutes(api *gin.RouterGroup, container *container.Container) {
-	protected := api.Group("/")
-	protected.Use(middleware.AuthMiddleware())
 	{
 		// 用户相关路由
-		setupUserRoutes(protected, container.GetUserController())
+		setupUserRoutes(api, container.GetUserController())
 
-		// 其他需要认证的路由可以在这里添加
-		// setupClothingRoutes(protected)
+		// 衣服相关路由
+		SetupClothingRoutes(api, container.GetClothingController())
 	}
 }

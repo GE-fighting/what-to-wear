@@ -29,8 +29,9 @@ type Container struct {
 	ClothingItemService   services.ClothingItemService
 
 	// Controllers
-	AuthController *controllers.AuthController
-	UserController *controllers.UserController
+	AuthController     *controllers.AuthController
+	UserController     *controllers.UserController
+	ClothingController *controllers.ClothingController
 }
 
 // NewContainer 创建容器实例
@@ -41,6 +42,7 @@ func NewContainer(db *gorm.DB) *Container {
 	outfitItemRepo := repositories.NewOutfitItemRepository(db)
 	clothingItemRepo := repositories.NewClothingItemRepository(db)
 	clothingCategoryRepo := repositories.NewClothingCategoryRepository(db)
+	clothingTagRepository := repositories.NewClothingTagRepository(db)
 	attachmentRepo := repositories.NewAttachmentRepository(db)
 	purchaseRecordRepo := repositories.NewPurchaseRecordRepository(db)
 	wearRecordRepo := repositories.NewWearRecordRepository(db)
@@ -71,10 +73,18 @@ func NewContainer(db *gorm.DB) *Container {
 		purchaseRecordRepo,
 		wearRecordRepo,
 	)
+	clothingCategoryService := services.NewCategoryService(clothingCategoryRepo)
+	clothingTagService := services.NewClothingTagService(clothingTagRepository)
 
 	// 创建 Controllers
 	authController := controllers.NewAuthController(authService)
 	userController := controllers.NewUserController(userService)
+	clothingController := controllers.NewClothingController(
+		clothingItemService,
+		clothingCategoryService,
+		clothingTagService,
+		wearRecordService,
+	)
 
 	return &Container{
 		// Repositories
@@ -96,8 +106,9 @@ func NewContainer(db *gorm.DB) *Container {
 		ClothingItemService:   clothingItemService,
 
 		// Controllers
-		AuthController: authController,
-		UserController: userController,
+		AuthController:     authController,
+		UserController:     userController,
+		ClothingController: clothingController,
 	}
 }
 
@@ -109,6 +120,11 @@ func (c *Container) GetAuthController() *controllers.AuthController {
 // GetUserController 获取用户控制器
 func (c *Container) GetUserController() *controllers.UserController {
 	return c.UserController
+}
+
+// GetClothingController 获取衣物控制器
+func (c *Container) GetClothingController() *controllers.ClothingController {
+	return c.ClothingController
 }
 
 // GetOutfitService 获取穿搭服务

@@ -8,9 +8,9 @@ import (
 )
 
 // SetupClothingRoutes 设置衣物管理相关路由
-func SetupClothingRoutes(router *gin.Engine, clothingController *controllers.ClothingController) {
+func SetupClothingRoutes(router *gin.RouterGroup, clothingController *controllers.ClothingController) {
 	// 衣物管理API组，需要认证
-	clothingAPI := router.Group("/api/clothing")
+	clothingAPI := router.Group("/clothing")
 	clothingAPI.Use(middleware.AuthMiddleware())
 	{
 		// 衣物CRUD操作
@@ -36,7 +36,7 @@ func SetupClothingRoutes(router *gin.Engine, clothingController *controllers.Clo
 	}
 
 	// 公开API组，不需要认证（用于获取系统预设数据）
-	publicAPI := router.Group("/api/public/clothing")
+	publicAPI := router.Group("/public/clothing")
 	{
 		publicAPI.GET("/categories", clothingController.GetCategories)
 		publicAPI.GET("/categories/tree", clothingController.GetCategoryTree)

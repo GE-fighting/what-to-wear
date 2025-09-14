@@ -2,9 +2,9 @@ package api
 
 // Response 统一响应结构 - 简化版
 type Response struct {
-	Code    int         `json:"code"`              // HTTP状态码
-	Message string      `json:"message"`           // 响应消息
-	Data    interface{} `json:"data,omitempty"`    // 响应数据
+	Code    int         `json:"code"`           // 业务状态码
+	Message string      `json:"message"`        // 响应消息
+	Data    interface{} `json:"data,omitempty"` // 响应数据
 }
 
 // Success 成功响应
@@ -13,7 +13,7 @@ func Success(data interface{}, message ...string) Response {
 	if len(message) > 0 && message[0] != "" {
 		msg = message[0]
 	}
-	
+
 	return Response{
 		Code:    200,
 		Message: msg,
@@ -85,7 +85,7 @@ func SuccessWithPage(items interface{}, total int64, page, size int, message ...
 	if int(total)%size > 0 {
 		pages++
 	}
-	
+
 	pageData := PageData{
 		Items: items,
 		Total: total,
@@ -93,6 +93,6 @@ func SuccessWithPage(items interface{}, total int64, page, size int, message ...
 		Size:  size,
 		Pages: pages,
 	}
-	
+
 	return Success(pageData, message...)
 }
