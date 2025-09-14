@@ -3,13 +3,19 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Modal } from '@/components/Modal';
 import { AddClothingItem } from '@/components/AddClothingItem';
+import { getUserProfile } from '@/lib/api/user';
+import { getCurrentWeather } from '@/lib/api/weather';
+import { createClothingItem } from '@/lib/api/clothing';
+import type { UserProfile } from '@/types/user';
+import type { Weather } from '@/types/weather';
+import type { ClothingItemData } from '@/types/clothing';
 import '@/styles/sidebar-layout.css';
 
 export default function MainPage() {
   const router = useRouter();
   const [username, setUsername] = useState('');
-  const [userProfile, setUserProfile] = useState<any>(null);
-  const [weather, setWeather] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [weather, setWeather] = useState<Weather | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeNav, setActiveNav] = useState('overview');
   const [isAddClothingModalOpen, setIsAddClothingModalOpen] = useState(false);
@@ -35,21 +41,13 @@ export default function MainPage() {
     }
 
     try {
-      const profileResponse = await fetch('http://localhost:8080/api/user/profile', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (profileResponse.ok) {
-        const profileData = await profileResponse.json();
-        setUserProfile(profileData);
-      }
-
-      const weatherResponse = await fetch('http://localhost:8080/api/weather/current', {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (weatherResponse.ok) {
-        const weatherData = await weatherResponse.json();
-        setWeather(weatherData);
-      }
+      const [profileData, weatherData] = await Promise.all([
+        getUserProfile().catch(() => null),
+        getCurrentWeather().catch(() => null)
+      ]);
+      
+      if (profileData) setUserProfile(profileData);
+      if (weatherData) setWeather(weatherData);
     } catch (error) {
       console.error('Failed to fetch user data:', error);
     } finally {
@@ -67,24 +65,14 @@ export default function MainPage() {
   const handleAddClothingClick = () => setIsAddClothingModalOpen(true);
   const handleCloseAddClothingModal = () => setIsAddClothingModalOpen(false);
 
-  const handleAddClothingSubmit = async (data: any) => {
+  const handleAddClothingSubmit = async (data: ClothingItemData) => {
     const token = localStorage.getItem('token');
     if (!token) { router.replace('/login'); return; }
     if (token === 'demo-token') { setIsAddClothingModalOpen(false); return; }
+    
     try {
-      const response = await fetch('http://localhost:8080/api/clothing-items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify(data)
-      });
-      if (response.ok) {
-        setIsAddClothingModalOpen(false);
-      } else {
-        console.error('添加衣物失败');
-      }
+      await createClothingItem(data);
+      setIsAddClothingModalOpen(false);
     } catch (error) {
       console.error('添加衣物时发生错误:', error);
     }

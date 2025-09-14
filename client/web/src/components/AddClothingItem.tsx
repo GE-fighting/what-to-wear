@@ -1,34 +1,7 @@
 "use client";
 import React, { useState, useRef } from 'react';
 import '@/styles/AddClothingItem.css';
-
-interface ClothingItemData {
-  name: string;
-  categoryId: string;
-  brand: string;
-  color: string;
-  size: string;
-  sizeSystem: string;
-  material: string;
-  price: string;
-  purchaseDate: string;
-  notes: string;
-  isFavorite: boolean;
-  specificAttributes: {
-    sleeveLength?: string;
-    neckline?: string;
-    fit?: string;
-    length?: string;
-    waistType?: string;
-    closure?: string;
-    heelHeight?: string;
-    shoeType?: string;
-    occasion?: string;
-    accessoryType?: string;
-    style?: string;
-    season?: string;
-  };
-}
+import type { ClothingItemData } from "@/types/clothing";
 
 interface AddClothingItemProps {
   onSubmit: (data: ClothingItemData) => Promise<void> | void;

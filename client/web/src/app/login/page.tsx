@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import "@/styles/modern.css";
 import { useRouter } from "next/navigation";
+import { login } from "@/lib/api/auth";
+import type { LoginResponse } from "@/types/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,22 +21,13 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       setMessage("登录中...");
-      const response = await fetch('http://localhost:8080/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password }),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setMessage('登录成功！');
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('username', username);
-        router.replace('/main');
-      } else {
-        setMessage(`登录失败: ${data.error}`);
-      }
-    } catch (error) {
-      setMessage('网络错误，请检查服务器连接');
+      const data: LoginResponse = await login({ username, password });
+      setMessage('登录成功！');
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('username', username);
+      router.replace('/main');
+    } catch (error: any) {
+      setMessage(`登录失败: ${error?.message || '未知错误'}`);
       console.error('Login failed:', error);
     } finally {
       setIsLoading(false);

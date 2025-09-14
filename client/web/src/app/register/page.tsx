@@ -2,6 +2,8 @@
 import React, { useState } from "react";
 import "@/styles/modern.css";
 import { useRouter } from "next/navigation";
+import { register as registerApi } from "@/lib/api/auth";
+import type { RegisterRequest } from "@/types/auth";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -44,7 +46,7 @@ export default function RegisterPage() {
     try {
       setIsLoading(true);
       setMessage('注册中...');
-      const registerData = {
+      const body: RegisterRequest = {
         username: formData.username,
         password: formData.password,
         email: formData.email,
@@ -54,20 +56,11 @@ export default function RegisterPage() {
         height: formData.height ? parseInt(formData.height) : null,
         weight: formData.weight ? parseInt(formData.weight) : null
       };
-      const response = await fetch('http://localhost:8080/api/auth/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(registerData),
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setMessage('注册成功！请登录');
-        setTimeout(() => { router.replace('/login'); }, 1200);
-      } else {
-        setMessage(`注册失败: ${data.error}`);
-      }
-    } catch (error) {
-      setMessage('网络错误，请检查服务器连接');
+      await registerApi(body);
+      setMessage('注册成功！请登录');
+      setTimeout(() => { router.replace('/login'); }, 1200);
+    } catch (error: any) {
+      setMessage(`注册失败: ${error?.message || '未知错误'}`);
       console.error('Registration failed:', error);
     } finally {
       setIsLoading(false);
