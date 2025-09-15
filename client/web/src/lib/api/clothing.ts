@@ -6,5 +6,5 @@ export function createClothingItem(body: ClothingItemData) {
 }
 
 export function getClothingCategories() {
-  return http<ClothingCategory[]>("/api/public/clothing/categories/tree");
+  return http<ClothingCategory[]>("/api/public/clothing/categories/tree", {method: "GET"});
 }

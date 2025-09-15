@@ -1,7 +1,9 @@
 "use client";
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import '@/styles/AddClothingItem.css';
 import type { ClothingItemData } from "@/types/clothing";
+import type { ClothingCategory } from "@/types/clothing";
+import { getClothingCategories } from "@/lib/api/clothing";
 
 interface AddClothingItemProps {
   onSubmit: (data: ClothingItemData) => Promise<void> | void;
@@ -28,6 +30,28 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const [categoryTree, setCategoryTree] = useState<ClothingCategory[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(false);
+  const [categoriesError, setCategoriesError] = useState<string | null>(null);
+
+  const fetchCategories = async () => {
+    setCategoriesLoading(true);
+    setCategoriesError(null);
+    try {
+      const data = await getClothingCategories();
+      setCategoryTree(Array.isArray(data) ? data : []);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '未知错误';
+      setCategoriesError(message);
+    } finally {
+      setCategoriesLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
@@ -122,6 +146,22 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const renderCategoryOptions = (categories: ClothingCategory[], depth = 0): React.ReactNode[] => {
+    const indent = depth > 0 ? '—'.repeat(depth) + ' ' : '';
+    return categories.flatMap((cat) => {
+      const label = `${cat.icon ? cat.icon + ' ' : ''}${indent}${cat.name}`;
+      const current = (
+        <option key={cat.id} value={String(cat.id)}>
+          {label}
+        </option>
+      );
+      const children = Array.isArray(cat.children) && cat.children.length > 0
+        ? renderCategoryOptions(cat.children, depth + 1)
+        : [];
+      return [current, ...children];
+    });
   };
 
   const renderDynamicAttributes = () => {
@@ -385,14 +425,17 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
               required
               value={formData.categoryId}
               onChange={handleInputChange}
+              disabled={categoriesLoading}
             >
-              <option value="">请选择分类</option>
-              <option value="1">上衣</option>
-              <option value="2">下装</option>
-              <option value="3">外套</option>
-              <option value="4">鞋子</option>
-              <option value="5">配饰</option>
+              <option value="">{categoriesLoading ? '分类加载中...' : '请选择分类'}</option>
+              {renderCategoryOptions(categoryTree)}
             </select>
+            {categoriesError && (
+              <div className="form-hint" style={{ color: '#d33' }}>
+                分类加载失败：{categoriesError}
+                <button type="button" className="btn btn-secondary" style={{ marginLeft: 8 }} onClick={fetchCategories}>重试</button>
+              </div>
+            )}
           </div>
           <div className="form-group">
             <label className="form-label">品牌</label>
