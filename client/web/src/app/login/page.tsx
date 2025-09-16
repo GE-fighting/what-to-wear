@@ -3,7 +3,6 @@ import React, { useState } from "react";
 import "@/styles/modern.css";
 import { useRouter } from "next/navigation";
 import { login } from "@/lib/api/auth";
-import type { LoginResponse } from "@/types/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -21,9 +20,10 @@ export default function LoginPage() {
     try {
       setIsLoading(true);
       setMessage("登录中...");
-      const data: LoginResponse = await login({ username, password });
+      const data = await login({ username, password });
       setMessage('登录成功！');
-      localStorage.setItem('token', data.token);
+      // 后端返回的data直接就是token字符串
+      localStorage.setItem('token', data as string);
       localStorage.setItem('username', username);
       router.replace('/main');
     } catch (error: any) {

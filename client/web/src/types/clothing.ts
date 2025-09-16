@@ -1,29 +1,38 @@
 export interface ClothingItemData {
   name: string;
-  categoryId: string;
+  category_id: number;
+  category_name: string;
   brand: string;
   color: string;
   size: string;
-  sizeSystem: string;
   material: string;
-  price: string;
-  purchaseDate: string;
+  season: string[];
+  occasion: string[];
+  style: string;
+  description: string;
+  tags: number[];
+  tag_names: string[];
+  status: ClothingStatus;
+  is_favorite: boolean;
+  purchase_info?: PurchaseInfo | null;
+  specific_attributes: Record<string, any>;
+}
+
+export interface PurchaseInfo {
+  price: number;
+  store: string;
+  purchase_date: string;
   notes: string;
-  isFavorite: boolean;
-  specificAttributes: {
-    sleeveLength?: string;
-    neckline?: string;
-    fit?: string;
-    length?: string;
-    waistType?: string;
-    closure?: string;
-    heelHeight?: string;
-    shoeType?: string;
-    occasion?: string;
-    accessoryType?: string;
-    style?: string;
-    season?: string;
-  };
+}
+
+export type ClothingStatus = 'active' | 'inactive' | 'donated' | 'sold' | 'lost' | 'damaged';
+
+export interface Tag {
+  id: number;
+  name: string;
+  type: string;
+  color: string;
+  description: string;
 }
 
 export interface ClothingCategory{

@@ -1,8 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import '@/styles/AddClothingItem.css';
-import type { ClothingItemData } from "@/types/clothing";
-import type { ClothingCategory } from "@/types/clothing";
+import type { ClothingItemData, ClothingCategory, ClothingStatus, Tag } from "@/types/clothing";
 import { getClothingCategories } from "@/lib/api/clothing";
 
 interface AddClothingItemProps {
@@ -13,27 +12,51 @@ interface AddClothingItemProps {
 export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
   const [formData, setFormData] = useState<ClothingItemData>({
     name: '',
-    categoryId: '',
+    category_id: 0,
+    category_name: '',
     brand: '',
     color: '',
     size: '',
-    sizeSystem: 'CN',
     material: '',
-    price: '',
-    purchaseDate: '',
-    notes: '',
-    isFavorite: false,
-    specificAttributes: {}
+    season: [],
+    occasion: [],
+    style: '',
+    description: '',
+    tags: [],
+    tag_names: [],
+    status: 'active' as ClothingStatus,
+    is_favorite: false,
+    purchase_info: null,
+    specific_attributes: {}
   });
 
   const [images, setImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
   const [categoryTree, setCategoryTree] = useState<ClothingCategory[]>([]);
   const [categoriesLoading, setCategoriesLoading] = useState(false);
   const [categoriesError, setCategoriesError] = useState<string | null>(null);
+  const [selectedParentId, setSelectedParentId] = useState<string>('');
+  const [categoryError, setCategoryError] = useState<string | null>(null);
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const [expandedParents, setExpandedParents] = useState<Set<string>>(new Set());
+  const [showPurchaseInfo, setShowPurchaseInfo] = useState(false);
+  
+  // 预定义的选项
+  const seasonOptions = ['春季', '夏季', '秋季', '冬季'];
+  const occasionOptions = ['日常', '工作', '运动', '正式', '休闲', '约会', '聚会', '旅行'];
+  const styleOptions = ['简约', '复古', '时尚', '优雅', '休闲', '正式', '运动', '甜美', '酷炫'];
+  const statusOptions = [
+    { value: 'active', label: '在用', icon: '✅' },
+    { value: 'inactive', label: '闲置', icon: '⏸️' },
+    { value: 'donated', label: '已捐赠', icon: '💝' },
+    { value: 'sold', label: '已出售', icon: '💰' },
+    { value: 'lost', label: '丢失', icon: '❌' },
+    { value: 'damaged', label: '损坏', icon: '🔧' }
+  ];
 
   const fetchCategories = async () => {
     setCategoriesLoading(true);
@@ -53,6 +76,20 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
     fetchCategories();
   }, []);
 
+  // 点击外部关闭下拉框
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(event.target as Node)) {
+        setCategoryDropdownOpen(false);
+      }
+    };
+
+    if (categoryDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+    }
+  }, [categoryDropdownOpen]);
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value, type } = e.target;
     
@@ -63,14 +100,33 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
       const attrName = name.replace('attr_', '');
       setFormData(prev => ({
         ...prev,
-        specificAttributes: {
-          ...prev.specificAttributes,
+        specific_attributes: {
+          ...prev.specific_attributes,
           [attrName]: value
+        }
+      }));
+    } else if (name.startsWith('purchase_')) {
+      const purchaseField = name.replace('purchase_', '');
+      setFormData(prev => ({
+        ...prev,
+        purchase_info: {
+          ...(prev.purchase_info || { price: 0, store: '', purchase_date: '', notes: '' }),
+          [purchaseField]: purchaseField === 'price' ? parseFloat(value) || 0 : value
         }
       }));
     } else {
       setFormData(prev => ({ ...prev, [name]: value }));
     }
+  };
+
+  const handleMultiSelect = (name: string, value: string) => {
+    setFormData(prev => {
+      const currentArray = prev[name as keyof ClothingItemData] as string[];
+      const newArray = currentArray.includes(value) 
+        ? currentArray.filter(item => item !== value)
+        : [...currentArray, value];
+      return { ...prev, [name]: newArray };
+    });
   };
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -137,10 +193,24 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formData.category_id) {
+      setCategoryError('请选择分类');
+      return;
+    }
     setIsSubmitting(true);
 
     try {
-      await onSubmit(formData);
+      // 处理购买信息：如果都是空的，设为 null
+      const cleanedFormData = { ...formData };
+      if (cleanedFormData.purchase_info) {
+        const { price, store, purchase_date, notes } = cleanedFormData.purchase_info;
+        const isEmpty = price === 0 && !store.trim() && !purchase_date.trim() && !notes.trim();
+        if (isEmpty) {
+          cleanedFormData.purchase_info = null;
+        }
+      }
+
+      await onSubmit(cleanedFormData);
     } catch (error) {
       console.error('提交失败:', error);
     } finally {
@@ -148,28 +218,89 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
     }
   };
 
-  const renderCategoryOptions = (categories: ClothingCategory[], depth = 0): React.ReactNode[] => {
-    const indent = depth > 0 ? '—'.repeat(depth) + ' ' : '';
-    return categories.flatMap((cat) => {
-      const label = `${cat.icon ? cat.icon + ' ' : ''}${indent}${cat.name}`;
-      const current = (
-        <option key={cat.id} value={String(cat.id)}>
-          {label}
-        </option>
-      );
-      const children = Array.isArray(cat.children) && cat.children.length > 0
-        ? renderCategoryOptions(cat.children, depth + 1)
-        : [];
-      return [current, ...children];
-    });
+  const getTopLevelCategoryId = React.useCallback((id: number): string | null => {
+    if (!id) return null;
+    for (const parent of categoryTree) {
+      if (parent.id === id) return String(parent.id);
+      const children = Array.isArray(parent.children) ? parent.children : [];
+      if (children.some(child => child.id === id)) {
+        return String(parent.id);
+      }
+    }
+    return null;
+  }, [categoryTree]);
+
+  const handleCategorySelect = (categoryId: string, parentId?: string) => {
+    // 查找分类名称
+    let categoryName = '';
+    for (const parent of categoryTree) {
+      if (String(parent.id) === categoryId) {
+        categoryName = parent.name;
+        break;
+      }
+      const children = Array.isArray(parent.children) ? parent.children : [];
+      for (const child of children) {
+        if (String(child.id) === categoryId) {
+          categoryName = child.name;
+          break;
+        }
+      }
+      if (categoryName) break;
+    }
+    
+    setFormData(prev => ({ ...prev, category_id: parseInt(categoryId), category_name: categoryName }));
+    if (parentId) {
+      setSelectedParentId(parentId);
+    } else {
+      setSelectedParentId(categoryId);
+    }
+    setCategoryError(null);
+    setCategoryDropdownOpen(false);
+  };
+
+  const handleParentClick = (parent: ClothingCategory) => {
+    const parentId = String(parent.id);
+    const hasChildren = Array.isArray(parent.children) && parent.children.length > 0;
+    
+    if (!hasChildren) {
+      // 没有子分类，直接选中
+      handleCategorySelect(parentId);
+    } else {
+      // 有子分类，切换展开/收起状态
+      setExpandedParents(prev => {
+        const newSet = new Set(prev);
+        if (newSet.has(parentId)) {
+          newSet.delete(parentId);
+        } else {
+          newSet.add(parentId);
+        }
+        return newSet;
+      });
+    }
+  };
+
+  const getSelectedCategoryDisplay = () => {
+    if (!formData.category_id) return '请选择分类';
+    
+    for (const parent of categoryTree) {
+      if (parent.id === formData.category_id) {
+        return `${parent.icon ? parent.icon + ' ' : ''}${parent.name}`;
+      }
+      const children = Array.isArray(parent.children) ? parent.children : [];
+      for (const child of children) {
+        if (child.id === formData.category_id) {
+          return `${parent.icon ? parent.icon + ' ' : ''}${parent.name} > ${child.icon ? child.icon + ' ' : ''}${child.name}`;
+        }
+      }
+    }
+    return '请选择分类';
   };
 
   const renderDynamicAttributes = () => {
-    const categoryId = formData.categoryId;
-    
-    if (!categoryId) return null;
+    const topLevelId = getTopLevelCategoryId(formData.category_id);
+    if (!topLevelId) return null;
 
-    switch (categoryId) {
+    switch (topLevelId) {
       case '1': // 上衣
         return (
           <div className="dynamic-attributes show">
@@ -179,8 +310,8 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <label className="form-label">袖长</label>
                 <select 
                   className="form-select" 
-                  name="attr_sleeveLength" 
-                  value={formData.specificAttributes.sleeveLength || ''}
+                  name="attr_sleeve_length" 
+                  value={formData.specific_attributes.sleeve_length || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -195,7 +326,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_neckline" 
-                  value={formData.specificAttributes.neckline || ''}
+                  value={formData.specific_attributes.neckline || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -210,7 +341,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_fit" 
-                  value={formData.specificAttributes.fit || ''}
+                  value={formData.specific_attributes.fit || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -234,7 +365,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_length" 
-                  value={formData.specificAttributes.length || ''}
+                  value={formData.specific_attributes.length || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -248,8 +379,8 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <label className="form-label">腰型</label>
                 <select 
                   className="form-select" 
-                  name="attr_waistType" 
-                  value={formData.specificAttributes.waistType || ''}
+                  name="attr_waist_type" 
+                  value={formData.specific_attributes.waist_type || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -263,7 +394,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_closure" 
-                  value={formData.specificAttributes.closure || ''}
+                  value={formData.specific_attributes.closure || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -277,7 +408,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
           </div>
         );
       
-      case '4': // 鞋子
+      case '3': // 鞋子
         return (
           <div className="dynamic-attributes show">
             <h3 className="attribute-title">鞋子属性</h3>
@@ -286,8 +417,8 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <label className="form-label">跟高</label>
                 <select 
                   className="form-select" 
-                  name="attr_heelHeight" 
-                  value={formData.specificAttributes.heelHeight || ''}
+                  name="attr_heel_height" 
+                  value={formData.specific_attributes.heel_height || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -301,8 +432,8 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <label className="form-label">鞋型</label>
                 <select 
                   className="form-select" 
-                  name="attr_shoeType" 
-                  value={formData.specificAttributes.shoeType || ''}
+                  name="attr_shoe_type" 
+                  value={formData.specific_attributes.shoe_type || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -313,73 +444,72 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">适用场合</label>
+                <label className="form-label">鞋头形状</label>
                 <select 
                   className="form-select" 
-                  name="attr_occasion" 
-                  value={formData.specificAttributes.occasion || ''}
+                  name="attr_toe_shape" 
+                  value={formData.specific_attributes.toe_shape || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
-                  <option value="日常">日常</option>
-                  <option value="运动">运动</option>
-                  <option value="正式">正式</option>
-                  <option value="休闲">休闲</option>
+                  <option value="圆头">圆头</option>
+                  <option value="尖头">尖头</option>
+                  <option value="方头">方头</option>
+                  <option value="杏仁头">杏仁头</option>
                 </select>
               </div>
             </div>
           </div>
         );
       
-      case '5': // 配饰
+      case '4': // 配饰
         return (
           <div className="dynamic-attributes show">
             <h3 className="attribute-title">配饰属性</h3>
             <div className="attribute-group">
               <div className="form-group">
-                <label className="form-label">配饰类型</label>
+                <label className="form-label">配饰材质</label>
                 <select 
                   className="form-select" 
-                  name="attr_accessoryType" 
-                  value={formData.specificAttributes.accessoryType || ''}
+                  name="attr_accessory_material" 
+                  value={formData.specific_attributes.accessory_material || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
-                  <option value="帽子">帽子</option>
-                  <option value="包包">包包</option>
-                  <option value="首饰">首饰</option>
-                  <option value="围巾">围巾</option>
+                  <option value="金属">金属</option>
+                  <option value="皮革">皮革</option>
+                  <option value="布料">布料</option>
+                  <option value="塑料">塑料</option>
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">风格</label>
+                <label className="form-label">配饰尺寸</label>
                 <select 
                   className="form-select" 
-                  name="attr_style" 
-                  value={formData.specificAttributes.style || ''}
+                  name="attr_accessory_size" 
+                  value={formData.specific_attributes.accessory_size || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
-                  <option value="简约">简约</option>
-                  <option value="复古">复古</option>
-                  <option value="时尚">时尚</option>
-                  <option value="优雅">优雅</option>
+                  <option value="小号">小号</option>
+                  <option value="中号">中号</option>
+                  <option value="大号">大号</option>
+                  <option value="特大">特大</option>
                 </select>
               </div>
               <div className="form-group">
-                <label className="form-label">适用季节</label>
+                <label className="form-label">配饰功能</label>
                 <select 
                   className="form-select" 
-                  name="attr_season" 
-                  value={formData.specificAttributes.season || ''}
+                  name="attr_accessory_function" 
+                  value={formData.specific_attributes.accessory_function || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
-                  <option value="春季">春季</option>
-                  <option value="夏季">夏季</option>
-                  <option value="秋季">秋季</option>
-                  <option value="冬季">冬季</option>
-                  <option value="四季">四季</option>
+                  <option value="装饰">装饰</option>
+                  <option value="实用">实用</option>
+                  <option value="保暖">保暖</option>
+                  <option value="防晒">防晒</option>
                 </select>
               </div>
             </div>
@@ -419,22 +549,68 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
             <label className="form-label">
               分类 <span className="required">*</span>
             </label>
-            <select 
-              className="form-select" 
-              name="categoryId" 
-              required
-              value={formData.categoryId}
-              onChange={handleInputChange}
-              disabled={categoriesLoading}
-            >
-              <option value="">{categoriesLoading ? '分类加载中...' : '请选择分类'}</option>
-              {renderCategoryOptions(categoryTree)}
-            </select>
+            <div className="category-selector" ref={categoryDropdownRef}>
+              <div 
+                className={`category-trigger ${categoryDropdownOpen ? 'open' : ''}`}
+                onClick={() => !categoriesLoading && setCategoryDropdownOpen(!categoryDropdownOpen)}
+              >
+                <span className="category-display">
+                  {categoriesLoading ? '分类加载中...' : getSelectedCategoryDisplay()}
+                </span>
+                <span className="dropdown-arrow">
+                  {categoryDropdownOpen ? '▲' : '▼'}
+                </span>
+              </div>
+              
+              {categoryDropdownOpen && !categoriesLoading && (
+                <div className="category-dropdown">
+                  <div className="category-grid">
+                    {categoryTree.map((parent) => {
+                      const parentId = String(parent.id);
+                      const hasChildren = Array.isArray(parent.children) && parent.children.length > 0;
+                      const isExpanded = expandedParents.has(parentId);
+                      
+                      return (
+                        <div key={parent.id} className="category-group">
+                          <div 
+                            className={`category-parent ${parent.id === formData.category_id ? 'selected' : ''} ${hasChildren ? 'expandable' : ''}`}
+                            onClick={() => handleParentClick(parent)}
+                          >
+                            <span className="category-icon">{parent.icon}</span>
+                            <span className="category-name">{parent.name}</span>
+                            {hasChildren && (
+                              <span className={`expand-arrow ${isExpanded ? 'expanded' : ''}`}>▼</span>
+                            )}
+                          </div>
+                          {hasChildren && isExpanded && (
+                            <div className="category-children">
+                              {parent.children!.map((child) => (
+                                <div 
+                                  key={child.id}
+                                  className={`category-child ${child.id === formData.category_id ? 'selected' : ''}`}
+                                  onClick={() => handleCategorySelect(String(child.id), String(parent.id))}
+                                >
+                                  <span className="category-icon">{child.icon}</span>
+                                  <span className="category-name">{child.name}</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
             {categoriesError && (
               <div className="form-hint" style={{ color: '#d33' }}>
                 分类加载失败：{categoriesError}
                 <button type="button" className="btn btn-secondary" style={{ marginLeft: 8 }} onClick={fetchCategories}>重试</button>
               </div>
+            )}
+            {categoryError && (
+              <div className="form-hint" style={{ color: '#d33' }}>{categoryError}</div>
             )}
           </div>
           <div className="form-group">
@@ -462,6 +638,22 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
               onChange={handleInputChange}
             />
           </div>
+          <div className="form-group">
+            <label className="form-label">状态</label>
+            <select 
+              className="form-select" 
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+            >
+              {statusOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.icon} {option.label}
+                </option>
+              ))}
+            </select>
+            <div className="form-hint">设置衣物的当前状态</div>
+          </div>
         </div>
       </div>
 
@@ -474,27 +666,14 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
         <div className="form-grid">
           <div className="form-group">
             <label className="form-label">尺码</label>
-            <div className="size-group">
-              <input 
-                type="text" 
-                className="form-input" 
-                name="size" 
-                placeholder="例如：M, L, 38, 40"
-                value={formData.size}
-                onChange={handleInputChange}
-              />
-              <select 
-                className="form-select" 
-                name="sizeSystem"
-                value={formData.sizeSystem}
-                onChange={handleInputChange}
-              >
-                <option value="CN">中国码</option>
-                <option value="US">美国码</option>
-                <option value="EU">欧洲码</option>
-                <option value="UK">英国码</option>
-              </select>
-            </div>
+            <input 
+              type="text" 
+              className="form-input" 
+              name="size" 
+              placeholder="例如：M, L, 38, 40"
+              value={formData.size}
+              onChange={handleInputChange}
+            />
           </div>
           <div className="form-group">
             <label className="form-label">材质</label>
@@ -515,11 +694,132 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
               <option value="混纺">混纺</option>
             </select>
           </div>
+          <div className="form-group">
+            <label className="form-label">风格</label>
+            <select 
+              className="form-select" 
+              name="style"
+              value={formData.style}
+              onChange={handleInputChange}
+            >
+              <option value="">请选择风格</option>
+              {styleOptions.map(style => (
+                <option key={style} value={style}>{style}</option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {/* 动态属性 */}
       {renderDynamicAttributes()}
+
+      {/* 适用场景 */}
+      <div className="form-section">
+        <h2 className="section-title">
+          <span className="section-icon">🌟</span>
+          适用场景
+        </h2>
+        <div className="form-grid">
+          <div className="form-group">
+            <label className="form-label">适用季节</label>
+            <div className="multi-select-container">
+              {seasonOptions.map(season => (
+                <label key={season} className="multi-select-item">
+                  <input
+                    type="checkbox"
+                    checked={formData.season.includes(season)}
+                    onChange={() => handleMultiSelect('season', season)}
+                  />
+                  <span className="multi-select-label">{season}</span>
+                </label>
+              ))}
+            </div>
+            <div className="form-hint">可以选择多个季节</div>
+          </div>
+          <div className="form-group">
+            <label className="form-label">适用场合</label>
+            <div className="multi-select-container">
+              {occasionOptions.map(occasion => (
+                <label key={occasion} className="multi-select-item">
+                  <input
+                    type="checkbox"
+                    checked={formData.occasion.includes(occasion)}
+                    onChange={() => handleMultiSelect('occasion', occasion)}
+                  />
+                  <span className="multi-select-label">{occasion}</span>
+                </label>
+              ))}
+            </div>
+            <div className="form-hint">可以选择多个场合</div>
+          </div>
+        </div>
+      </div>
+
+      {/* 购买信息 */}
+      <div className="form-section">
+        <h2 className="section-title">
+          <span className="section-icon">💰</span>
+          购买信息
+          <button 
+            type="button" 
+            className="btn btn-link"
+            onClick={() => setShowPurchaseInfo(!showPurchaseInfo)}
+          >
+            {showPurchaseInfo ? '隐藏' : '显示'}
+          </button>
+        </h2>
+        {showPurchaseInfo && (
+          <div className="form-grid">
+            <div className="form-group">
+              <label className="form-label">购买价格</label>
+              <div className="price-input">
+                <input 
+                  type="number" 
+                  className="form-input" 
+                  name="purchase_price" 
+                  placeholder="0.00"
+                  step="0.01"
+                  min="0"
+                  value={formData.purchase_info?.price || ''}
+                  onChange={handleInputChange}
+                />
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label">购买商店</label>
+              <input 
+                type="text" 
+                className="form-input" 
+                name="purchase_store" 
+                placeholder="例如：Uniqlo官网"
+                value={formData.purchase_info?.store || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label">购买日期</label>
+              <input 
+                type="date" 
+                className="form-input" 
+                name="purchase_purchase_date" 
+                value={formData.purchase_info?.purchase_date || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div className="form-group full-width">
+              <label className="form-label">购买备注</label>
+              <textarea 
+                className="form-textarea" 
+                name="purchase_notes" 
+                placeholder="记录折扣、促销信息等..."
+                value={formData.purchase_info?.notes || ''}
+                onChange={handleInputChange}
+              />
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* 图片上传 */}
       <div className="form-section">
@@ -573,12 +873,12 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
         </h2>
         <div className="form-grid">
           <div className="form-group full-width">
-            <label className="form-label">备注</label>
+            <label className="form-label">描述</label>
             <textarea 
               className="form-textarea" 
-              name="notes" 
+              name="description" 
               placeholder="记录关于这件衣物的其他信息..."
-              value={formData.notes}
+              value={formData.description}
               onChange={handleInputChange}
             />
           </div>
@@ -587,8 +887,8 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
               <input 
                 type="checkbox" 
                 className="checkbox" 
-                name="isFavorite"
-                checked={formData.isFavorite}
+                name="is_favorite"
+                checked={formData.is_favorite}
                 onChange={handleInputChange}
               />
               <label className="checkbox-label">标记为收藏</label>

@@ -1,8 +1,8 @@
 import { http } from "@/lib/api/http";
-import type { LoginRequest, LoginResponse, RegisterRequest } from "@/types/auth";
+import type { LoginRequest, RegisterRequest } from "@/types/auth";
 
 export function login(body: LoginRequest) {
-  return http<LoginResponse>("/api/auth/login", { method: "POST", body: JSON.stringify(body) });
+  return http<string>("/api/auth/login", { method: "POST", body: JSON.stringify(body) });
 }
 
 export function register(body: RegisterRequest) {

@@ -52,7 +52,7 @@ export default function RegisterPage() {
         email: formData.email,
         nickname: formData.nickname || formData.username,
         gender: formData.gender,
-        birth_date: formData.birthDate,
+        birth_date: formData.birthDate ? `${formData.birthDate}T00:00:00Z` : undefined,
         height: formData.height ? parseInt(formData.height) : null,
         weight: formData.weight ? parseInt(formData.weight) : null
       };

@@ -116,7 +116,7 @@ body {
 
 .form-input {
   width: 100%;
-  padding: 20px 20px 12px 20px;
+  padding: 24px 20px 8px 20px;
   border: 2px solid #e1e5e9;
   border-radius: 12px;
   font-size: 16px;
@@ -134,10 +134,13 @@ body {
 
 .form-input:focus + .form-label,
 .form-input:not(:placeholder-shown) + .form-label {
-  transform: translateY(-8px) scale(0.85);
+  transform: translateY(-28px) scale(0.85);
   color: #667eea;
-  background: white;
-  padding: 0 8px;
+  background: transparent;
+  padding: 0;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-label {
@@ -151,7 +154,7 @@ body {
   pointer-events: none;
   transition: all 0.3s ease;
   background: transparent;
-  z-index: 1;
+  z-index: 2;
 }
 
 /* 特殊输入类型样式（下拉框、日期、数字等） */
