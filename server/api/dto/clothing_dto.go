@@ -7,19 +7,23 @@ import (
 
 // CreateClothingItemDTO 创建衣物DTO
 type CreateClothingItemDTO struct {
-	CategoryID   uint                     `json:"category_id" binding:"required"`
-	Name         string                   `json:"name" binding:"required"`
-	Brand        string                   `json:"brand"`
-	Color        string                   `json:"color"`
-	Size         string                   `json:"size"`
-	Material     string                   `json:"material"`
-	Season       []string                 `json:"season"`
-	Occasion     []string                 `json:"occasion"`
-	Style        string                   `json:"style"`
-	Description  string                   `json:"description"`
-	Tags         []uint                   `json:"tags"`
-	Status       api.ClothingStatus       `json:"status"`
-	PurchaseInfo *CreatePurchaseRecordDTO `json:"purchase_info,omitempty"`
+	CategoryID         uint                     `json:"category_id" binding:"required"`
+	CategoryName       string                   `json:"category_name" binding:"required"`
+	Name               string                   `json:"name" binding:"required"`
+	Brand              string                   `json:"brand"`
+	Color              string                   `json:"color"`
+	Size               string                   `json:"size"`
+	Material           string                   `json:"material"`
+	Season             []string                 `json:"season"`
+	Occasion           []string                 `json:"occasion"`
+	Style              []string                 `json:"style"`
+	Description        string                   `json:"description"`
+	Tags               []uint                   `json:"tags"`
+	TagNames           []string                 `json:"tag_names"`
+	Status             api.ClothingStatus       `json:"status"`
+	IsFavorite         bool                     `json:"is_favorite"`
+	SpecificAttributes map[string]interface{}   `json:"specific_attributes"`
+	PurchaseInfo       *CreatePurchaseRecordDTO `json:"purchase_info,omitempty"`
 }
 
 // UpdateClothingItemDTO 更新衣物DTO
@@ -30,12 +34,13 @@ type UpdateClothingItemDTO struct {
 	Color       *string             `json:"color"`
 	Size        *string             `json:"size"`
 	Material    *string             `json:"material"`
-	Season      []string            `json:"season"`
-	Occasion    []string            `json:"occasion"`
-	Style       *string             `json:"style"`
-	Description *string             `json:"description"`
+	Season      []string            `json:"season"`      // 通过标签系统管理
+	Occasion    []string            `json:"occasion"`    // 通过标签系统管理
+	Style       []string            `json:"style"`       // 改为标签管理，支持多风格
+	Description *string             `json:"description"` // 直接字段
 	Tags        []uint              `json:"tags"`
 	Status      *api.ClothingStatus `json:"status"`
+	IsFavorite  *bool               `json:"is_favorite"`
 }
 
 // ClothingItemDTO 衣物DTO
@@ -51,7 +56,7 @@ type ClothingItemDTO struct {
 	Material           string                 `json:"material"`
 	Season             []string               `json:"season"`
 	Occasion           []string               `json:"occasion"`
-	Style              string                 `json:"style"`
+	Style              []string               `json:"style"` // 改为数组，支持多风格
 	Description        string                 `json:"description"`
 	Status             api.ClothingStatus     `json:"status"`
 	Tags               []TagDTO               `json:"tags"`
@@ -92,48 +97,30 @@ type ClothingItemListResponseDTO struct {
 	TotalPages int               `json:"total_pages"`
 }
 
-// CreatePurchaseRecordDTO 创建购买记录DTO
+// CreatePurchaseRecordDTO 创建购买记录DTO - 简化版
 type CreatePurchaseRecordDTO struct {
-	PurchasePrice  float64   `json:"purchase_price" binding:"required"`
-	OriginalPrice  float64   `json:"original_price"`
-	PurchaseDate   time.Time `json:"purchase_date" binding:"required"`
-	Store          string    `json:"store"`
-	OnlineStore    string    `json:"online_store"`
-	PaymentMethod  string    `json:"payment_method"`
-	OrderNumber    string    `json:"order_number"`
-	Notes          string    `json:"notes"`
-	ReceiptURL     string    `json:"receipt_url"`
-	WarrantyPeriod int       `json:"warranty_period"` // 保修期（月）
+	Price        float64   `json:"price" binding:"required"`         // 实际购买价格
+	Store        string    `json:"store"`                            // 商店名称（线上或线下）
+	PurchaseDate time.Time `json:"purchase_date" binding:"required"` // 购买日期
+	Notes        string    `json:"notes"`                            // 备注信息（可包含折扣、原价等信息）
 }
 
-// UpdatePurchaseRecordDTO 更新购买记录DTO
+// UpdatePurchaseRecordDTO 更新购买记录DTO - 简化版
 type UpdatePurchaseRecordDTO struct {
-	PurchasePrice  *float64   `json:"purchase_price,omitempty"`
-	OriginalPrice  *float64   `json:"original_price,omitempty"`
-	PurchaseDate   *time.Time `json:"purchase_date,omitempty"`
-	Store          *string    `json:"store,omitempty"`
-	OnlineStore    *string    `json:"online_store,omitempty"`
-	PaymentMethod  *string    `json:"payment_method,omitempty"`
-	OrderNumber    *string    `json:"order_number,omitempty"`
-	Notes          *string    `json:"notes,omitempty"`
-	ReceiptURL     *string    `json:"receipt_url,omitempty"`
-	WarrantyPeriod *int       `json:"warranty_period,omitempty"` // 保修期（月）
+	Price        *float64   `json:"price,omitempty"`         // 实际购买价格
+	Store        *string    `json:"store,omitempty"`         // 商店名称
+	PurchaseDate *time.Time `json:"purchase_date,omitempty"` // 购买日期
+	Notes        *string    `json:"notes,omitempty"`         // 备注信息
 }
 
-// PurchaseRecordDTO 购买记录DTO
+// PurchaseRecordDTO 购买记录DTO - 简化版
 type PurchaseRecordDTO struct {
 	ID             uint      `json:"id"`
 	ClothingItemID uint      `json:"clothing_item_id"`
-	PurchasePrice  float64   `json:"purchase_price"`
-	OriginalPrice  float64   `json:"original_price"`
-	PurchaseDate   time.Time `json:"purchase_date"`
-	Store          string    `json:"store"`
-	OnlineStore    string    `json:"online_store"`
-	PaymentMethod  string    `json:"payment_method"`
-	OrderNumber    string    `json:"order_number"`
-	Notes          string    `json:"notes"`
-	ReceiptURL     string    `json:"receipt_url"`
-	WarrantyPeriod int       `json:"warranty_period"`
+	Price          float64   `json:"price"`         // 实际购买价格
+	Store          string    `json:"store"`         // 商店名称
+	PurchaseDate   time.Time `json:"purchase_date"` // 购买日期
+	Notes          string    `json:"notes"`         // 备注信息
 	CreatedAt      time.Time `json:"created_at"`
 	UpdatedAt      time.Time `json:"updated_at"`
 }

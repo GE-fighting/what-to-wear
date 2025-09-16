@@ -23,6 +23,10 @@ type ClothingTagService interface {
 	GetSystemTags(ctx context.Context) ([]dto.TagDTO, error)
 	GetUserTags(ctx context.Context, userID uint) ([]dto.TagDTO, error)
 
+	// 系统标签枚举查询（从内存获取）
+	GetSystemTagEnumsByType(tagType api.TagType) ([]dto.TagDTO, error)
+	GetAllSystemTagEnums() (map[string][]dto.TagDTO, error)
+
 	// 统计
 	GetPopularTags(ctx context.Context, userID uint, limit int) ([]dto.TagDTO, error)
 	GetTagStats(ctx context.Context, userID uint) ([]dto.TagStatsItem, error)
@@ -52,7 +56,6 @@ func (s *clothingTagService) CreateTag(ctx context.Context, userID uint, req *dt
 		Name:        req.Name,
 		Type:        api.TagType(req.Type),
 		Description: req.Description,
-		Color:       req.Color,
 		IsSystem:    false, // 用户创建的标签都不是系统标签
 		IsActive:    true,
 		UserID:      &userID,
@@ -111,9 +114,6 @@ func (s *clothingTagService) UpdateTag(ctx context.Context, userID, tagID uint, 
 	}
 	if req.Description != nil {
 		tag.Description = *req.Description
-	}
-	if req.Color != nil {
-		tag.Color = *req.Color
 	}
 
 	// 调用仓库层更新
@@ -225,13 +225,59 @@ func (s *clothingTagService) GetTagStats(ctx context.Context, userID uint) ([]dt
 	return result, nil
 }
 
+// GetSystemTagEnumsByType 根据标签类型获取系统标签枚举（从内存）
+func (s *clothingTagService) GetSystemTagEnumsByType(tagType api.TagType) ([]dto.TagDTO, error) {
+	// 从内存中获取系统标签枚举
+	systemTags := api.GetSystemTagsByType(tagType)
+	if len(systemTags) == 0 {
+		return []dto.TagDTO{}, nil
+	}
+
+	// 转换为DTO
+	result := make([]dto.TagDTO, len(systemTags))
+	for i, tag := range systemTags {
+		result[i] = dto.TagDTO{
+			ID:          tag.ID,
+			Name:        tag.Name,
+			Type:        tag.Type,
+			Description: tag.Description,
+		}
+	}
+
+	return result, nil
+}
+
+// GetAllSystemTagEnums 获取所有系统标签枚举（从内存）
+func (s *clothingTagService) GetAllSystemTagEnums() (map[string][]dto.TagDTO, error) {
+	// 从内存中获取所有系统标签
+	allSystemTags := api.GetAllSystemTags()
+
+	result := make(map[string][]dto.TagDTO)
+	for tagType, systemTags := range allSystemTags {
+		tagTypeStr := string(tagType)
+		tagDTOs := make([]dto.TagDTO, len(systemTags))
+
+		for i, tag := range systemTags {
+			tagDTOs[i] = dto.TagDTO{
+				ID:          tag.ID,
+				Name:        tag.Name,
+				Type:        tag.Type,
+				Description: tag.Description,
+			}
+		}
+
+		result[tagTypeStr] = tagDTOs
+	}
+
+	return result, nil
+}
+
 // convertToDTO 将模型转换为DTO
 func (s *clothingTagService) convertToDTO(tag *models.ClothingTag) *dto.TagDTO {
 	return &dto.TagDTO{
 		ID:          tag.ID,
 		Name:        tag.Name,
 		Type:        string(tag.Type),
-		Color:       tag.Color,
 		Description: tag.Description,
 	}
 }

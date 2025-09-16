@@ -140,9 +140,6 @@ const (
 	TagTypeSeason   TagType = "season"   // 季节标签
 	TagTypeOccasion TagType = "occasion" // 场合标签
 	TagTypeStyle    TagType = "style"    // 风格标签
-	TagTypeColor    TagType = "color"    // 颜色标签
-	TagTypeMaterial TagType = "material" // 材质标签
-	TagTypeBrand    TagType = "brand"    // 品牌标签
 	TagTypeCustom   TagType = "custom"   // 自定义标签
 )
 
@@ -150,7 +147,7 @@ const (
 func IsValidTagType(tagType string) bool {
 	validTypes := []TagType{
 		TagTypeSeason, TagTypeOccasion, TagTypeStyle,
-		TagTypeColor, TagTypeMaterial, TagTypeBrand, TagTypeCustom,
+		TagTypeCustom,
 	}
 
 	for _, validType := range validTypes {
@@ -216,4 +213,109 @@ func IsValidItemRole(role string) bool {
 		}
 	}
 	return false
+}
+
+// 系统标签枚举定义
+// SystemTag 系统标签信息
+type SystemTag struct {
+	ID          uint   `json:"id"`
+	Name        string `json:"name"`
+	Type        string `json:"type"`
+	Description string `json:"description"`
+	Icon        string `json:"icon"`
+}
+
+// 季节标签枚举
+const (
+	SeasonSpring = "春季"
+	SeasonSummer = "夏季"
+	SeasonAutumn = "秋季"
+	SeasonWinter = "冬季"
+)
+
+// 场合标签枚举
+const (
+	OccasionFormal  = "正式"
+	OccasionLeisure = "休闲"
+	OccasionSports  = "运动"
+	OccasionDate    = "约会"
+	OccasionWork    = "工作"
+	OccasionParty   = "聚会"
+	OccasionHome    = "居家"
+)
+
+// 风格标签枚举
+const (
+	StyleSimple   = "简约"
+	StyleSweet    = "甜美"
+	StyleCool     = "酷帅"
+	StyleElegant  = "优雅"
+	StyleRetro    = "复古"
+	StyleStreet   = "街头"
+	StyleLiterary = "文艺"
+)
+
+// 系统标签数据映射
+var SystemTags = map[TagType][]SystemTag{
+	TagTypeSeason: {
+		{ID: 1, Name: SeasonSpring, Type: "season", Description: "适合春季穿着", Icon: ""},
+		{ID: 2, Name: SeasonSummer, Type: "season", Description: "适合夏季穿着", Icon: ""},
+		{ID: 3, Name: SeasonAutumn, Type: "season", Description: "适合秋季穿着", Icon: ""},
+		{ID: 4, Name: SeasonWinter, Type: "season", Description: "适合冬季穿着", Icon: ""},
+	},
+	TagTypeOccasion: {
+		{ID: 5, Name: OccasionFormal, Type: "occasion", Description: "正式场合", Icon: ""},
+		{ID: 6, Name: OccasionLeisure, Type: "occasion", Description: "休闲场合", Icon: ""},
+		{ID: 7, Name: OccasionSports, Type: "occasion", Description: "运动健身", Icon: ""},
+		{ID: 8, Name: OccasionDate, Type: "occasion", Description: "约会场合", Icon: ""},
+		{ID: 9, Name: OccasionWork, Type: "occasion", Description: "工作场合", Icon: ""},
+		{ID: 10, Name: OccasionParty, Type: "occasion", Description: "聚会场合", Icon: ""},
+		{ID: 11, Name: OccasionHome, Type: "occasion", Description: "居家休息", Icon: ""},
+	},
+	TagTypeStyle: {
+		{ID: 12, Name: StyleSimple, Type: "style", Description: "简约风格", Icon: ""},
+		{ID: 13, Name: StyleSweet, Type: "style", Description: "甜美风格", Icon: ""},
+		{ID: 14, Name: StyleCool, Type: "style", Description: "酷帅风格", Icon: ""},
+		{ID: 15, Name: StyleElegant, Type: "style", Description: "优雅风格", Icon: ""},
+		{ID: 16, Name: StyleRetro, Type: "style", Description: "复古风格", Icon: ""},
+		{ID: 17, Name: StyleStreet, Type: "style", Description: "街头风格", Icon: ""},
+		{ID: 18, Name: StyleLiterary, Type: "style", Description: "文艺风格", Icon: ""},
+	},
+}
+
+// GetSystemTagsByType 根据标签类型获取系统标签枚举
+func GetSystemTagsByType(tagType TagType) []SystemTag {
+	if tags, exists := SystemTags[tagType]; exists {
+		return tags
+	}
+	return []SystemTag{}
+}
+
+// GetAllSystemTags 获取所有系统标签
+func GetAllSystemTags() map[TagType][]SystemTag {
+	return SystemTags
+}
+
+// IsSystemTag 检查是否为系统标签
+func IsSystemTag(tagName string, tagType TagType) bool {
+	if tags, exists := SystemTags[tagType]; exists {
+		for _, tag := range tags {
+			if tag.Name == tagName {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+// GetSystemTagByName 根据名称和类型获取系统标签信息
+func GetSystemTagByName(tagName string, tagType TagType) (*SystemTag, bool) {
+	if tags, exists := SystemTags[tagType]; exists {
+		for _, tag := range tags {
+			if tag.Name == tagName {
+				return &tag, true
+			}
+		}
+	}
+	return nil, false
 }

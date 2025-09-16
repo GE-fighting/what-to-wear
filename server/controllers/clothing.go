@@ -377,6 +377,36 @@ func (cc *ClothingController) UpdateTag(c *gin.Context) {
 	c.JSON(http.StatusOK, api.Success(tag, "标签更新成功"))
 }
 
+// GetSystemTagEnumsByType 根据类型获取系统标签枚举（从内存）
+func (cc *ClothingController) GetSystemTagEnumsByType(c *gin.Context) {
+	tagType := c.Param("type")
+
+	// 验证标签类型
+	if !isValidTagType(tagType) {
+		c.JSON(http.StatusBadRequest, api.BadRequest("无效的标签类型"))
+		return
+	}
+
+	tags, err := cc.tagService.GetSystemTagEnumsByType(api.TagType(tagType))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, api.Success(tags, "获取系统标签枚举成功"))
+}
+
+// GetAllSystemTagEnums 获取所有系统标签枚举（从内存）
+func (cc *ClothingController) GetAllSystemTagEnums(c *gin.Context) {
+	tagsMap, err := cc.tagService.GetAllSystemTagEnums()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, api.InternalError(err.Error()))
+		return
+	}
+
+	c.JSON(http.StatusOK, api.Success(tagsMap, "获取所有系统标签枚举成功"))
+}
+
 // RecordWear 记录穿着
 func (cc *ClothingController) RecordWear(c *gin.Context) {
 

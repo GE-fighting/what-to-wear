@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"what-to-wear/server/api"
 	"what-to-wear/server/api/errors"
+
+	"github.com/gin-gonic/gin"
 )
 
 // getUserID 从上下文获取用户ID
@@ -103,7 +104,7 @@ func validatePagination(page, pageSize *int) {
 
 // isValidTagType 验证标签类型
 func isValidTagType(tagType string) bool {
-	validTypes := []string{"season", "occasion", "style", "color", "material", "brand", "custom"}
+	validTypes := []string{"season", "occasion", "style", "color", "custom"}
 	for _, validType := range validTypes {
 		if tagType == validType {
 			return true

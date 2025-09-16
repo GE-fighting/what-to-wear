@@ -14,7 +14,7 @@ func SetupClothingRoutes(router *gin.RouterGroup, clothingController *controller
 	clothingAPI.Use(middleware.AuthMiddleware())
 	{
 		// 衣物CRUD操作
-		clothingAPI.POST("/items", clothingController.CreateClothingItem)
+		clothingAPI.POST("/item", clothingController.CreateClothingItem)
 		clothingAPI.GET("/items", clothingController.GetClothingItems)
 		clothingAPI.GET("/items/:id", clothingController.GetClothingItem)
 		clothingAPI.PUT("/items/:id", clothingController.UpdateClothingItem)
@@ -41,6 +41,10 @@ func SetupClothingRoutes(router *gin.RouterGroup, clothingController *controller
 		publicAPI.GET("/categories", clothingController.GetCategories)
 		publicAPI.GET("/categories/tree", clothingController.GetCategoryTree)
 		publicAPI.GET("/tags/system", clothingController.GetTags) // 只返回系统标签
+
+		// 系统标签枚举API（从内存获取，无需数据库查询）
+		publicAPI.GET("/tags/enums/all", clothingController.GetAllSystemTagEnums)      // 获取所有系统标签枚举
+		publicAPI.GET("/tags/enums/:type", clothingController.GetSystemTagEnumsByType) // 根据类型获取系统标签枚举
 	}
 }
 

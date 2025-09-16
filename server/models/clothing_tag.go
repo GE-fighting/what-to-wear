@@ -1,9 +1,10 @@
 package models
 
 import (
-	"gorm.io/gorm"
 	"time"
 	"what-to-wear/server/api"
+
+	"gorm.io/gorm"
 )
 
 // ClothingTag 衣物标签模型
@@ -12,7 +13,6 @@ type ClothingTag struct {
 	Name        string      `json:"name" gorm:"not null;index"`
 	Type        api.TagType `json:"type" gorm:"not null;index"`
 	Description string      `json:"description"`
-	Color       string      `json:"color"`
 	Icon        string      `json:"icon"`
 	IsSystem    bool        `json:"is_system" gorm:"default:false"` // 是否为系统预设标签
 	IsActive    bool        `json:"is_active" gorm:"default:true"`

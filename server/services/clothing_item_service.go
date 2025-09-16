@@ -74,7 +74,7 @@ func (s *clothingItemService) CreateClothingItem(ctx context.Context, userID uin
 		Material:   req.Material,
 		Condition:  req.Status,
 		IsActive:   true,
-		IsFavorite: false,
+		IsFavorite: req.IsFavorite,
 	}
 
 	// 设置尺码
@@ -84,7 +84,7 @@ func (s *clothingItemService) CreateClothingItem(ctx context.Context, userID uin
 
 	// 设置价格（如果有购买信息）
 	if req.PurchaseInfo != nil {
-		clothingItem.Price = req.PurchaseInfo.PurchasePrice
+		clothingItem.Price = req.PurchaseInfo.Price
 		clothingItem.PurchaseDate = &req.PurchaseInfo.PurchaseDate
 	}
 
@@ -311,7 +311,7 @@ func (s *clothingItemService) convertToDTO(item *models.ClothingItem, category *
 		Material:           item.Material,
 		Season:             []string{},
 		Occasion:           []string{},
-		Style:              "",
+		Style:              []string{},
 		Description:        "",
 		Status:             item.Condition,
 		Tags:               []dto.TagDTO{},

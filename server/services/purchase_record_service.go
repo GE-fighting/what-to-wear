@@ -71,15 +71,10 @@ func (s *purchaseRecordService) CreatePurchaseRecord(userID, itemID uint, req *d
 	// 创建购买记录模型
 	purchaseRecord := &models.PurchaseRecord{
 		ClothingItemID: itemID,
-		Price:          req.PurchasePrice,
+		Price:          req.Price,
 		Store:          req.Store,
 		PurchaseDate:   req.PurchaseDate,
 		Notes:          req.Notes,
-	}
-
-	// 如果有在线商店信息，优先使用在线商店
-	if req.OnlineStore != "" {
-		purchaseRecord.Store = req.OnlineStore
 	}
 
 	if err := s.purchaseRepo.Create(ctx, purchaseRecord); err != nil {
@@ -153,8 +148,8 @@ func (s *purchaseRecordService) UpdatePurchaseRecord(userID, recordID uint, req 
 	}
 
 	// 更新字段
-	if req.PurchasePrice != nil {
-		record.Price = *req.PurchasePrice
+	if req.Price != nil {
+		record.Price = *req.Price
 	}
 	if req.PurchaseDate != nil {
 		record.PurchaseDate = *req.PurchaseDate
@@ -162,8 +157,8 @@ func (s *purchaseRecordService) UpdatePurchaseRecord(userID, recordID uint, req 
 	if req.Store != nil {
 		record.Store = *req.Store
 	}
-	if req.OnlineStore != nil && *req.OnlineStore != "" {
-		record.Store = *req.OnlineStore // 优先使用在线商店
+	if req.Store != nil && *req.Store != "" {
+		record.Store = *req.Store // 优先使用在线商店
 	}
 	if req.Notes != nil {
 		record.Notes = *req.Notes
@@ -332,16 +327,10 @@ func (s *purchaseRecordService) convertToDTO(ctx context.Context, record *models
 	dto := &dto.PurchaseRecordDTO{
 		ID:             record.ID,
 		ClothingItemID: record.ClothingItemID,
-		PurchasePrice:  record.Price,
-		OriginalPrice:  record.Price, // 简化模型中没有原价，使用实际价格
+		Price:          record.Price, // 简化模型中没有原价，使用实际价格
 		PurchaseDate:   record.PurchaseDate,
 		Store:          record.Store,
-		OnlineStore:    "", // 简化模型中合并了线上线下商店
-		PaymentMethod:  "", // 简化模型中没有此字段
-		OrderNumber:    "", // 简化模型中没有此字段
 		Notes:          record.Notes,
-		ReceiptURL:     "", // 简化模型中没有此字段
-		WarrantyPeriod: 0,  // 简化模型中没有此字段
 		CreatedAt:      record.CreatedAt,
 		UpdatedAt:      record.UpdatedAt,
 	}

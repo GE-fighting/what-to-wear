@@ -4,8 +4,9 @@ import (
 	"math"
 	"time"
 
-	"gorm.io/gorm"
 	"what-to-wear/server/api"
+
+	"gorm.io/gorm"
 )
 
 // ClothingSize 衣物尺码
@@ -51,6 +52,7 @@ type ClothingItem struct {
 	Color              string             `json:"color" gorm:"not null"`
 	Size               ClothingSize       `json:"size" gorm:"type:json"`
 	Material           string             `json:"material"`
+	Description        string             `json:"description"` // 详细描述
 	Price              float64            `json:"price" gorm:"type:decimal(10,2)"`
 	PurchaseDate       *time.Time         `json:"purchase_date"`
 	Condition          api.ClothingStatus `json:"condition" gorm:"default:'active'"`
