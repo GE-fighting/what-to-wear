@@ -8,7 +8,6 @@ import (
 	"what-to-wear/server/middleware"
 	"what-to-wear/server/routes"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -40,13 +39,7 @@ func main() {
 	r.Use(gin.Recovery())
 
 	// 配置CORS中间件
-	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"http://localhost:1420", "https://tauri.localhost"},
-		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization", "X-Request-ID"},
-		ExposeHeaders:    []string{"Content-Length", "X-Request-ID"},
-		AllowCredentials: true,
-	}))
+	r.Use(config.GetCORSMiddleware())
 
 	// 配置路由
 	routes.SetupRoutes(r, appContainer)
