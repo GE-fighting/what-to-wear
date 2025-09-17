@@ -9,12 +9,6 @@ import (
 	"gorm.io/gorm"
 )
 
-// ClothingSize 衣物尺码
-type ClothingSize struct {
-	Size   string `json:"size"`   // 尺码标识 (XS, S, M, L, XL, 38, 40, etc.)
-	System string `json:"system"` // 尺码系统 (US, EU, CN, UK, etc.)
-}
-
 // SpecificAttributes 特定属性结构
 type SpecificAttributes struct {
 	// 通用属性
@@ -50,9 +44,10 @@ type ClothingItem struct {
 	Name               string             `json:"name" gorm:"not null"`
 	Brand              string             `json:"brand"`
 	Color              string             `json:"color" gorm:"not null"`
-	Size               ClothingSize       `json:"size" gorm:"type:json"`
+	Size               string             `json:"size"`
 	Material           string             `json:"material"`
-	Description        string             `json:"description"` // 详细描述
+	Style              string             `json:"style"`
+	Description        string             `json:"description"`
 	Price              float64            `json:"price" gorm:"type:decimal(10,2)"`
 	PurchaseDate       *time.Time         `json:"purchase_date"`
 	Condition          api.ClothingStatus `json:"condition" gorm:"default:'active'"`

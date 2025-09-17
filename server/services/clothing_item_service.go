@@ -79,7 +79,7 @@ func (s *clothingItemService) CreateClothingItem(ctx context.Context, userID uin
 
 	// 设置尺码
 	if req.Size != "" {
-		clothingItem.Size = models.ClothingSize{Size: req.Size, System: "CN"}
+		clothingItem.Size = req.Size
 	}
 
 	// 设置价格（如果有购买信息）
@@ -167,6 +167,9 @@ func (s *clothingItemService) UpdateClothingItem(ctx context.Context, userID, it
 	}
 	if req.Color != nil {
 		item.Color = *req.Color
+	}
+	if req.Size != nil {
+		item.Size = *req.Size
 	}
 	if req.Material != nil {
 		item.Material = *req.Material
@@ -307,7 +310,7 @@ func (s *clothingItemService) convertToDTO(item *models.ClothingItem, category *
 		Name:               item.Name,
 		Brand:              item.Brand,
 		Color:              item.Color,
-		Size:               item.Size.Size,
+		Size:               item.Size,
 		Material:           item.Material,
 		Season:             []string{},
 		Occasion:           []string{},
