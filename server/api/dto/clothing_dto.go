@@ -14,16 +14,14 @@ type CreateClothingItemDTO struct {
 	Color              string                   `json:"color"`
 	Size               string                   `json:"size"`
 	Material           string                   `json:"material"`
-	Season             []string                 `json:"season"`
-	Occasion           []string                 `json:"occasion"`
-	Style              []string                 `json:"style"`
+	Style              string                   `json:"style"`
 	Description        string                   `json:"description"`
-	Tags               []uint                   `json:"tags"`
 	TagNames           []string                 `json:"tag_names"`
 	Status             api.ClothingStatus       `json:"status"`
 	IsFavorite         bool                     `json:"is_favorite"`
 	SpecificAttributes map[string]interface{}   `json:"specific_attributes"`
 	PurchaseInfo       *CreatePurchaseRecordDTO `json:"purchase_info,omitempty"`
+	Tags               []uint                   `json:"tags"`
 }
 
 // UpdateClothingItemDTO 更新衣物DTO

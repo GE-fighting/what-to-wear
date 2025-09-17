@@ -15,6 +15,7 @@ func AutoMigrate(db *gorm.DB) error {
 		&models.User{},
 		&models.ClothingCategory{},
 		&models.ClothingTag{},
+		&models.ClothingItemTag{},
 		&models.ClothingItem{},
 		&models.Outfit{},
 		&models.OutfitItem{},

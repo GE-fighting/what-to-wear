@@ -74,12 +74,9 @@ func (s *clothingItemService) CreateClothingItem(ctx context.Context, userID uin
 		Material:   req.Material,
 		Condition:  req.Status,
 		IsActive:   true,
+		Size:       req.Size,
+		Style:      req.Style,
 		IsFavorite: req.IsFavorite,
-	}
-
-	// 设置尺码
-	if req.Size != "" {
-		clothingItem.Size = req.Size
 	}
 
 	// 设置价格（如果有购买信息）

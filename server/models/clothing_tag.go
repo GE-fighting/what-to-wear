@@ -1,7 +1,6 @@
 package models
 
 import (
-	"time"
 	"what-to-wear/server/api"
 
 	"gorm.io/gorm"
@@ -27,10 +26,9 @@ func (ClothingTag) TableName() string {
 
 // ClothingItemTag 衣物标签关联表
 type ClothingItemTag struct {
+	gorm.Model
 	ClothingItemID uint `json:"clothing_item_id" gorm:"primaryKey"`
 	ClothingTagID  uint `json:"clothing_tag_id" gorm:"primaryKey"`
-	// 移除直接关联以避免循环依赖
-	CreatedAt time.Time `json:"created_at"`
 }
 
 // TableName 指定表名
