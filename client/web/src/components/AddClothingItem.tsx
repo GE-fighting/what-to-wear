@@ -2,7 +2,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '@/styles/AddClothingItem.css';
 import type { ClothingItemData, ClothingCategory, ClothingStatus, Tag } from "@/types/clothing";
-import { getClothingCategories } from "@/lib/api/clothing";
+import { getClothingCategories, getSystemTagEnums } from "@/lib/api/clothing";
 
 interface AddClothingItemProps {
   onSubmit: (data: ClothingItemData) => Promise<void> | void;
@@ -45,10 +45,12 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
   const [expandedParents, setExpandedParents] = useState<Set<string>>(new Set());
   const [showPurchaseInfo, setShowPurchaseInfo] = useState(false);
   
-  // 预定义的选项
-  const seasonOptions = ['春季', '夏季', '秋季', '冬季'];
-  const occasionOptions = ['日常', '工作', '运动', '正式', '休闲', '约会', '聚会', '旅行'];
-  const styleOptions = ['简约', '复古', '时尚', '优雅', '休闲', '正式', '运动', '甜美', '酷炫'];
+  // 动态加载的选项
+  const [seasonOptions, setSeasonOptions] = useState<Tag[]>([]);
+  const [occasionOptions, setOccasionOptions] = useState<Tag[]>([]);
+  const [styleOptions, setStyleOptions] = useState<Tag[]>([]);
+  const [tagEnumsLoading, setTagEnumsLoading] = useState(false);
+  const [tagEnumsError, setTagEnumsError] = useState<string | null>(null);
   const statusOptions = [
     { value: 'active', label: '在用', icon: '✅' },
     { value: 'inactive', label: '闲置', icon: '⏸️' },
@@ -72,8 +74,29 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
     }
   };
 
+  const fetchTagEnums = async () => {
+    setTagEnumsLoading(true);
+    setTagEnumsError(null);
+    try {
+      const [seasonData, occasionData, styleData] = await Promise.all([
+        getSystemTagEnums('season'),
+        getSystemTagEnums('occasion'),
+        getSystemTagEnums('style')
+      ]);
+      setSeasonOptions(Array.isArray(seasonData) ? seasonData : []);
+      setOccasionOptions(Array.isArray(occasionData) ? occasionData : []);
+      setStyleOptions(Array.isArray(styleData) ? styleData : []);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '未知错误';
+      setTagEnumsError(message);
+    } finally {
+      setTagEnumsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchTagEnums();
   }, []);
 
   // 点击外部关闭下拉框
@@ -639,43 +662,6 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
             />
           </div>
           <div className="form-group">
-            <label className="form-label">状态</label>
-            <select 
-              className="form-select" 
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-            >
-              {statusOptions.map(option => (
-                <option key={option.value} value={option.value}>
-                  {option.icon} {option.label}
-                </option>
-              ))}
-            </select>
-            <div className="form-hint">设置衣物的当前状态</div>
-          </div>
-        </div>
-      </div>
-
-      {/* 尺码信息 */}
-      <div className="form-section">
-        <h2 className="section-title">
-          <span className="section-icon">📏</span>
-          尺码信息
-        </h2>
-        <div className="form-grid">
-          <div className="form-group">
-            <label className="form-label">尺码</label>
-            <input 
-              type="text" 
-              className="form-input" 
-              name="size" 
-              placeholder="例如：M, L, 38, 40"
-              value={formData.size}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div className="form-group">
             <label className="form-label">材质</label>
             <select 
               className="form-select" 
@@ -704,11 +690,54 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
             >
               <option value="">请选择风格</option>
               {styleOptions.map(style => (
-                <option key={style} value={style}>{style}</option>
+                <option key={style.id} value={style.name}>{style.name}</option>
               ))}
             </select>
           </div>
         </div>
+      </div>
+
+      {/* 尺码与状态 */}
+      <div className="form-section">
+        <h2 className="section-title">
+          <span className="section-icon">📏</span>
+          尺码与状态
+        </h2>
+        <div className="form-grid">
+          <div className="form-group">
+            <label className="form-label">尺码</label>
+            <input 
+              type="text" 
+              className="form-input" 
+              name="size" 
+              placeholder="例如：M, L, 38, 40"
+              value={formData.size}
+              onChange={handleInputChange}
+            />
+          </div>
+          <div className="form-group">
+            <label className="form-label">状态</label>
+            <select 
+              className="form-select" 
+              name="status"
+              value={formData.status}
+              onChange={handleInputChange}
+            >
+              {statusOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.icon} {option.label}
+                </option>
+              ))}
+            </select>
+            <div className="form-hint">设置衣物的当前状态</div>
+          </div>
+        </div>
+        {tagEnumsError && (
+          <div className="form-hint" style={{ color: '#d33' }}>
+            标签加载失败：{tagEnumsError}
+            <button type="button" className="btn btn-secondary" style={{ marginLeft: 8 }} onClick={fetchTagEnums}>重试</button>
+          </div>
+        )}
       </div>
 
       {/* 动态属性 */}
@@ -724,32 +753,44 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
           <div className="form-group">
             <label className="form-label">适用季节</label>
             <div className="multi-select-container">
-              {seasonOptions.map(season => (
-                <label key={season} className="multi-select-item">
-                  <input
-                    type="checkbox"
-                    checked={formData.season.includes(season)}
-                    onChange={() => handleMultiSelect('season', season)}
-                  />
-                  <span className="multi-select-label">{season}</span>
-                </label>
-              ))}
+              {tagEnumsLoading ? (
+                <div className="loading-text">加载中...</div>
+              ) : seasonOptions.length > 0 ? (
+                seasonOptions.map(season => (
+                  <label key={season.id} className="multi-select-item">
+                    <input
+                      type="checkbox"
+                      checked={formData.season.includes(season.name)}
+                      onChange={() => handleMultiSelect('season', season.name)}
+                    />
+                    <span className="multi-select-label">{season.name}</span>
+                  </label>
+                ))
+              ) : (
+                <div className="form-hint" style={{ color: '#666' }}>暂无季节选项</div>
+              )}
             </div>
             <div className="form-hint">可以选择多个季节</div>
           </div>
           <div className="form-group">
             <label className="form-label">适用场合</label>
             <div className="multi-select-container">
-              {occasionOptions.map(occasion => (
-                <label key={occasion} className="multi-select-item">
-                  <input
-                    type="checkbox"
-                    checked={formData.occasion.includes(occasion)}
-                    onChange={() => handleMultiSelect('occasion', occasion)}
-                  />
-                  <span className="multi-select-label">{occasion}</span>
-                </label>
-              ))}
+              {tagEnumsLoading ? (
+                <div className="loading-text">加载中...</div>
+              ) : occasionOptions.length > 0 ? (
+                occasionOptions.map(occasion => (
+                  <label key={occasion.id} className="multi-select-item">
+                    <input
+                      type="checkbox"
+                      checked={formData.occasion.includes(occasion.name)}
+                      onChange={() => handleMultiSelect('occasion', occasion.name)}
+                    />
+                    <span className="multi-select-label">{occasion.name}</span>
+                  </label>
+                ))
+              ) : (
+                <div className="form-hint" style={{ color: '#666' }}>暂无场合选项</div>
+              )}
             </div>
             <div className="form-hint">可以选择多个场合</div>
           </div>
@@ -891,7 +932,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 checked={formData.is_favorite}
                 onChange={handleInputChange}
               />
-              <label className="checkbox-label">标记为收藏</label>
+              <label className="checkbox-label">⭐ 标记为收藏</label>
             </div>
           </div>
         </div>
