@@ -12,7 +12,14 @@ UI/
 │   ├── main-page-top-nav.html   # 主页面 - 顶部导航版本
 │   ├── main-page-sidebar.html   # 主页面 - 侧边导航版本 (推荐)
 │   ├── login-page.html          # 登录页面
-│   └── register-page.html       # 注册页面
+│   ├── register-page.html       # 注册页面
+│   ├── add-clothing-item.html   # 添加衣物
+│   ├── wardrobe-overview.html   # 我的衣橱 · 概览
+│   ├── wardrobe-list.html       # 我的衣橱 · 列表
+│   ├── wardrobe-detail.html     # 我的衣橱 · 详情
+│   ├── wardrobe-categories.html # 我的衣橱 · 分类与标签
+│   ├── wardrobe-import.html     # 我的衣橱 · 批量导入
+│   └── wardrobe-stats.html      # 我的衣橱 · 数据统计
 ├── components/                  # 组件级UI预览
 │   ├── navigation.html          # 导航组件
 │   ├── weather-card.html        # 天气卡片
@@ -41,6 +48,12 @@ UI/
 - **主页面 (备选)**: `pages/main-page-top-nav.html`
 - **登录页面**: `pages/login-page.html`
 - **注册页面**: `pages/register-page.html`
+ - **我的衣橱 · 概览**: `pages/wardrobe-overview.html`
+ - **我的衣橱 · 列表**: `pages/wardrobe-list.html`
+ - **我的衣橱 · 详情**: `pages/wardrobe-detail.html`
+ - **我的衣橱 · 分类与标签**: `pages/wardrobe-categories.html`
+ - **我的衣橱 · 批量导入**: `pages/wardrobe-import.html`
+ - **我的衣橱 · 数据统计**: `pages/wardrobe-stats.html`
 
 ### 3. 组件预览
 在 `components/` 目录下查看独立的组件设计

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的衣橱 · 分类与标签 - What to Wear</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{ --bg:#f8fafc; --card:#fff; --text:#1e293b; --muted:#64748b; --line:#e2e8f0; --primary:#667eea; --radius:16px; }
+        *{ box-sizing:border-box; margin:0; padding:0; }
+        body{ font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif; background:var(--bg); color:var(--text); }
+        .container{ max-width:1100px; margin:0 auto; padding:32px 20px 56px; }
+        .breadcrumbs{ color:var(--muted); font-size:14px; }
+        h1{ font-size:28px; font-weight:700; margin:6px 0 12px; }
+        .layout{ display:grid; grid-template-columns: 1fr 1fr; gap:20px; }
+        .card{ background:var(--card); border:1px solid var(--line); border-radius:var(--radius); padding:16px; }
+        .section-title{ font-size:14px; color:var(--muted); font-weight:700; margin-bottom:10px; }
+        .list{ display:grid; grid-template-columns: 1fr; gap:8px; }
+        .row{ display:flex; align-items:center; gap:10px; border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:#f8fafc; }
+        .row input{ flex: 1; padding:8px 10px; border:1px solid var(--line); border-radius:8px; }
+        .badge{ background:#eef2ff; color:#4f46e5; border-radius:999px; padding:4px 8px; font-size:12px; }
+        .tags{ display:flex; gap:8px; flex-wrap:wrap; }
+        .add{ display:flex; gap:8px; margin-top:10px; }
+        .btn{ background:var(--primary); color:#fff; border:none; padding:8px 12px; border-radius:10px; font-weight:600; cursor:pointer; }
+        .ghost{ background:transparent; color:var(--muted); border:1px solid var(--line); }
+        .grid{ display:grid; grid-template-columns: repeat(2,1fr); gap:10px; }
+        @media (max-width: 1024px){ .layout{ grid-template-columns: 1fr; } }
+    </style>
+    <script>
+        function addChip(containerId){
+            const input = document.querySelector('#'+containerId+'-input');
+            const wrap = document.querySelector('#'+containerId+'-wrap');
+            if(!input.value) return;
+            const span = document.createElement('span');
+            span.className = 'badge';
+            span.textContent = input.value;
+            wrap.appendChild(span);
+            input.value='';
+        }
+    </script>
+    </head>
+<body>
+    <div class="container">
+        <div class="breadcrumbs">What to Wear › 我的衣橱 › 分类与标签</div>
+        <h1>分类与标签</h1>
+
+        <nav class="subnav" style="display:flex; gap:8px; background:#fff; border:1px solid #e2e8f0; border-radius:999px; padding:6px; margin: 4px 0 16px;">
+            <a href="wardrobe-overview.html" style="text-decoration:none; color:#64748b; padding:8px 12px; border-radius:999px; border:1px solid transparent; font-weight:600;">概览</a>
+            <a href="wardrobe-list.html" style="text-decoration:none; color:#64748b; padding:8px 12px; border-radius:999px; border:1px solid transparent; font-weight:600;">列表</a>
+            <a href="wardrobe-categories.html" style="text-decoration:none; color:#fff; background:#667eea; border:1px solid #667eea; padding:8px 12px; border-radius:999px; font-weight:600;">分类与标签</a>
+            <a href="wardrobe-stats.html" style="text-decoration:none; color:#64748b; padding:8px 12px; border-radius:999px; border:1px solid transparent; font-weight:600;">数据统计</a>
+            <a href="wardrobe-import.html" style="text-decoration:none; color:#64748b; padding:8px 12px; border-radius:999px; border:1px solid transparent; font-weight:600;">批量导入</a>
+        </nav>
+
+        <div class="layout">
+            <div class="card">
+                <div class="section-title">一级分类</div>
+                <div class="list">
+                    <div class="row"><span>👕 上装</span><span class="badge">128</span></div>
+                    <div class="row"><span>👖 下装</span><span class="badge">96</span></div>
+                    <div class="row"><span>🧥 外套</span><span class="badge">54</span></div>
+                    <div class="row"><span>👟 鞋履</span><span class="badge">42</span></div>
+                </div>
+                <div class="add">
+                    <input id="categories-input" placeholder="新增分类名称" />
+                    <button class="btn" onclick="addChip('categories')">添加</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="section-title">标签体系（风格 / 场景 / 颜色）</div>
+                <div class="grid">
+                    <div>
+                        <div class="section-title">风格</div>
+                        <div id="styles-wrap" class="tags">
+                            <span class="badge">通勤</span>
+                            <span class="badge">休闲</span>
+                            <span class="badge">户外</span>
+                        </div>
+                        <div class="add"><input id="styles-input" placeholder="新增风格" /><button class="btn" onclick="addChip('styles')">添加</button></div>
+                    </div>
+                    <div>
+                        <div class="section-title">场景</div>
+                        <div id="scenes-wrap" class="tags">
+                            <span class="badge">会议</span>
+                            <span class="badge">约会</span>
+                            <span class="badge">旅行</span>
+                        </div>
+                        <div class="add"><input id="scenes-input" placeholder="新增场景" /><button class="btn" onclick="addChip('scenes')">添加</button></div>
+                    </div>
+                    <div>
+                        <div class="section-title">颜色</div>
+                        <div id="colors-wrap" class="tags">
+                            <span class="badge">黑</span>
+                            <span class="badge">白</span>
+                            <span class="badge">灰</span>
+                        </div>
+                        <div class="add"><input id="colors-input" placeholder="新增颜色" /><button class="btn" onclick="addChip('colors')">添加</button></div>
+                    </div>
+                    <div>
+                        <div class="section-title">材质</div>
+                        <div id="materials-wrap" class="tags">
+                            <span class="badge">棉</span>
+                            <span class="badge">羊毛</span>
+                            <span class="badge">尼龙</span>
+                        </div>
+                        <div class="add"><input id="materials-input" placeholder="新增材质" /><button class="btn" onclick="addChip('materials')">添加</button></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
