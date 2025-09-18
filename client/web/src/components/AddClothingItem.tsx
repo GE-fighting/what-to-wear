@@ -2,7 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import '@/styles/AddClothingItem.css';
 import type { ClothingItemData, ClothingCategory, ClothingStatus, Tag } from "@/types/clothing";
-import { getClothingCategories, getSystemTagEnums } from "@/lib/api/clothing";
+import { getClothingCategories, getSystemTagEnums, createClothingItem } from "@/lib/api/clothing";
+import { showToast } from "@/components/Toast";
 
 interface AddClothingItemProps {
   onSubmit: (data: ClothingItemData) => Promise<void> | void;
@@ -233,9 +234,36 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
         }
       }
 
+      // 收集季节和场合的 ID，放入 tags 字段
+      const seasonIds = seasonOptions
+        .filter(season => formData.season.includes(season.name))
+        .map(season => season.id);
+      
+      const occasionIds = occasionOptions
+        .filter(occasion => formData.occasion.includes(occasion.name))
+        .map(occasion => occasion.id);
+
+      // 合并所有标签 ID
+      cleanedFormData.tags = [...seasonIds, ...occasionIds];
+
+      // 收集标签名称
+      const seasonNames = formData.season;
+      const occasionNames = formData.occasion;
+      cleanedFormData.tag_names = [...seasonNames, ...occasionNames];
+
+      // 调用 API 创建衣物
+      const result = await createClothingItem(cleanedFormData);
+      console.log('衣物创建成功:', result);
+
+      // 显示成功提示
+      showToast('✅ 衣物保存成功！', 'success', 3000);
+
+      // 调用父组件的 onSubmit 回调
       await onSubmit(cleanedFormData);
     } catch (error) {
       console.error('提交失败:', error);
+      // 显示错误提示
+      showToast('保存失败，请重试', 'error', 4000);
     } finally {
       setIsSubmitting(false);
     }

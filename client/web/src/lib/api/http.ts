@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/lib/config/env";
+import { showToast } from "@/components/Toast";
 
 export interface ApiResponse<T> {
   code: number;
@@ -41,6 +42,24 @@ async function request<T>(path: string, init?: RequestInit): Promise<ApiResponse
 
   // If not ok, try to surface backend message
   if (!res.ok) {
+    // Handle 401 Unauthorized - redirect to login
+    if (res.status === 401) {
+      if (typeof window !== "undefined") {
+        // Clear stored token
+        localStorage.removeItem("token");
+        
+        // Show modern toast notification
+        showToast("当前未登录，正在跳转到登录页面", "warning", 2000);
+        
+        // Redirect to login page after a short delay
+        setTimeout(() => {
+          window.location.href = "/login";
+        }, 2000);
+      }
+      
+      throw new ApiError("未授权访问，请重新登录", 401, 401);
+    }
+    
     if (isJson && raw && typeof raw === "object" && "message" in raw && "code" in raw) {
       const r = raw as ApiResponse<unknown>;
       throw new ApiError(r.message || `Request failed: ${res.status}`, Number(r.code) || res.status, res.status);
