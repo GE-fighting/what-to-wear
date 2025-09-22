@@ -1,0 +1,132 @@
+/* What to Wear - Brand Color System */
+/* 品牌主色：#1380ec - 现代简洁的蓝色调 */
+
+:root {
+  /* 品牌主色 - Primary Brand Color */
+  --brand-primary: #1380ec;
+  --brand-primary-light: #e7edf3;
+  --brand-primary-dark: #0d141b;
+  
+  /* 中性色 - Neutral Colors */
+  --brand-text-primary: #0d141b;
+  --brand-text-secondary: #4c739a;
+  --brand-text-tertiary: #94a3b8;
+  --brand-background: #f8fafc;
+  --brand-surface: #ffffff;
+  --brand-border: #cfdbe7;
+  
+  /* 功能色 - Functional Colors */
+  --brand-success: #10b981;
+  --brand-warning: #f59e0b;
+  --brand-error: #ef4444;
+  --brand-info: #1380ec;
+  
+  /* 交互状态 - Interactive States */
+  --brand-hover: #0d6efd;
+  --brand-active: #0a58ca;
+  --brand-focus: rgba(19, 128, 236, 0.2);
+  
+  /* 阴影 - Shadows */
+  --brand-shadow-sm: 0 1px 2px 0 rgba(13, 20, 27, 0.05);
+  --brand-shadow-md: 0 4px 6px -1px rgba(13, 20, 27, 0.1), 0 2px 4px -1px rgba(13, 20, 27, 0.06);
+  --brand-shadow-lg: 0 10px 15px -3px rgba(13, 20, 27, 0.1), 0 4px 6px -2px rgba(13, 20, 27, 0.05);
+  
+  /* 圆角 - Border Radius */
+  --brand-radius-sm: 0.375rem;
+  --brand-radius-md: 0.5rem;
+  --brand-radius-lg: 0.75rem;
+  --brand-radius-xl: 1rem;
+  --brand-radius-2xl: 1.5rem;
+  
+  /* 字体粗细 - Font Weights */
+  --brand-weight-normal: 400;
+  --brand-weight-medium: 500;
+  --brand-weight-semibold: 600;
+  --brand-weight-bold: 700;
+}
+
+/* 品牌色板 - Brand Color Palette */
+.brand-color-primary { color: var(--brand-primary); }
+.brand-color-primary-light { color: var(--brand-primary-light); }
+.brand-color-primary-dark { color: var(--brand-primary-dark); }
+
+.brand-bg-primary { background-color: var(--brand-primary); }
+.brand-bg-primary-light { background-color: var(--brand-primary-light); }
+.brand-bg-primary-dark { background-color: var(--brand-primary-dark); }
+
+.brand-border-primary { border-color: var(--brand-primary); }
+.brand-border-primary-light { border-color: var(--brand-primary-light); }
+
+/* 悬停效果 - Hover Effects */
+.brand-hover-primary:hover {
+  background-color: var(--brand-hover);
+  transition: background-color 0.2s ease;
+}
+
+.brand-hover-text:hover {
+  color: var(--brand-hover);
+  transition: color 0.2s ease;
+}
+
+/* 焦点效果 - Focus Effects */
+.brand-focus:focus {
+  outline: 2px solid var(--brand-focus);
+  outline-offset: 2px;
+}
+
+/* 按钮样式 - Button Styles */
+.brand-btn-primary {
+  background-color: var(--brand-primary);
+  color: white;
+  font-weight: var(--brand-weight-semibold);
+  border-radius: var(--brand-radius-lg);
+  box-shadow: var(--brand-shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.brand-btn-primary:hover {
+  background-color: var(--brand-hover);
+  box-shadow: var(--brand-shadow-md);
+}
+
+.brand-btn-primary:active {
+  background-color: var(--brand-active);
+  box-shadow: var(--brand-shadow-sm);
+}
+
+/* 卡片样式 - Card Styles */
+.brand-card {
+  background-color: var(--brand-surface);
+  border: 1px solid var(--brand-border);
+  border-radius: var(--brand-radius-xl);
+  box-shadow: var(--brand-shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.brand-card:hover {
+  box-shadow: var(--brand-shadow-md);
+  border-color: var(--brand-primary);
+}
+
+/* 图标样式 - Icon Styles */
+.brand-icon-primary {
+  color: var(--brand-primary);
+  transition: color 0.2s ease;
+}
+
+.brand-icon-primary:hover {
+  color: var(--brand-hover);
+}
+
+/* 链接样式 - Link Styles */
+.brand-link {
+  color: var(--brand-primary);
+  font-weight: var(--brand-weight-medium);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.brand-link:hover {
+  color: var(--brand-hover);
+  text-decoration: underline;
+}

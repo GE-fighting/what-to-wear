@@ -1,711 +1,361 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>What to Wear - 现代侧边导航</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>What to Wear - 现代侧边导航</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<style type="text/tailwindcss">
+  @layer base {
+    :root {
+      /* 高级配色系统 - Advanced Color System */
+      /* 主色调 - Monochrome Primary */
+      --mono-50: #fafafa;
+      --mono-100: #f5f5f5;
+      --mono-200: #e5e5e5;
+      --mono-300: #d4d4d4;
+      --mono-400: #a3a3a3;
+      --mono-500: #737373;
+      --mono-600: #525252;
+      --mono-700: #404040;
+      --mono-800: #262626;
+      --mono-900: #171717;
+      --mono-950: #0a0a0a;
 
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8fafc;
-            color: #1e293b;
-            overflow-x: hidden;
-        }
+      /* 温馨点缀色 - Warm Accent Colors */
+      --warm-beige: #f5f1eb;
+      --warm-taupe: #e8ddd4;
+      --warm-cream: #faf8f5;
+      --warm-sand: #f0e6d8;
+      --warm-stone: #d4c4b0;
 
-        .app-layout {
-            display: flex;
-            min-height: 100vh;
-        }
+      /* 品牌主色 - Brand Primary (Warm Gray) */
+      --color-primary: #6b5b47;
+      --color-primary-light: #8b7355;
+      --color-primary-dark: #4a3f32;
+      
+      /* 强调色 - Accent Colors */
+      --color-accent-1: #d4a574; /* 金色调 */
+      --color-accent-2: #b8860b; /* 古铜色 */
+      --color-accent-3: #cd853f; /* 秘鲁色 */
 
-        /* 侧边导航栏 */
-        .sidebar {
-            width: 280px;
-            background: #ffffff;
-            border-right: 1px solid #e2e8f0;
-            display: flex;
-            flex-direction: column;
-            position: fixed;
-            height: 100vh;
-            z-index: 100;
-        }
+      /* 功能色 - Functional Colors */
+      --color-success: #6b8e23; /* 橄榄绿 */
+      --color-warning: #daa520; /* 金麒麟色 */
+      --color-error: #a0522d; /* 赭石色 */
+      --color-info: #708090; /* 石板灰 */
 
-        .sidebar-header {
-            padding: 24px 20px;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-        .app-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 16px;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-        }
-
-        .app-name {
-            font-size: 18px;
-            font-weight: 700;
-            color: #1e293b;
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px;
-            background: #f8fafc;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .user-profile:hover {
-            background: #e2e8f0;
-        }
-
-        .user-avatar {
-            width: 36px;
-            height: 36px;
-            background: #e2e8f0;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        .user-info h4 {
-            font-size: 14px;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 2px;
-        }
-
-        .user-info span {
-            font-size: 12px;
-            color: #64748b;
-        }
-
-        /* 导航菜单 */
-        .sidebar-nav {
-            flex: 1;
-            padding: 24px 0;
-            overflow-y: auto;
-        }
-
-        .nav-section {
-            margin-bottom: 32px;
-        }
-
-        .nav-section-title {
-            font-size: 11px;
-            font-weight: 600;
-            color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            padding: 0 20px;
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            color: #64748b;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-right: 3px solid transparent;
-        }
-
-        .nav-item:hover {
-            background: #f8fafc;
-            color: #1e293b;
-        }
-
-        .nav-item.active {
-            background: #f1f5f9;
-            color: #667eea;
-            border-right-color: #667eea;
-        }
-
-        .nav-icon {
-            font-size: 18px;
-            width: 20px;
-            text-align: center;
-        }
-
-        .nav-text {
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .nav-badge {
-            background: #ef4444;
-            color: white;
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-left: auto;
-        }
-
-        /* 侧边栏底部 */
-        .sidebar-footer {
-            padding: 20px;
-            border-top: 1px solid #e2e8f0;
-        }
-
-        .logout-btn {
-            width: 100%;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            background: #1e293b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .logout-btn:hover {
-            background: #334155;
-            transform: translateY(-1px);
-        }
-
-        /* 主内容区域 */
-        .main-content {
-            flex: 1;
-            margin-left: 280px;
-            min-height: 100vh;
-        }
-
-        .content-header {
-            background: white;
-            padding: 24px 32px;
-            border-bottom: 1px solid #e2e8f0;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-        }
-
-        .header-top {
-            display: flex;
-            justify-content: between;
-            align-items: center;
-            margin-bottom: 8px;
-        }
-
-        .page-title {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 4px;
-        }
-
-        .page-subtitle {
-            font-size: 16px;
-            color: #64748b;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            margin-left: auto;
-        }
-
-        .header-btn {
-            padding: 8px 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            color: #64748b;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-        }
-
-        .header-btn:hover {
-            background: #e2e8f0;
-            color: #1e293b;
-        }
-
-        .header-btn.primary {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .header-btn.primary:hover {
-            background: #5a67d8;
-        }
-
-        /* 内容区域 */
-        .content-body {
-            padding: 32px;
-        }
-
-        .content-grid {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 32px;
-            max-width: 1400px;
-        }
-
-        .main-column {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .side-column {
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* 卡片样式 */
-        .card {
-            background: white;
-            border-radius: 16px;
-            border: 1px solid #e2e8f0;
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .card-title {
-            font-size: 18px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-        .card-body {
-            padding: 24px;
-        }
-
-        /* 天气卡片 */
-        .weather-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 24px;
-            border-radius: 16px;
-        }
-
-        .weather-main {
-            display: flex;
-            align-items: center;
-            gap: 20px;
-            margin-bottom: 20px;
-        }
-
-        .temperature {
-            font-size: 48px;
-            font-weight: 700;
-        }
-
-        .weather-details h3 {
-            font-size: 20px;
-            margin-bottom: 4px;
-        }
-
-        .weather-details p {
-            opacity: 0.9;
-            font-size: 14px;
-        }
-
-        .weather-stats {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 16px;
-        }
-
-        .weather-stat {
-            text-align: center;
-            padding: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-        }
-
-        .weather-stat-value {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .weather-stat-label {
-            font-size: 12px;
-            opacity: 0.8;
-        }
-
-        /* 快捷操作 */
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
-
-        .action-btn {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            padding: 20px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .action-btn:hover {
-            background: #e2e8f0;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .action-btn.primary {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-
-        .action-btn.primary:hover {
-            background: #5a67d8;
-        }
-
-        .action-icon {
-            font-size: 24px;
-        }
-
-        .action-title {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .action-desc {
-            font-size: 12px;
-            opacity: 0.7;
-            text-align: center;
-        }
-
-        /* 响应式设计 */
-        @media (max-width: 1024px) {
-            .content-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .sidebar {
-                transform: translateX(-100%);
-                transition: transform 0.3s ease;
-            }
-            
-            .sidebar.open {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .content-body {
-                padding: 20px;
-            }
-            
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
-            
-            .weather-stats {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+      /* 背景色 - Background Colors */
+      --color-background-light: var(--mono-50);
+      --color-background-dark: var(--mono-950);
+      --color-surface-light: var(--mono-100);
+      --color-surface-dark: var(--mono-900);
+      
+      /* 文字颜色 - Text Colors */
+      --color-text-light: var(--mono-900);
+      --color-text-dark: var(--mono-50);
+      --color-subtle-light: var(--mono-600);
+      --color-subtle-dark: var(--mono-300);
+      
+      /* 边框颜色 - Border Colors */
+      --color-border-light: var(--mono-200);
+      --color-border-dark: var(--mono-700);
+      
+      /* 交互状态 - Interactive States */
+      --color-hover-bg: var(--mono-200);
+      --color-hover-text: var(--mono-900);
+      --color-active-bg: var(--mono-300);
+      --color-focus-ring: rgba(212, 165, 116, 0.3);
+    }
+  }
+</style>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: 'var(--color-primary)',
+            'primary-light': 'var(--color-primary-light)',
+            'primary-dark': 'var(--color-primary-dark)',
+            'background-light': 'var(--color-background-light)',
+            'background-dark': 'var(--color-background-dark)',
+            'surface-light': 'var(--color-surface-light)',
+            'surface-dark': 'var(--color-surface-dark)',
+            'text-light': 'var(--color-text-light)',
+            'text-dark': 'var(--color-text-dark)',
+            'subtle-light': 'var(--color-subtle-light)',
+            'subtle-dark': 'var(--color-subtle-dark)',
+            'border-light': 'var(--color-border-light)',
+            'border-dark': 'var(--color-border-dark)',
+            'accent-red': 'var(--color-error)',
+            'accent-yellow': 'var(--color-warning)',
+          },
+          fontFamily: {
+            display: ["'Inter'", "-apple-system", "BlinkMacSystemFont", "'Segoe UI'", "Roboto", "sans-serif"],
+          },
+          borderRadius: {
+            sm: "0.25rem",
+            md: "0.375rem", 
+            lg: "0.5rem",
+            xl: "0.75rem",
+            "2xl": "1rem",
+            "3xl": "1.5rem",
+          },
+          boxShadow: {
+            'sm': '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+            'md': '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+            'lg': '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
+            'warm': '0 4px 20px -2px rgba(212, 165, 116, 0.15)',
+            'elegant': '0 8px 30px -4px rgba(0, 0, 0, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.04)',
+          }
+        },
+      },
+    };
+  </script>
 </head>
-<body>
-    <div class="app-layout">
-        <!-- 侧边导航栏 -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="app-logo">
-                    <div class="logo-icon">👗</div>
-                    <div class="app-name">What to Wear</div>
-                </div>
-                
-                <div class="user-profile">
-                    <div class="user-avatar">👤</div>
-                    <div class="user-info">
-                        <h4>用户名</h4>
-                        <span>在线</span>
-                    </div>
-                </div>
-            </div>
+<body class="font-display bg-[#fafafa] text-[#171717]" style='font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;'>
+<div class="flex h-screen">
+<aside class="w-64 bg-[#ffffff] border-r border-[#e5e5e5] flex flex-col p-4 fixed h-full">
+<div class="flex items-center gap-2 mb-8">
+<div class="w-10 h-10 bg-[#262626] rounded-full flex items-center justify-center shadow-warm">
+<span class="material-icons text-white">styler</span>
+</div>
+<h1 class="text-xl font-bold text-[#171717]">What to Wear</h1>
+</div>
+<div class="flex items-center gap-3 mb-8 p-3 rounded-xl bg-[#f5f5f5]">
+<div class="w-10 h-10 rounded-full bg-[#e5e5e5]"></div>
+<div>
+<p class="font-semibold text-[#171717]">用户名</p>
+<p class="text-sm text-[#525252]">在线</p>
+</div>
+</div>
+<nav class="flex-1 space-y-1 overflow-y-auto">
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-3 px-3 py-2 rounded-xl bg-[#f5f5f5]">
+<span class="material-icons text-[#171717]">home</span>
+<span class="text-sm font-medium text-[#171717]">今日概览</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<span class="material-icons text-[#525252]">checkroom</span>
+<span class="text-sm font-medium text-[#171717]">记录穿搭</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<span class="material-icons text-[#525252]">inventory_2</span>
+<span class="text-sm font-medium text-[#171717]">我的衣橱</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<span class="material-icons text-[#525252]">auto_awesome</span>
+<span class="text-sm font-medium text-[#171717]">风格推荐</span>
+</div>
+</div>
+<div class="flex flex-col gap-1 mt-6">
+<div class="flex items-center gap-3 px-3 py-2">
+<span class="material-icons text-[#525252]">bar_chart</span>
+<span class="text-sm font-medium text-[#171717]">穿搭统计</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<span class="material-icons text-[#525252]">trending_up</span>
+<span class="text-sm font-medium text-[#171717]">趋势分析</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2">
+<span class="material-icons text-[#525252]">lightbulb</span>
+<span class="text-sm font-medium text-[#171717]">搭配灵感</span>
+</div>
+</div>
+</nav>
+<div class="mt-auto pt-4">
+<button class="flex items-center gap-3 px-3 py-2">
+<span class="material-icons text-[#525252]">logout</span>
+<span class="text-sm font-medium text-[#171717]">退出登录</span>
+</button>
+</div>
+</aside>
+<main class="flex-1 p-8 grid grid-cols-3 gap-8 ml-64">
+<div class="col-span-2 space-y-8">
+<header>
+<div class="flex justify-between items-center">
+<div>
+<h2 class="text-3xl font-bold text-[#171717]">今日概览</h2>
+<p class="text-[#525252] mt-1">2024年8月1日 星期四 · 北京</p>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#f5f5f5]">
+<span class="material-icons text-[#525252]">notifications_none</span>
+</button>
+<button class="p-2 rounded-full hover:bg-[#f5f5f5]">
+<span class="material-icons text-[#525252]">settings</span>
+</button>
+</div>
+</div>
+</header>
+<section class="grid grid-cols-2 md:grid-cols-4 gap-4">
+<div class="group flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-[#e5e5e5] hover:bg-[#fafafa] hover:border-[#d4d4d4] cursor-pointer transition-all duration-300 shadow-sm hover:shadow-elegant">
+<div class="w-16 h-16 rounded-full bg-[#f5f5f5] flex items-center justify-center mb-3 group-hover:bg-[#d4a574] group-hover:scale-110 transition-all duration-300">
+<span class="material-icons text-[#525252] text-3xl group-hover:text-white transition-colors duration-300">edit_note</span>
+</div>
+<p class="font-semibold text-[#171717]">记录穿搭</p>
+</div>
+<div class="group flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-[#e5e5e5] hover:bg-[#fafafa] hover:border-[#d4d4d4] cursor-pointer transition-all duration-300 shadow-sm hover:shadow-elegant">
+<div class="w-16 h-16 rounded-full bg-[#f5f5f5] flex items-center justify-center mb-3 group-hover:bg-[#d4a574] group-hover:scale-110 transition-all duration-300">
+<span class="material-icons text-[#525252] text-3xl group-hover:text-white transition-colors duration-300">add_shopping_cart</span>
+</div>
+<p class="font-semibold text-[#171717]">添加衣物</p>
+</div>
+<div class="group flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-[#e5e5e5] hover:bg-[#fafafa] hover:border-[#d4d4d4] cursor-pointer transition-all duration-300 shadow-sm hover:shadow-elegant">
+<div class="w-16 h-16 rounded-full bg-[#f5f5f5] flex items-center justify-center mb-3 group-hover:bg-[#d4a574] group-hover:scale-110 transition-all duration-300">
+<span class="material-icons text-[#525252] text-3xl group-hover:text-white transition-colors duration-300">auto_awesome</span>
+</div>
+<p class="font-semibold text-[#171717]">风格推荐</p>
+</div>
+<div class="group flex flex-col items-center justify-center p-4 rounded-2xl bg-white border border-[#e5e5e5] hover:bg-[#fafafa] hover:border-[#d4d4d4] cursor-pointer transition-all duration-300 shadow-sm hover:shadow-elegant">
+<div class="w-16 h-16 rounded-full bg-[#f5f5f5] flex items-center justify-center mb-3 group-hover:bg-[#d4a574] group-hover:scale-110 transition-all duration-300">
+<span class="material-icons text-[#525252] text-3xl group-hover:text-white transition-colors duration-300">bar_chart</span>
+</div>
+<p class="font-semibold text-[#171717]">查看统计</p>
+</div>
+</section>
+<section class="bg-[#fafafa] p-6 rounded-2xl border border-[#e5e5e5] shadow-elegant">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold text-[#171717]">今日穿搭建议</h3>
+<button class="p-2 rounded-full hover:bg-[#f5f5f5]">
+<span class="material-icons text-[#525252]">grid_view</span>
+</button>
+</div>
+<p class="text-[#525252] mb-6">根据今日天气，为您推荐以下搭配：</p>
+<div class="relative w-full">
+<div class="relative h-96 overflow-hidden rounded-lg">
+<div class="duration-700 ease-in-out">
+<img alt="..." class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAR1ZplAx9apIzFnMHRcIl9olPgHLnRMPpC80NrehjM46F8nKMX6lQpvkySdSrVZqCkHbvOxKDBz9ErDcFggbutyQalJW2XMBaLHUqP9mw3zsy2q6gfslFIT6G6DIfZb2606qwFNkQjKIB2m8_OOhbSKGEjVY41ddbOfCXlJVn7G_uD2Ss70n-J6kH2YRcWAag0bf2XjxjiDUH7Nd-5Q83IuaM4-R20lhRJ9uvPlYRPZ_Wu4btTlig7HDABhb-QxNpEJojgxNJGe73Y"/>
+</div>
+<div class="hidden duration-700 ease-in-out">
+<img alt="..." class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCZbntMbUszA2m3INyO8mQNMuPmEsVDAdtGs9_1ybRE9vMYHSCcoEdIDsb1gI407bM14x60_C1VwNaxtf6OuuGra8auv2DfBBKQafEJ0MAzxwJK1D02_YO6eAVOBFfhzI7AaYPK1pCchXdGvBznlimpweuhwORw2MP_3oZ6UM6AuMuuZbX6UiGC4P6UTKuR6cItolC4DeywsE5XZzxAha8fCS5s0cfD_Z1F5jJ2KaW4_79mRuaH_z0bn7F0sfkcZUzHVI4lkf-MgiEr"/>
+</div>
+</div>
+</div>
+</section>
+</div>
 
-            <nav class="sidebar-nav">
-                <div class="nav-section">
-                    <div class="nav-section-title">主要功能</div>
-                    <a href="#" class="nav-item active">
-                        <span class="nav-icon">🏠</span>
-                        <span class="nav-text">今日概览</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <span class="nav-icon">📸</span>
-                        <span class="nav-text">记录穿搭</span>
-                        <span class="nav-badge">3</span>
-                    </a>
-                    <a href="wardrobe-overview.html" class="nav-item">
-                        <span class="nav-icon">👗</span>
-                        <span class="nav-text">我的衣橱</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <span class="nav-icon">🎨</span>
-                        <span class="nav-text">风格推荐</span>
-                    </a>
-                </div>
+<!-- 右侧边栏 -->
+<div class="space-y-6">
+<!-- 天气卡片 -->
+<section class="bg-[#fafafa] p-6 rounded-2xl border border-[#e5e5e5] shadow-elegant">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold text-[#171717]">今日天气</h3>
+<button class="p-2 rounded-full hover:bg-[#f5f5f5]">
+<span class="material-icons text-[#525252]">refresh</span>
+</button>
+</div>
+<div class="flex items-center justify-between mb-4">
+<div class="flex items-center gap-3">
+<span class="material-icons text-[#d4a574] text-4xl">wb_sunny</span>
+<div>
+<div class="text-3xl font-bold text-[#171717]">25°</div>
+<div class="text-sm text-[#525252]">晴朗</div>
+</div>
+</div>
+<div class="text-right">
+<div class="text-sm text-[#525252]">北京</div>
+<div class="text-xs text-[#737373]">体感 27°</div>
+</div>
+</div>
+<div class="grid grid-cols-3 gap-3 text-center">
+<div class="p-2 bg-white rounded-lg border border-[#e5e5e5]">
+<div class="text-sm font-semibold text-[#171717]">60%</div>
+<div class="text-xs text-[#525252]">湿度</div>
+</div>
+<div class="p-2 bg-white rounded-lg border border-[#e5e5e5]">
+<div class="text-sm font-semibold text-[#171717]">5km/h</div>
+<div class="text-xs text-[#525252]">风速</div>
+</div>
+<div class="p-2 bg-white rounded-lg border border-[#e5e5e5]">
+<div class="text-sm font-semibold text-[#171717]">良好</div>
+<div class="text-xs text-[#525252]">空气质量</div>
+</div>
+</div>
+<div class="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+<p class="text-sm text-blue-800">💡 今天是个好天气，适合外出</p>
+</div>
+</section>
 
-                <div class="nav-section">
-                    <div class="nav-section-title">数据分析</div>
-                    <a href="#" class="nav-item">
-                        <span class="nav-icon">📊</span>
-                        <span class="nav-text">穿搭统计</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <span class="nav-icon">📈</span>
-                        <span class="nav-text">趋势分析</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <span class="nav-icon">🌟</span>
-                        <span class="nav-text">搭配灵感</span>
-                    </a>
-                </div>
+<!-- 最近活动 -->
+<section class="bg-[#fafafa] p-6 rounded-2xl border border-[#e5e5e5] shadow-elegant">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold text-[#171717]">最近活动</h3>
+<button class="p-2 rounded-full hover:bg-[#f5f5f5]">
+<span class="material-icons text-[#525252]">more_vert</span>
+</button>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+<div class="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+<span class="material-icons text-green-600 text-sm">check_circle</span>
+</div>
+<div class="flex-1">
+<div class="text-sm font-medium text-[#171717]">已完成今日穿搭</div>
+<div class="text-xs text-[#525252]">休闲舒适风格</div>
+</div>
+<div class="text-xs text-[#737373]">2小时前</div>
+</div>
+<div class="flex items-center gap-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+<div class="w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
+<span class="material-icons text-yellow-600 text-sm">photo_camera</span>
+</div>
+<div class="flex-1">
+<div class="text-sm font-medium text-[#171717]">待拍照记录</div>
+<div class="text-xs text-[#525252]">记录今日搭配效果</div>
+</div>
+<div class="text-xs text-[#737373]">待完成</div>
+</div>
+<div class="flex items-center gap-3 p-3 bg-purple-50 border border-purple-200 rounded-lg">
+<div class="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
+<span class="material-icons text-purple-600 text-sm">flag</span>
+</div>
+<div class="flex-1">
+<div class="text-sm font-medium text-[#171717]">穿搭挑战</div>
+<div class="text-xs text-[#525252]">尝试新的颜色搭配</div>
+</div>
+<div class="text-xs text-[#737373]">进行中</div>
+</div>
+</div>
+</section>
 
-                <div class="nav-section">
-                    <div class="nav-section-title">设置</div>
-                    <a href="#" class="nav-item">
-                        <span class="nav-icon">⚙️</span>
-                        <span class="nav-text">个人设置</span>
-                    </a>
-                    <a href="#" class="nav-item">
-                        <span class="nav-icon">🔔</span>
-                        <span class="nav-text">通知设置</span>
-                    </a>
-                </div>
-            </nav>
-
-            <div class="sidebar-footer">
-                <button class="logout-btn">
-                    <span>🚪</span>
-                    <span>退出登录</span>
-                </button>
-            </div>
-        </aside>
-
-        <!-- 主内容区域 -->
-        <main class="main-content">
-            <header class="content-header">
-                <div class="header-top">
-                    <div>
-                        <h1 class="page-title">今日概览</h1>
-                        <p class="page-subtitle">2024年8月1日 星期四 · 北京</p>
-                    </div>
-                    <div class="header-actions">
-                        <button class="header-btn">🔄 刷新</button>
-                        <button class="header-btn primary">📸 记录穿搭</button>
-                    </div>
-                </div>
-            </header>
-
-            <div class="content-body">
-                <div class="content-grid">
-                    <div class="main-column">
-                        <!-- 天气卡片 -->
-                        <div class="weather-card">
-                            <div class="weather-main">
-                                <div class="temperature">25°</div>
-                                <div class="weather-details">
-                                    <h3>晴朗</h3>
-                                    <p>今天是个好天气，适合外出</p>
-                                </div>
-                            </div>
-                            <div class="weather-stats">
-                                <div class="weather-stat">
-                                    <div class="weather-stat-value">60%</div>
-                                    <div class="weather-stat-label">湿度</div>
-                                </div>
-                                <div class="weather-stat">
-                                    <div class="weather-stat-value">5km/h</div>
-                                    <div class="weather-stat-label">风速</div>
-                                </div>
-                                <div class="weather-stat">
-                                    <div class="weather-stat-value">良好</div>
-                                    <div class="weather-stat-label">空气质量</div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 穿搭建议 -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">今日穿搭建议</h3>
-                                <button class="header-btn">🔄</button>
-                            </div>
-                            <div class="card-body">
-                                <p style="margin-bottom: 16px; color: #64748b;">根据今日天气，为您推荐以下搭配：</p>
-                                <ul style="list-style: none; padding: 0;">
-                                    <li style="padding: 8px 0; border-left: 3px solid #667eea; padding-left: 12px; margin-bottom: 8px;">轻薄长袖衬衫</li>
-                                    <li style="padding: 8px 0; border-left: 3px solid #667eea; padding-left: 12px; margin-bottom: 8px;">休闲长裤</li>
-                                    <li style="padding: 8px 0; border-left: 3px solid #667eea; padding-left: 12px; margin-bottom: 8px;">舒适运动鞋</li>
-                                </ul>
-                                <p style="margin-top: 16px; font-size: 14px; color: #64748b;">💡 建议携带薄外套备用</p>
-                            </div>
-                        </div>
-
-                        <!-- 快捷操作 -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">快捷操作</h3>
-                            </div>
-                            <div class="card-body">
-                                <div class="quick-actions">
-                                    <a href="#" class="action-btn primary">
-                                        <span class="action-icon">📸</span>
-                                        <span class="action-title">记录穿搭</span>
-                                        <span class="action-desc">拍照记录今日搭配</span>
-                                    </a>
-                                    <a href="#" class="action-btn">
-                                        <span class="action-icon">👗</span>
-                                        <span class="action-title">添加衣物</span>
-                                        <span class="action-desc">管理衣橱物品</span>
-                                    </a>
-                                    <a href="#" class="action-btn">
-                                        <span class="action-icon">🎨</span>
-                                        <span class="action-title">风格推荐</span>
-                                        <span class="action-desc">发现新搭配</span>
-                                    </a>
-                                    <a href="#" class="action-btn">
-                                        <span class="action-icon">📊</span>
-                                        <span class="action-title">查看统计</span>
-                                        <span class="action-desc">分析穿搭数据</span>
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="side-column">
-                        <!-- 最近活动 -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">最近活动</h3>
-                                <button class="header-btn">查看全部</button>
-                            </div>
-                            <div class="card-body">
-                                <div style="display: flex; flex-direction: column; gap: 16px;">
-                                    <div style="display: flex; gap: 12px; align-items: center;">
-                                        <div style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center;">📸</div>
-                                        <div>
-                                            <div style="font-size: 14px; font-weight: 500; margin-bottom: 2px;">记录了今日穿搭</div>
-                                            <div style="font-size: 12px; color: #64748b;">2小时前</div>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; gap: 12px; align-items: center;">
-                                        <div style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center;">👗</div>
-                                        <div>
-                                            <div style="font-size: 14px; font-weight: 500; margin-bottom: 2px;">添加了新衣服</div>
-                                            <div style="font-size: 12px; color: #64748b;">昨天</div>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; gap: 12px; align-items: center;">
-                                        <div style="width: 32px; height: 32px; background: #f1f5f9; border-radius: 8px; display: flex; align-items: center; justify-content: center;">🎨</div>
-                                        <div>
-                                            <div style="font-size: 14px; font-weight: 500; margin-bottom: 2px;">收藏了搭配灵感</div>
-                                            <div style="font-size: 12px; color: #64748b;">3天前</div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- 个人统计 -->
-                        <div class="card">
-                            <div class="card-header">
-                                <h3 class="card-title">本月统计</h3>
-                            </div>
-                            <div class="card-body">
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-                                    <div style="text-align: center; padding: 16px; background: #f8fafc; border-radius: 8px;">
-                                        <div style="font-size: 24px; font-weight: 700; color: #667eea; margin-bottom: 4px;">23</div>
-                                        <div style="font-size: 12px; color: #64748b;">穿搭记录</div>
-                                    </div>
-                                    <div style="text-align: center; padding: 16px; background: #f8fafc; border-radius: 8px;">
-                                        <div style="font-size: 24px; font-weight: 700; color: #667eea; margin-bottom: 4px;">8</div>
-                                        <div style="font-size: 12px; color: #64748b;">新增衣物</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        // 简单的交互效果
-        document.addEventListener('DOMContentLoaded', function() {
-            // 导航项目点击效果
-            const navItems = document.querySelectorAll('.nav-item');
-            navItems.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    const href = this.getAttribute('href');
-                    if (!href || href === '#') {
-                        e.preventDefault();
-                        navItems.forEach(nav => nav.classList.remove('active'));
-                        this.classList.add('active');
-                    }
-                });
-            });
-
-            // 快捷操作点击效果
-            const actionBtns = document.querySelectorAll('.action-btn');
-            actionBtns.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const title = this.querySelector('.action-title').textContent;
-                    alert(`点击了：${title}`);
-                });
-            });
-        });
-    </script>
-</body>
-</html>
+<!-- 本月统计 -->
+<section class="bg-[#fafafa] p-6 rounded-2xl border border-[#e5e5e5] shadow-elegant">
+<div class="flex justify-between items-center mb-4">
+<h3 class="text-xl font-bold text-[#171717]">本月统计</h3>
+<button class="p-2 rounded-full hover:bg-[#f5f5f5]">
+<span class="material-icons text-[#525252]">trending_up</span>
+</button>
+</div>
+<div class="grid grid-cols-2 gap-4 mb-4">
+<div class="p-4 bg-white rounded-lg border border-[#e5e5e5] text-center">
+<div class="text-2xl font-bold text-[#171717]">23</div>
+<div class="text-sm text-[#525252]">穿搭天数</div>
+</div>
+<div class="p-4 bg-white rounded-lg border border-[#e5e5e5] text-center">
+<div class="text-2xl font-bold text-[#171717]">15</div>
+<div class="text-sm text-[#525252]">新添衣物</div>
+</div>
+<div class="p-4 bg-white rounded-lg border border-[#e5e5e5] text-center">
+<div class="text-2xl font-bold text-[#171717]">8</div>
+<div class="text-sm text-[#525252]">风格尝试</div>
+</div>
+<div class="p-4 bg-white rounded-lg border border-[#e5e5e5] text-center">
+<div class="text-2xl font-bold text-[#171717]">92%</div>
+<div class="text-sm text-[#525252]">满意度</div>
+</div>
+</div>
+<div class="p-3 bg-gradient-to-r from-[#f5f5f5] to-[#fafafa] rounded-lg border border-[#e5e5e5]">
+<div class="flex justify-between items-center mb-2">
+<span class="text-sm font-medium text-[#171717]">本月目标完成度</span>
+<span class="text-sm font-bold text-[#171717]">85%</span>
+</div>
+<div class="w-full bg-[#e5e5e5] rounded-full h-2">
+<div class="bg-[#d4a574] h-2 rounded-full" style="width: 85%"></div>
+</div>
+</div>
+</section>
+</div>
