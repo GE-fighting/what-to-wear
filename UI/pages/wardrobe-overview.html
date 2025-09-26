@@ -1,347 +1,324 @@
+
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的衣橱 · 概览 - What to Wear</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link rel="stylesheet" as="style" onload="this.rel='stylesheet'" 
+          href="https://fonts.googleapis.com/css2?display=swap&family=Noto+Sans%3Awght%40400%3B500%3B700%3B900&family=Plus+Jakarta+Sans%3Awght%40400%3B500%3B700%3B800">
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <style>
-        :root {
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --muted: #64748b;
-            --line: #e2e8f0;
-            --primary: #667eea;
-            --primary-dark: #4f46e5;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --radius: 16px;
-        }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 32px 20px 56px;
-        }
-
-        .topbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        .breadcrumbs {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        .title {
-            font-size: 28px;
-            font-weight: 700;
-            margin: 4px 0 0;
-        }
-
-        .actions {
-            display: flex;
-            gap: 10px;
-        }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 10px 14px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s ease;
-            text-decoration: none;
-        }
-
-        .btn.secondary {
-            background: #eef2ff;
-            color: var(--primary);
-        }
-
-        .btn:hover { background: var(--primary-dark); }
-        .btn.secondary:hover { background: #e0e7ff; }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap: 20px;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--line);
-            border-radius: var(--radius);
-            padding: 20px;
-        }
-
-        .welcome {
-            grid-column: span 12;
-            display: grid;
-            grid-template-columns: 1.3fr 1fr;
-            gap: 20px;
-            align-items: stretch;
-        }
-
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 14px;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 180px;
-        }
-
-        .hero h2 { font-size: 22px; margin-bottom: 8px; }
-        .hero p { color: #eef2ff; }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 12px;
-            margin-top: 14px;
-        }
-
-        .stat {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.25);
-            border-radius: 12px;
-            padding: 12px;
-        }
-
-        .stat .value { font-size: 22px; font-weight: 700; }
-        .stat .label { font-size: 12px; opacity: 0.9; }
-
-        .quick-filters {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .chip {
-            background: #f1f5f9;
-            border: 1px solid var(--line);
-            color: var(--muted);
-            padding: 8px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            cursor: pointer;
-        }
-
-        .section-title {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 12px;
-        }
-
-        .categories-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
-
-        .category {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 14px;
-            border: 1px solid var(--line);
-            border-radius: 12px;
-            background: #f8fafc;
-        }
-
-        .category .icon { font-size: 18px; }
-        .category .name { font-weight: 600; }
-        .category .count { color: var(--muted); font-size: 12px; margin-left: auto; }
-
-        .recent-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
-        .item-card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: white; }
-        .item-thumb { height: 120px; background: linear-gradient(135deg, #f1f5f9, #e2e8f0); display:flex; align-items:center; justify-content:center; font-size: 24px; }
-        .item-body { padding: 12px; }
-        .item-name { font-weight: 600; font-size: 14px; }
-        .meta { color: var(--muted); font-size: 12px; margin-top: 4px; }
-
-        .two-col { grid-column: span 12; display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }
-
-        .tips li { color: var(--muted); font-size: 14px; margin-bottom: 8px; }
-
+        /* 响应式断点适配 */
         @media (max-width: 1024px) {
-            .welcome { grid-template-columns: 1fr; }
-            .categories-grid { grid-template-columns: repeat(3, 1fr); }
-            .recent-grid { grid-template-columns: repeat(2, 1fr); }
-            .two-col { grid-template-columns: 1fr; }
+            .px-40 {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+            .grid-cols-6 {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            .grid-cols-4 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-cols-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .grid-cols-6 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .grid-cols-4 {
+                grid-template-columns: 1fr;
+            }
+            header .flex-wrap {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .layout-content-container > div {
+                margin-bottom: 1rem;
+            }
+        }
+        
+        @media (max-width: 640px) {
+            .grid-cols-6 {
+                grid-template-columns: 1fr;
+            }
+            .px-40 {
+                padding-left: 0.5rem;
+                padding-right: 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="topbar">
-            <div>
-                <div class="breadcrumbs">What to Wear › 我的衣橱</div>
-                <h1 class="title">我的衣橱 · 概览</h1>
+    <div class="relative flex h-auto min-h-screen w-full flex-col bg-slate-50 group/design-root overflow-x-hidden" 
+         style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'>
+        
+        <!-- 顶部导航栏 -->
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#e7edf3] px-10 py-3">
+            <div class="flex items-center gap-8">
+                <div class="flex items-center gap-4 text-[#0d141b]">
+                    <div class="size-4">
+                        <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M42.4379 44C42.4379 44 36.0744 33.9038 41.1692 24C46.8624 12.9336 42.2078 4 42.2078 4L7.01134 4C7.01134 4 11.6577 12.932 5.96912 23.9969C0.876273 33.9029 7.27094 44 7.27094 44L42.4379 44Z" fill="currentColor"></path>
+                        </svg>
+                    </div>
+                    <h2 class="text-[#0d141b] text-lg font-bold leading-tight tracking-[-0.015em]">StyleSense</h2>
+                </div>
+                <div class="flex items-center gap-9">
+                    <a class="text-[#0d141b] text-sm font-medium leading-normal" href="#">记录穿搭</a>
+                    <a class="text-[#0d141b] text-sm font-medium leading-normal" href="#">我的衣橱</a>
+                    <a class="text-[#0d141b] text-sm font-medium leading-normal" href="#">风格灵感</a>
+                    <a class="text-[#0d141b] text-sm font-medium leading-normal" href="#">穿搭分析</a>
+                </div>
             </div>
-            <div class="actions">
-                <a class="btn" href="add-clothing-item.html">➕ 添加衣物</a>
-                <a class="btn secondary" href="wardrobe-list.html">📚 查看全部</a>
+            <div class="flex flex-1 justify-end gap-8">
+                <label class="flex flex-col min-w-40 !h-10 max-w-64">
+                    <div class="flex w-full flex-1 items-stretch rounded-xl h-full">
+                        <div class="text-[#4c739a] flex border-none bg-[#e7edf3] items-center justify-center pl-4 rounded-l-xl border-r-0" data-icon="MagnifyingGlass" data-size="24px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M229.66,218.34l-50.07-50.06a88.11,88.11,0,1,0-11.31,11.31l50.06,50.07a8,8,0,0,0,11.32-11.32ZM40,112a72,72,0,1,1,72,72A72.08,72.08,0,0,1,40,112Z"></path>
+                            </svg>
+                        </div>
+                        <input placeholder="搜索衣物..." class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#0d141b] focus:outline-0 focus:ring-0 border-none bg-[#e7edf3] focus:border-none h-full placeholder:text-[#4c739a] px-4 rounded-l-none border-l-0 pl-2 text-base font-normal leading-normal" value="" />
+                    </div>
+                </label>
+                <div class="flex gap-2">
+                    <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#e7edf3] text-[#0d141b] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+                        <div class="text-[#0d141b]" data-icon="Heart" data-size="20px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"></path>
+                            </svg>
+                        </div>
+                    </button>
+                    <button class="flex max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 bg-[#e7edf3] text-[#0d141b] gap-2 text-sm font-bold leading-normal tracking-[0.015em] min-w-0 px-2.5">
+                        <div class="text-[#0d141b]" data-icon="ShoppingBag" data-size="20px" data-weight="regular">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="20px" height="20px" fill="currentColor" viewBox="0 0 256 256">
+                                <path d="M216,40H40A16,16,0,0,0,24,56V200a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A16,16,0,0,0,216,40Zm0,160H40V56H216V200ZM176,88a48,48,0,0,1-96,0,8,8,0,0,1,16,0,32,32,0,0,0,64,0,8,8,0,0,1,16,0Z"></path>
+                            </svg>
+                        </div>
+                    </button>
+                </div>
+                <div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-10" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBXaZIMxc1evrgSZyesklFdqA4ZqHAxXLYOiNlxldd-XovKLmcT6dbjc3P-okXxMh5Rp8rxhXkFnIlOWVkmBgW_PAZIGrq9iuXFrhEbUB8TxWmIqjVKLdGiYsVXcCWdOOh53gJKUkc4SS3mpdRg-FzfJciu4WUriDT97q94s9FgqkU9wdY_p6BS0Qk_187DU2H5C4LbkpA3jlTWI87TRxhBiKnkifC6r8M_5aK_vG1-hcxFJX37DY2KwJtuAVVYd3EULAf0NUXIhboA");'></div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <div class="px-40 flex flex-1 justify-center py-5">
+            <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+                <!-- 页面标题 -->
+                <div class="flex flex-wrap justify-between gap-3 p-4">
+                    <p class="text-[#0d141b] tracking-light text-[32px] font-bold leading-tight min-w-72">我的衣橱概览</p>
+                    <div class="flex gap-3">
+                        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#1380ec] text-slate-50 text-sm font-medium leading-normal">
+                            <span class="truncate">➕ 添加衣物</span>
+                        </button>
+                        <button class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#e7edf3] text-[#0d141b] text-sm font-medium leading-normal">
+                            <span class="truncate">📚 查看全部</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 衣橱总览卡片 -->
+                <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                    <h2 class="text-[#0d141b] text-[22px] font-bold leading-tight tracking-[-0.015em] mb-4">我的衣橱总览</h2>
+                    <p class="text-[#4c739a] text-base font-normal leading-normal mb-6">精心管理你的每一件衣物，让搭配变得更简单。</p>
+                    
+                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                        <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                            <div class="text-[#0d141b] text-2xl font-bold mb-1">483</div>
+                            <div class="text-[#4c739a] text-sm">件衣物</div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                            <div class="text-[#0d141b] text-2xl font-bold mb-1">127</div>
+                            <div class="text-[#4c739a] text-sm">常穿单品</div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                            <div class="text-[#0d141b] text-2xl font-bold mb-1">8</div>
+                            <div class="text-[#4c739a] text-sm">新增衣物</div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                            <div class="text-[#0d141b] text-2xl font-bold mb-1">94%</div>
+                            <div class="text-[#4c739a] text-sm">利用率</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 快速筛选区域 -->
+                <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                    <h3 class="text-[#0d141b] text-lg font-bold leading-tight mb-4">快速筛选</h3>
+                    <div class="flex flex-wrap gap-2">
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">春秋</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">夏季</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">冬季</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">上装</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">下装</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">鞋履</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">中性色</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">近7天未穿</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">最常穿</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">需要清洗</span>
+                        <span class="bg-[#e7edf3] text-[#0d141b] px-3 py-1 rounded-full text-sm cursor-pointer">待整理</span>
+                    </div>
+                </div>
+
+                <!-- 分类纵览 -->
+                <div class="bg-white rounded-xl p-6 mb-6 shadow-sm">
+                    <h3 class="text-[#0d141b] text-lg font-bold leading-tight mb-4">分类概览</h3>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+                        <div class="bg-[#e7edf3] rounded-xl p-4 flex items-center gap-3">
+                            <span class="text-2xl">👕</span>
+                            <div>
+                                <div class="text-[#0d141b] font-medium">上装</div>
+                                <div class="text-[#4c739a] text-sm">128件</div>
+                            </div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 flex items-center gap-3">
+                            <span class="text-2xl">👖</span>
+                            <div>
+                                <div class="text-[#0d141b] font-medium">下装</div>
+                                <div class="text-[#4c739a] text-sm">96件</div>
+                            </div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 flex items-center gap-3">
+                            <span class="text-2xl">🧥</span>
+                            <div>
+                                <div class="text-[#0d141b] font-medium">外套</div>
+                                <div class="text-[#4c739a] text-sm">54件</div>
+                            </div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 flex items-center gap-3">
+                            <span class="text-2xl">👗</span>
+                            <div>
+                                <div class="text-[#0d141b] font-medium">裙装</div>
+                                <div class="text-[#4c739a] text-sm">36件</div>
+                            </div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 flex items-center gap-3">
+                            <span class="text-2xl">👟</span>
+                            <div>
+                                <div class="text-[#0d141b] font-medium">鞋履</div>
+                                <div class="text-[#4c739a] text-sm">42件</div>
+                            </div>
+                        </div>
+                        <div class="bg-[#e7edf3] rounded-xl p-4 flex items-center gap-3">
+                            <span class="text-2xl">🎒</span>
+                            <div>
+                                <div class="text-[#0d141b] font-medium">配饰</div>
+                                <div class="text-[#4c739a] text-sm">127件</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 两列布局：衣橱状态和衣橱管理 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- 左侧：衣橱状态 -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-[#0d141b] text-lg font-bold leading-tight mb-4">衣橱状态</h3>
+                        
+                        <div class="grid grid-cols-2 gap-4 mb-6">
+                            <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                                <div class="text-[#0d141b] text-2xl font-bold mb-1">12</div>
+                                <div class="text-[#4c739a] text-sm">需要清洗</div>
+                            </div>
+                            <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                                <div class="text-[#0d141b] text-2xl font-bold mb-1">5</div>
+                                <div class="text-[#4c739a] text-sm">需要整理</div>
+                            </div>
+                            <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                                <div class="text-[#0d141b] text-2xl font-bold mb-1">43</div>
+                                <div class="text-[#4c739a] text-sm">30天未穿</div>
+                            </div>
+                            <div class="bg-[#e7edf3] rounded-xl p-4 text-center">
+                                <div class="text-[#0d141b] text-2xl font-bold mb-1">8</div>
+                                <div class="text-[#4c739a] text-sm">本周新购</div>
+                            </div>
+                        </div>
+
+                        <!-- 最近衣物展示 -->
+                        <h4 class="text-[#0d141b] text-base font-bold leading-tight mb-4">最近添加</h4>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            <div class="bg-[#e7edf3] rounded-xl p-3 text-center">
+                                <div class="text-3xl mb-2">🧥</div>
+                                <div class="text-[#0d141b] text-sm font-medium">机能风防风外套</div>
+                                <div class="text-[#4c739a] text-xs">外套 · 春秋</div>
+                            </div>
+                            <div class="bg-[#e7edf3] rounded-xl p-3 text-center">
+                                <div class="text-3xl mb-2">👟</div>
+                                <div class="text-[#0d141b] text-sm font-medium">白色运动鞋</div>
+                                <div class="text-[#4c739a] text-xs">鞋履 · 全季节</div>
+                            </div>
+                            <div class="bg-[#e7edf3] rounded-xl p-3 text-center">
+                                <div class="text-3xl mb-2">👖</div>
+                                <div class="text-[#0d141b] text-sm font-medium">直筒牛仔裤</div>
+                                <div class="text-[#4c739a] text-xs">下装 · 春秋</div>
+                            </div>
+                            <div class="bg-[#e7edf3] rounded-xl p-3 text-center">
+                                <div class="text-3xl mb-2">👕</div>
+                                <div class="text-[#0d141b] text-sm font-medium">简约白T</div>
+                                <div class="text-[#4c739a] text-xs">上装 · 夏季</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：衣橱管理 -->
+                    <div class="bg-white rounded-xl p-6 shadow-sm">
+                        <h3 class="text-[#0d141b] text-lg font-bold leading-tight mb-4">衣橱管理</h3>
+                        
+                        <div class="space-y-3 mb-6">
+                            <button class="flex items-center gap-3 w-full p-3 bg-[#e7edf3] rounded-xl text-[#0d141b] text-sm font-medium cursor-pointer hover:bg-[#d8e1ea] transition-colors">
+                                <span class="text-lg">🧹</span>
+                                <span>清理长期未穿衣物</span>
+                            </button>
+                            <button class="flex items-center gap-3 w-full p-3 bg-[#e7edf3] rounded-xl text-[#0d141b] text-sm font-medium cursor-pointer hover:bg-[#d8e1ea] transition-colors">
+                                <span class="text-lg">📊</span>
+                                <span>生成穿搭报告</span>
+                            </button>
+                            <button class="flex items-center gap-3 w-full p-3 bg-[#e7edf3] rounded-xl text-[#0d141b] text-sm font-medium cursor-pointer hover:bg-[#d8e1ea] transition-colors">
+                                <span class="text-lg">🏷️</span>
+                                <span>批量标签管理</span>
+                            </button>
+                        </div>
+
+                        <h4 class="text-[#0d141b] text-base font-bold leading-tight mb-3">管理建议</h4>
+                        <ul class="space-y-2 text-[#4c739a] text-sm">
+                            <li class="flex items-start gap-2">
+                                <span class="text-[#1380ec]">•</span>
+                                <span>12件衣物需要清洗，建议及时处理。</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-[#1380ec]">•</span>
+                                <span>43件衣物超过30天未穿，考虑整理或捐赠。</span>
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <span class="text-[#1380ec]">•</span>
+                                <span>春季衣物使用率较低，可适当调整摆放位置。</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="grid">
-            <div class="welcome">
-                <div class="hero">
-                    <div>
-                        <h2>我的衣橱总览</h2>
-                        <p>精心管理你的每一件衣物，让搭配变得更简单。</p>
+        <!-- 页脚 -->
+        <footer class="flex justify-center mt-8">
+            <div class="flex max-w-[960px] flex-1 flex-col">
+                <footer class="flex flex-col gap-6 px-5 py-10 text-center @container">
+                    <div class="flex flex-wrap items-center justify-center gap-6 @[480px]:flex-row @[480px]:justify-around">
+                        <a class="text-[#4c739a] text-base font-normal leading-normal min-w-40" href="#">关于我们</a>
+                        <a class="text-[#4c739a] text-base font-normal leading-normal min-w-40" href="#">联系我们</a>
+                        <a class="text-[#4c739a] text-base font-normal leading-normal min-w-40" href="#">隐私政策</a>
                     </div>
-                    <div class="stats">
-                        <div class="stat">
-                            <div class="value">483</div>
-                            <div class="label">件衣物</div>
-                        </div>
-                        <div class="stat">
-                            <div class="value">127</div>
-                            <div class="label">常穿单品</div>
-                        </div>
-                        <div class="stat">
-                            <div class="value">8</div>
-                            <div class="label">新增衣物</div>
-                        </div>
-                        <div class="stat">
-                            <div class="value">94%</div>
-                            <div class="label">利用率</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card">
-                    <div class="section-title">快速筛选</div>
-                    <div class="quick-filters">
-                        <div class="chip">春秋</div>
-                        <div class="chip">夏季</div>
-                        <div class="chip">冬季</div>
-                        <div class="chip">上装</div>
-                        <div class="chip">下装</div>
-                        <div class="chip">鞋履</div>
-                        <div class="chip">中性色</div>
-                        <div class="chip">近7天未穿</div>
-                        <div class="chip">最常穿</div>
-                        <div class="chip">需要清洗</div>
-                        <div class="chip">待整理</div>
-                    </div>
-                </div>
+                    <p class="text-[#4c739a] text-base font-normal leading-normal">@2024 StyleSense. All rights reserved.</p>
+                </footer>
             </div>
-
-            <div class="card" style="grid-column: span 12;">
-                <div class="section-title">分类概览</div>
-                <div class="categories-grid">
-                    <div class="category"><div class="icon">👕</div><div class="name">上装</div><div class="count">128</div></div>
-                    <div class="category"><div class="icon">👖</div><div class="name">下装</div><div class="count">96</div></div>
-                    <div class="category"><div class="icon">🧥</div><div class="name">外套</div><div class="count">54</div></div>
-                    <div class="category"><div class="icon">👗</div><div class="name">裙装</div><div class="count">36</div></div>
-                    <div class="category"><div class="icon">👟</div><div class="name">鞋履</div><div class="count">42</div></div>
-                    <div class="category"><div class="icon">🎒</div><div class="name">配饰</div><div class="count">127</div></div>
-                </div>
-            </div>
-
-            <div class="two-col">
-                <div class="card">
-                    <div class="section-title">衣橱状态</div>
-                    <div class="status-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
-                        <div class="status-item" style="padding: 12px; background: #f1f5f9; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: 600; color: #ef4444;">12</div>
-                            <div style="font-size: 12px; color: #64748b;">需要清洗</div>
-                        </div>
-                        <div class="status-item" style="padding: 12px; background: #f1f5f9; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: 600; color: #f59e0b;">5</div>
-                            <div style="font-size: 12px; color: #64748b;">需要整理</div>
-                        </div>
-                        <div class="status-item" style="padding: 12px; background: #f1f5f9; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: 600; color: #64748b;">43</div>
-                            <div style="font-size: 12px; color: #64748b;">30天未穿</div>
-                        </div>
-                        <div class="status-item" style="padding: 12px; background: #f1f5f9; border-radius: 8px; text-align: center;">
-                            <div style="font-size: 20px; font-weight: 600; color: #10b981;">8</div>
-                            <div style="font-size: 12px; color: #64748b;">本周新购</div>
-                        </div>
-                    </div>
-                    <div class="recent-grid">
-                        <div class="item-card">
-                            <div class="item-thumb">🧥</div>
-                            <div class="item-body">
-                                <div class="item-name">机能风防风外套</div>
-                                <div class="meta">外套 · 春秋 · 深灰</div>
-                            </div>
-                        </div>
-                        <div class="item-card">
-                            <div class="item-thumb">👟</div>
-                            <div class="item-body">
-                                <div class="item-name">白色运动鞋</div>
-                                <div class="meta">鞋履 · 全季节</div>
-                            </div>
-                        </div>
-                        <div class="item-card">
-                            <div class="item-thumb">👖</div>
-                            <div class="item-body">
-                                <div class="item-name">直筒牛仔裤</div>
-                                <div class="meta">下装 · 春秋</div>
-                            </div>
-                        </div>
-                        <div class="item-card">
-                            <div class="item-thumb">👕</div>
-                            <div class="item-body">
-                                <div class="item-name">简约白T</div>
-                                <div class="meta">上装 · 夏季</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card">
-                    <div class="section-title">衣橱管理</div>
-                    <div class="management-actions" style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 20px;">
-                        <button style="display: flex; align-items: center; gap: 8px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1e293b;">
-                            <span>🧹</span>
-                            <span>清理长期未穿衣物</span>
-                        </button>
-                        <button style="display: flex; align-items: center; gap: 8px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1e293b;">
-                            <span>📊</span>
-                            <span>生成穿搭报告</span>
-                        </button>
-                        <button style="display: flex; align-items: center; gap: 8px; padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 14px; color: #1e293b;">
-                            <span>🏷️</span>
-                            <span>批量标签管理</span>
-                        </button>
-                    </div>
-                    <div class="section-title" style="font-size: 14px; margin-bottom: 8px;">管理建议</div>
-                    <ul class="tips">
-                        <li>12件衣物需要清洗，建议及时处理。</li>
-                        <li>43件衣物超过30天未穿，考虑整理或捐赠。</li>
-                        <li>春季衣物使用率较低，可适当调整摆放位置。</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+        </footer>
     </div>
 </body>
 </html>
-
-
+                                <
