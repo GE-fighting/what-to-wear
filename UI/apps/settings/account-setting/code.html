@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>账户设置</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111827",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#1F2937",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#374151",
+                        "text-light": "#111827",
+                        "text-dark": "#F9FAFB",
+                        "text-secondary-light": "#6B7280",
+                        "text-secondary-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#4B5563",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 3rem;
+            height: 1.5rem;
+        }
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 1.5rem;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 1.25rem;
+            width: 1.25rem;
+            left: 0.125rem;
+            bottom: 0.125rem;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked+.slider {
+            background-color: #111827;
+        }
+        .dark input:checked+.slider {
+            background-color: #374151;
+        }
+        input:focus+.slider {
+            box-shadow: 0 0 1px #111827;
+        }
+        input:checked+.slider:before {
+            transform: translateX(1.5rem);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="min-h-screen flex flex-col">
+<header class="bg-card-light dark:bg-card-dark shadow-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex items-center space-x-8">
+<a class="text-xl font-bold text-text-light dark:text-text-dark" href="#">StyleSense</a>
+<nav class="hidden md:flex space-x-8">
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">记录穿搭</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">我的衣橱</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">风格灵感</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">穿搭分析</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative hidden md:block">
+<span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark">search</span>
+<input class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-light dark:text-text-dark w-64" placeholder="搜索衣物" type="text"/>
+</div>
+<button class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark">
+<span class="material-icons">notifications_none</span>
+</button>
+<button>
+<img alt="User avatar" class="h-8 w-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUZrQ70mFuE94RZbqBza4cjKL55KSGqqN473iO43esR3GiQh8n5RxwtaohdLBuSLV5xqrSzkaeWiKobpKNjXtSNtJA4IqaswkZMT4bXDa5laBbWJp4hNdjEo24Tvh9wB8zk7cAQ2nNKhorjoN_JSFsZJK4QLd6yiA99c0l2dOYF0eK56jRMgRo3A5j3m8R4JYGdYTq34SKldjEBQ3a5yUMA9sg_dLbxatb4crcOQZijGPIho_bidIgOoR-sJpZwmRKlfeEGKmTjd8J"/>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="flex flex-col md:flex-row gap-12">
+<aside class="md:w-1/4">
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm text-center">
+<img alt="User avatar" class="h-24 w-24 rounded-full mx-auto mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW2h2swZVkdE7STqWc-jkdffI2IZ8Yur5SXhOl3qkQgywypBMxrNrXsm6aQMnwGZGhnVGDFVvmH1Vg_k9s79o7UirWPfftrTwUnFm8bzL1ATxOSR1IEuSvRpXQtSCmOGIbIvOIxPKE2C9x717vnaNJcZWBWC9Ie73UvQRwan97YIRtq9njFBMzK9rRq_JHUSPGBXPLQb0CDp79XOR8BfDYJurWXMfmQXHlvQcl81y47F-CgvehizHWHoOn9c3nUzZbp1aJvllMnaQj"/>
+<h2 class="text-xl font-bold text-text-light dark:text-text-dark">用户名</h2>
+<p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">时尚爱好者</p>
+<div class="flex justify-center space-x-6 mt-4 text-text-secondary-light dark:text-text-secondary-dark">
+<div class="text-center">
+<p class="font-bold text-lg text-text-light dark:text-text-dark">463</p>
+<p class="text-sm">衣物</p>
+</div>
+<div class="text-center">
+<p class="font-bold text-lg text-text-light dark:text-text-dark">128</p>
+<p class="text-sm">穿搭</p>
+</div>
+<div class="text-center">
+<p class="font-bold text-lg text-text-light dark:text-text-dark">32</p>
+<p class="text-sm">灵感</p>
+</div>
+</div>
+</div>
+<nav class="mt-8">
+<ul class="space-y-2">
+<li>
+<a class="flex items-center p-3 rounded-lg text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700" href="#">
+<span class="material-icons mr-3">account_circle</span>
+<span>个人信息</span>
+</a>
+</li>
+<li>
+<a class="flex items-center p-3 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-icons mr-3">settings</span>
+<span>账户设置</span>
+</a>
+</li>
+<li>
+<a class="flex items-center p-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" href="#">
+<span class="material-icons mr-3">logout</span>
+<span>退出登录</span>
+</a>
+</li>
+</ul>
+</nav>
+</aside>
+<div class="md:w-3/4 space-y-8">
+<div class="bg-card-light dark:bg-card-dark p-8 rounded-lg shadow-sm">
+<h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-6">账户设置</h2>
+<div class="border-b border-border-light dark:border-border-dark pb-6 mb-6">
+<h3 class="text-lg font-medium text-text-light dark:text-text-dark mb-4">更改密码</h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="current-password">当前密码</label>
+<input class="mt-1 block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark" id="current-password" type="password"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="new-password">新密码</label>
+<input class="mt-1 block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark" id="new-password" type="password"/>
+</div>
+</div>
+<div class="mt-4 flex justify-end">
+<button class="rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="button">更新密码</button>
+</div>
+</div>
+<div class="border-b border-border-light dark:border-border-dark pb-6 mb-6">
+<h3 class="text-lg font-medium text-text-light dark:text-text-dark mb-4">更改邮箱</h3>
+<div class="flex items-center space-x-4">
+<div class="flex-grow">
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="email">邮箱地址</label>
+<input class="mt-1 block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark" id="email" type="email" value="user@example.com"/>
+</div>
+<button class="self-end rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="button">更新邮箱</button>
+</div>
+</div>
+<div class="border-b border-border-light dark:border-border-dark pb-6 mb-6">
+<h3 class="text-lg font-medium text-text-light dark:text-text-dark mb-4">通知设置</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-text-light dark:text-text-dark">新品推荐</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">获取最新单品和品牌合作的通知。</p>
+</div>
+<label class="switch">
+<input checked="" type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-text-light dark:text-text-dark">促销活动</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">接收特别优惠和折扣信息。</p>
+</div>
+<label class="switch">
+<input checked="" type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-text-light dark:text-text-dark">社区动态</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">当有人评论或喜欢你的穿搭时收到通知。</p>
+</div>
+<label class="switch">
+<input type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-lg font-medium text-text-light dark:text-text-dark mb-4">隐私设置</h3>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-text-light dark:text-text-dark">公开个人资料</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">允许其他用户查看你的个人资料和穿搭。</p>
+</div>
+<label class="switch">
+<input checked="" type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div>
+<p class="text-sm font-medium text-text-light dark:text-text-dark">允许被搜索</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark">允许其他用户通过你的用户名搜索到你。</p>
+</div>
+<label class="switch">
+<input type="checkbox"/>
+<span class="slider"></span>
+</label>
+</div>
+</div>
+</div>
+</div>
+<div class="bg-red-50 dark:bg-red-900/20 p-6 rounded-lg shadow-sm">
+<h3 class="text-lg font-medium text-red-700 dark:text-red-400 mb-2">删除账户</h3>
+<p class="text-sm text-red-600 dark:text-red-300 mb-4">一旦删除你的账户，所有数据将被永久移除。此操作无法撤销。</p>
+<button class="w-full sm:w-auto rounded-md border border-transparent bg-red-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-red-50 focus:ring-red-500">
+                        删除我的账户
+                        </button>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto py-8 text-center text-text-secondary-light dark:text-text-secondary-dark">
+<p>©2024 StyleSense. All rights reserved.</p>
+</footer>
+</div>
+
+</body></html>

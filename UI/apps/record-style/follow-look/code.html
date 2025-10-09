@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StyleSense - 镜像灵感</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<style>
+        .group:hover .group-hover\:block {
+            display: block;
+        }
+        .tab-active {
+            border-bottom: 2px solid #1F2937;
+            color: #1F2937;
+        }
+        .dark .tab-active {
+            border-bottom: 2px solid #F9FAFB;
+            color: #F9FAFB;
+        }
+    </style>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#1F2937", // A dark gray, works well for text/primary elements
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#111827",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#1F2937",
+                        "text-light": "#1F2937",
+                        "text-dark": "#F9FAFB",
+                        "subtext-light": "#6B7280",
+                        "subtext-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#374151"
+                    },
+                    fontFamily: {
+                        display: ["Noto Sans SC", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-text-light dark:text-text-dark antialiased" x-data="{ activeTab: 'mirror-inspiration', analysisStep: 'upload' }">
+<div class="min-h-screen">
+<header class="bg-card-light dark:bg-card-dark border-b border-border-light dark:border-border-dark sticky top-0 z-50">
+<div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<div class="flex items-center space-x-8">
+<a class="text-2xl font-bold text-primary dark:text-white" href="#">StyleSense</a>
+<nav class="hidden md:flex items-center space-x-8">
+<div class="relative group">
+<a class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark transition-colors duration-200 text-lg font-medium" href="#">记录穿搭</a>
+<div class="absolute hidden group-hover:block w-48 bg-card-light dark:bg-card-dark rounded-md shadow-lg py-2 mt-2 border border-border-light dark:border-border-dark">
+<a @click.prevent="activeTab = 'my-room'" class="block px-4 py-2 text-sm text-subtext-light dark:text-subtext-dark hover:bg-background-light dark:hover:bg-background-dark" href="#">我的搭间</a>
+<a @click.prevent="activeTab = 'mirror-inspiration'" class="block px-4 py-2 text-sm text-subtext-light dark:text-subtext-dark hover:bg-background-light dark:hover:bg-background-dark" href="#">镜像灵感</a>
+</div>
+</div>
+<a class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark transition-colors duration-200 text-lg" href="#">我的衣橱</a>
+<a class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark transition-colors duration-200 text-lg" href="#">风格灵感</a>
+<a class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark transition-colors duration-200 text-lg" href="#">穿搭分析</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative">
+<span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-subtext-light dark:text-subtext-dark">search</span>
+<input class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full py-2 pl-10 pr-4 w-64 focus:outline-none focus:ring-2 focus:ring-primary/50" placeholder="搜索衣物" type="text"/>
+</div>
+<button class="text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark">
+<span class="material-icons-outlined">notifications</span>
+</button>
+<img alt="用户头像" class="w-8 h-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfoMP5M6uhdUhlzmQkjp1NtdSfJ0sPvwR89AfrGobdAQiDlqi6ai9gTSrzwkzV7Eu5qzE4wwvRt7H8_izhqnX2xAtR4GuS67HOSXSgHP37Dmzh1q7-jVhcJOmFTFs_fYZJkGbIIg_64ltffLqZAZ1v450-pBoPv-wGZy9nuIrNCJR4roKz5WH_jiQMgftirvOfbxr6DyFleQbcHnz00Bk5t_xMTI0ISS8plT5V4eSXcniYRkNFQinj6HdWQts4BYBneZ-ZCFmDMA"/>
+</div>
+</div>
+</div>
+</header>
+<main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+<div x-show="activeTab === 'mirror-inspiration'">
+<div class="flex justify-between items-center mb-6">
+<h1 class="text-3xl font-bold text-text-light dark:text-text-dark">镜像灵感</h1>
+<button @click="analysisStep = 'upload'" class="text-sm text-primary dark:text-white font-medium hover:underline flex items-center space-x-1" x-show="analysisStep !== 'upload'">
+<span class="material-icons-outlined text-base">arrow_back</span>
+<span>重新上传</span>
+</button>
+</div>
+<div class="bg-card-light dark:bg-card-dark p-8 rounded-lg shadow-sm border border-border-light dark:border-border-dark">
+<div class="text-center" x-show="analysisStep === 'upload'" x-transition:enter="transition ease-out duration-300" x-transition:enter-end="opacity-100" x-transition:enter-start="opacity-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-end="opacity-0" x-transition:leave-start="opacity-100">
+<h2 class="text-2xl font-semibold mb-2 text-text-light dark:text-text-dark">上传穿搭图片</h2>
+<p class="text-subtext-light dark:text-subtext-dark mb-8 max-w-2xl mx-auto">上传一张您喜欢的穿搭照片，AI 将为您解析并从您的衣橱中推荐相似单品，助您轻松复刻心仪造型。</p>
+<div @click="analysisStep = 'analysis'" class="relative border-2 border-dashed border-border-light dark:border-border-dark rounded-lg p-10 text-center cursor-pointer hover:border-primary/70 transition-colors duration-200 max-w-lg mx-auto">
+<input class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" type="file"/>
+<div class="flex flex-col items-center">
+<span class="material-icons-outlined text-5xl text-subtext-light dark:text-subtext-dark mb-4">cloud_upload</span>
+<p class="font-semibold text-text-light dark:text-text-dark">点击或拖拽图片到这里</p>
+<p class="text-sm text-subtext-light dark:text-subtext-dark">支持 PNG, JPG, GIF (最大 5MB)</p>
+</div>
+</div>
+</div>
+<div x-data="{ currentCategory: 'tops' }" x-show="analysisStep === 'analysis'" x-transition:enter="transition ease-out duration-300" x-transition:enter-end="opacity-100" x-transition:enter-start="opacity-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-end="opacity-0" x-transition:leave-start="opacity-100">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div class="flex flex-col items-center">
+<h2 class="text-xl font-semibold mb-4 text-text-light dark:text-text-dark">灵感来源</h2>
+<img alt="Uploaded Outfit" class="rounded-lg w-full max-w-md object-cover aspect-[3/4] shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZDhxirXA366O_DiSOoHAEEaXEEZl52tKVDCulW78Jn8rXFke-wFY-bhLXzU92MuCC5fEPXK9M8mmylm2lEMDK5VNUZLPjSfHsdHObV7yx2gz7J50f56OZvBcn-YkoVl8PBL6Y8sbRVM9w45LydSqfN6CnlhYkBvG8AXwJT98XFFAZXx9mjRcrHgsZsQmDhfMb4Esv4zydxO9AS1Xr5Ni8WqlzAp-smDDXfaRX9buyS4fUrPDuAiWUSyOYmTDl5A6xtmeRScB7cw"/>
+</div>
+<div class="flex flex-col">
+<h2 class="text-xl font-semibold mb-4 text-text-light dark:text-text-dark">AI 解析与单品选择</h2>
+<div class="border-b border-border-light dark:border-border-dark mb-4">
+<nav class="-mb-px flex space-x-6">
+<button :class="{'tab-active': currentCategory === 'tops'}" @click="currentCategory = 'tops'" class="py-3 px-1 border-b-2 border-transparent text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark font-medium transition-colors">
+                                            上装
+                                        </button>
+<button :class="{'tab-active': currentCategory === 'bottoms'}" @click="currentCategory = 'bottoms'" class="py-3 px-1 border-b-2 border-transparent text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark font-medium transition-colors">
+                                            下装
+                                        </button>
+<button :class="{'tab-active': currentCategory === 'shoes'}" @click="currentCategory = 'shoes'" class="py-3 px-1 border-b-2 border-transparent text-subtext-light dark:text-subtext-dark hover:text-text-light dark:hover:text-text-dark font-medium transition-colors">
+                                            鞋子
+                                        </button>
+</nav>
+</div>
+<div class="flex-grow overflow-y-auto pr-2">
+<div class="bg-background-light dark:bg-background-dark p-4 rounded-lg mb-4">
+<p class="text-sm font-medium text-text-light dark:text-text-dark">AI 分析结果:</p>
+<div class="flex flex-wrap gap-2 mt-2">
+<span class="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-blue-900 dark:text-blue-300">颜色: 白色</span>
+<span class="bg-gray-100 text-gray-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-gray-700 dark:text-gray-300">风格: 简约</span>
+<span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-green-900 dark:text-green-300">款式: T恤</span>
+<span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full dark:bg-yellow-900 dark:text-yellow-300">厚度: 薄款</span>
+</div>
+</div>
+<p class="text-subtext-light dark:text-subtext-dark mb-4 text-sm">根据AI分析，为你从衣橱中筛选出以下相似单品：</p>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+<div class="group relative cursor-pointer border-2 border-primary/80 rounded-lg overflow-hidden shadow-md">
+<div class="absolute top-2 right-2 bg-primary text-white rounded-full h-6 w-6 flex items-center justify-center">
+<span class="material-icons-outlined text-base">check</span>
+</div>
+<img alt="简约白T" class="h-40 w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZDhxirXA366O_DiSOoHAEEaXEEZl52tKVDCulW78Jn8rXFke-wFY-bhLXzU92MuCC5fEPXK9M8mmylm2lEMDK5VNUZLPjSfHsdHObV7yx2gz7J50f56OZvBcn-YkoVl8PBL6Y8sbRVM9w45LydSqfN6CnlhYkBvG8AXwJT98XFFAZXx9mjRcrHgsZsQmDhfMb4Esv4zydxO9AS1Xr5Ni8WqlzAp-smDDXfaRX9buyS4fUrPDuAiWUSyOYmTDl5A6xtmeRScB7cw"/>
+<div class="p-2 bg-card-light dark:bg-card-dark">
+<h4 class="text-sm font-medium truncate">简约白T</h4>
+</div>
+</div>
+<div class="group relative cursor-pointer border-2 border-transparent hover:border-primary/50 rounded-lg overflow-hidden transition">
+<img alt="棉质圆领T恤" class="h-40 w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH-L7FdmL3xHhlueKM1mE__6QUrDRhY3Lpu69oN3tqwTZgTzqhjiMG4KKmHqm3hfhYFuE3IyfN4wqsbV4uXFepSq3L3VbONrlxEC2SPr1rSxTwDle1CL6nu92HiusbkGSQUU-h41V2a9UnJBIxHa1b65CaD5f04CLPvuSQ5Ua1zMRvMv5GB-17Oy7kw3oEsVihT9dgmO03x4zPGUnCEGbYpjcNsOD4sj38ph_VyANpYycuQSJgI6MYMLtNTevwKLM0iRuXyxpisQ"/>
+<div class="p-2 bg-card-light dark:bg-card-dark">
+<h4 class="text-sm font-medium truncate">棉质圆领T恤</h4>
+</div>
+</div>
+<div class="group relative cursor-pointer border-2 border-transparent hover:border-primary/50 rounded-lg overflow-hidden transition">
+<img alt="基础款白T" class="h-40 w-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDU-ygsALDYwS7zNZWUs9pZDlDvvy_Wq8126XFo7nZ-V69gRjCJXJdHExRtPVzzzd12cUiT3m74IQOCcSreUxzm1Mpf5v-PmquoM8yuCHU63SpnaNCBkRpqpVeiBSrKZda3FlXe9oPWDBHK3uCWEdp6_5ZBlfxMn-YsBzChoFHOF___qI7oODtntM3hbmA6JTJObhYACPN8ClNjeq54cpGvroi1HCWaHTv-Z8Dq3YxhPEo2bdWCeJ6wFfOC4_dP49DoJT8chSwbCg"/>
+<div class="p-2 bg-card-light dark:bg-card-dark">
+<h4 class="text-sm font-medium truncate">基础款白T</h4>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto pt-6 flex justify-end">
+<button @click="analysisStep = 'result'" class="w-full lg:w-auto bg-primary text-white py-2.5 px-6 rounded-md font-semibold hover:bg-opacity-90 transition-colors duration-200 flex items-center justify-center space-x-2">
+<span>生成我的穿搭</span>
+<span class="material-icons-outlined text-xl">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<div x-show="analysisStep === 'result'" x-transition:enter="transition ease-out duration-300" x-transition:enter-end="opacity-100" x-transition:enter-start="opacity-0" x-transition:leave="transition ease-in duration-200" x-transition:leave-end="opacity-0" x-transition:leave-start="opacity-100">
+<div class="text-center mb-8">
+<h2 class="text-2xl font-semibold mb-2 text-text-light dark:text-text-dark">我的镜像穿搭</h2>
+<p class="text-subtext-light dark:text-subtext-dark max-w-2xl mx-auto">基于你的选择，这是为你生成的穿搭。你可以保存或进行AI试穿。</p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+<div class="bg-background-light dark:bg-background-dark p-6 rounded-lg flex flex-col items-center justify-center">
+<h3 class="font-semibold text-lg mb-6">灵感来源</h3>
+<div class="grid grid-cols-3 gap-2 w-full max-w-sm">
+<img alt="Inspiration Top" class="rounded-md object-cover aspect-square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZDhxirXA366O_DiSOoHAEEaXEEZl52tKVDCulW78Jn8rXFke-wFY-bhLXzU92MuCC5fEPXK9M8mmylm2lEMDK5VNUZLPjSfHsdHObV7yx2gz7J50f56OZvBcn-YkoVl8PBL6Y8sbRVM9w45LydSqfN6CnlhYkBvG8AXwJT98XFFAZXx9mjRcrHgsZsQmDhfMb4Esv4zydxO9AS1Xr5Ni8WqlzAp-smDDXfaRX9buyS4fUrPDuAiWUSyOYmTDl5A6xtmeRScB7cw"/>
+<img alt="Inspiration Bottom" class="rounded-md object-cover aspect-square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH-L7FdmL3xHhlueKM1mE__6QUrDRhY3Lpu69oN3tqwTZgTzqhjiMG4KKmHqm3hfhYFuE3IyfN4wqsbV4uXFepSq3L3VbONrlxEC2SPr1rSxTwDle1CL6nu92HiusbkGSQUU-h41V2a9UnJBIxHa1b65CaD5f04CLPvuSQ5Ua1zMRvMv5GB-17Oy7kw3oEsVihT9dgmO03x4zPGUnCEGbYpjcNsOD4sj38ph_VyANpYycuQSJgI6MYMLtNTevwKLM0iRuXyxpisQ"/>
+<img alt="Inspiration Shoes" class="rounded-md object-cover aspect-square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGzrvTvoWWB_5H4heTler19abv4xv0FsGLBMon5u3nr8duZlOsHKN-oc9Gt38i5wxIPV4cUWxuP9MXzGXsb88m8zh07YrOaTG1iPr7BwLH0rYJDe9UIdrZKXg2vgSUsO3bxAHlExprC0JNdQNabNnoZes8G3GSYK-XYB2tOvt8cPD_vRRBIJjIxtPDlVkA9QwsTFlxFuhqxcAHcx87m-b5bjoUpH4RGzUB0i6NDuE49NJ7dzGjjTrusd5HtjsZW65tc90XmD_Cnw"/>
+</div>
+</div>
+<div class="bg-background-light dark:bg-background-dark p-6 rounded-lg flex flex-col items-center justify-center">
+<h3 class="font-semibold text-lg mb-6">我的衣橱复刻</h3>
+<div class="grid grid-cols-3 gap-2 w-full max-w-sm">
+<img alt="My Top" class="rounded-md object-cover aspect-square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZDhxirXA366O_DiSOoHAEEaXEEZl52tKVDCulW78Jn8rXFke-wFY-bhLXzU92MuCC5fEPXK9M8mmylm2lEMDK5VNUZLPjSfHsdHObV7yx2gz7J50f56OZvBcn-YkoVl8PBL6Y8sbRVM9w45LydSqfN6CnlhYkBvG8AXwJT98XFFAZXx9mjRcrHgsZsQmDhfMb4Esv4zydxO9AS1Xr5Ni8WqlzAp-smDDXfaRX9buyS4fUrPDuAiWUSyOYmTDl5A6xtmeRScB7cw"/>
+<img alt="My Bottom" class="rounded-md object-cover aspect-square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDH-L7FdmL3xHhlueKM1mE__6QUrDRhY3Lpu69oN3tqwTZgTzqhjiMG4KKmHqm3hfhYFuE3IyfN4wqsbV4uXFepSq3L3VbONrlxEC2SPr1rSxTwDle1CL6nu92HiusbkGSQUU-h41V2a9UnJBIxHa1b65CaD5f04CLPvuSQ5Ua1zMRvMv5GB-17Oy7kw3oEsVihT9dgmO03x4zPGUnCEGbYpjcNsOD4sj38ph_VyANpYycuQSJgI6MYMLtNTevwKLM0iRuXyxpisQ"/>
+<img alt="My Shoes" class="rounded-md object-cover aspect-square" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDGzrvTvoWWB_5H4heTler19abv4xv0FsGLBMon5u3nr8duZlOsHKN-oc9Gt38i5wxIPV4cUWxuP9MXzGXsb88m8zh07YrOaTG1iPr7BwLH0rYJDe9UIdrZKXg2vgSUsO3bxAHlExprC0JNdQNabNnoZes8G3GSYK-XYB2tOvt8cPD_vRRBIJjIxtPDlVkA9QwsTFlxFuhqxcAHcx87m-b5bjoUpH4RGzUB0i6NDuE49NJ7dzGjjTrusd5HtjsZW65tc90XmD_Cnw"/>
+</div>
+</div>
+</div>
+<div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+<button class="w-full sm:w-auto bg-green-500 text-white py-2.5 px-6 rounded-md font-semibold hover:bg-green-600 transition-colors duration-200 flex items-center justify-center space-x-2">
+<span class="material-icons-outlined text-xl">camera_alt</span>
+<span>AI 试穿</span>
+</button>
+<button class="w-full sm:w-auto border border-border-light dark:border-border-dark text-subtext-light dark:text-subtext-dark py-2.5 px-6 rounded-md font-semibold hover:bg-background-light dark:hover:bg-background-dark hover:text-text-light dark:hover:text-text-dark transition-colors duration-200">
+                                保存穿搭
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="text-center py-6 text-sm text-subtext-light dark:text-subtext-dark border-t border-border-light dark:border-border-dark mt-12">
+            @2024 StyleSense. All rights reserved.
+        </footer>
+</div>
+<script defer="" src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+</body></html>

@@ -1,0 +1,52 @@
+<!-- StyleSense 统一主题配置 -->
+<!-- 在页面 <head> 中引入此文件来使用统一主题 -->
+
+<!-- 字体引入 -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet"/>
+
+<!-- Tailwind CSS 配置 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+<script>
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          primary: "#000000",
+          "primary-hover": "#333333",
+          "background-light": "#F8F9FA",
+          "background-dark": "#121212",
+          "card-light": "#FFFFFF",
+          "card-dark": "#1E1E1E",
+          "text-light-primary": "#1F2937",
+          "text-dark-primary": "#F9FAFB",
+          "text-light-secondary": "#6B7280",
+          "text-dark-secondary": "#9CA3AF",
+          "border-light": "#E5E7EB",
+          "border-dark": "#374151"
+        },
+        fontFamily: {
+          display: ["'Noto Sans SC'", "sans-serif"],
+        },
+        borderRadius: {
+          DEFAULT: "0.5rem",
+        },
+      },
+    },
+  };
+</script>
+
+<!-- 全局样式 -->
+<style>
+  body {
+    font-family: 'Noto Sans SC', sans-serif;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+</style>

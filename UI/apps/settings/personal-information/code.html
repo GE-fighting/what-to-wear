@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111827",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#1F2937",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#374151",
+                        "text-light": "#111827",
+                        "text-dark": "#F9FAFB",
+                        "text-secondary-light": "#6B7280",
+                        "text-secondary-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#4B5563",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="min-h-screen flex flex-col">
+<header class="bg-card-light dark:bg-card-dark shadow-sm">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex items-center space-x-8">
+<a class="text-xl font-bold text-text-light dark:text-text-dark" href="#">StyleSense</a>
+<nav class="hidden md:flex space-x-8">
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">记录穿搭</a>
+<a class="text-text-light dark:text-text-dark font-medium border-b-2 border-primary" href="#">我的衣橱</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">风格灵感</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">穿搭分析</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative hidden md:block">
+<span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark">search</span>
+<input class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-light dark:text-text-dark w-64" placeholder="搜索衣物" type="text"/>
+</div>
+<button class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark">
+<span class="material-icons">notifications_none</span>
+</button>
+<button>
+<img alt="User avatar" class="h-8 w-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUZrQ70mFuE94RZbqBza4cjKL55KSGqqN473iO43esR3GiQh8n5RxwtaohdLBuSLV5xqrSzkaeWiKobpKNjXtSNtJA4IqaswkZMT4bXDa5laBbWJp4hNdjEo24Tvh9wB8zk7cAQ2nNKhorjoN_JSFsZJK4QLd6yiA99c0l2dOYF0eK56jRMgRo3A5j3m8R4JYGdYTq34SKldjEBQ3a5yUMA9sg_dLbxatb4crcOQZijGPIho_bidIgOoR-sJpZwmRKlfeEGKmTjd8J"/>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="flex flex-col md:flex-row gap-12">
+<aside class="md:w-1/4">
+<div class="bg-card-light dark:bg-card-dark p-6 rounded-lg shadow-sm text-center">
+<img alt="User avatar" class="h-24 w-24 rounded-full mx-auto mb-4" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW2h2swZVkdE7STqWc-jkdffI2IZ8Yur5SXhOl3qkQgywypBMxrNrXsm6aQMnwGZGhnVGDFVvmH1Vg_k9s79o7UirWPfftrTwUnFm8bzL1ATxOSR1IEuSvRpXQtSCmOGIbIvOIxPKE2C9x717vnaNJcZWBWC9Ie73UvQRwan97YIRtq9njFBMzK9rRq_JHUSPGBXPLQb0CDp79XOR8BfDYJurWXMfmQXHlvQcl81y47F-CgvehizHWHoOn9c3nUzZbp1aJvllMnaQj"/>
+<h2 class="text-xl font-bold text-text-light dark:text-text-dark">用户名</h2>
+<p class="text-text-secondary-light dark:text-text-secondary-dark mt-1">时尚爱好者</p>
+<div class="flex justify-center space-x-6 mt-4 text-text-secondary-light dark:text-text-secondary-dark">
+<div class="text-center">
+<p class="font-bold text-lg text-text-light dark:text-text-dark">463</p>
+<p class="text-sm">衣物</p>
+</div>
+<div class="text-center">
+<p class="font-bold text-lg text-text-light dark:text-text-dark">128</p>
+<p class="text-sm">穿搭</p>
+</div>
+<div class="text-center">
+<p class="font-bold text-lg text-text-light dark:text-text-dark">32</p>
+<p class="text-sm">灵感</p>
+</div>
+</div>
+</div>
+<nav class="mt-8">
+<ul class="space-y-2">
+<li>
+<a class="flex items-center p-3 rounded-lg bg-primary/10 text-primary font-medium" href="#">
+<span class="material-icons mr-3">account_circle</span>
+<span>个人信息</span>
+</a>
+</li>
+<li>
+<a class="flex items-center p-3 rounded-lg text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700" href="#">
+<span class="material-icons mr-3">settings</span>
+<span>账户设置</span>
+</a>
+</li>
+<li>
+<a class="flex items-center p-3 rounded-lg text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700" href="#">
+<span class="material-icons mr-3">security</span>
+<span>安全与隐私</span>
+</a>
+</li>
+<li>
+<a class="flex items-center p-3 rounded-lg text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700" href="#">
+<span class="material-icons mr-3">notifications</span>
+<span>通知设置</span>
+</a>
+</li>
+<li>
+<a class="flex items-center p-3 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20" href="#">
+<span class="material-icons mr-3">logout</span>
+<span>退出登录</span>
+</a>
+</li>
+</ul>
+</nav>
+</aside>
+<div class="md:w-3/4">
+<div class="bg-card-light dark:bg-card-dark p-8 rounded-lg shadow-sm">
+<h2 class="text-2xl font-bold text-text-light dark:text-text-dark mb-6">个人信息</h2>
+<form action="#" method="POST">
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div class="col-span-2">
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="username">用户名</label>
+<div class="mt-1">
+<input class="block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark" id="username" name="username" type="text" value="用户名"/>
+</div>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="bio">个人简介</label>
+<div class="mt-1">
+<textarea class="block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark" id="bio" name="bio" rows="3">时尚爱好者</textarea>
+</div>
+<p class="mt-2 text-sm text-text-secondary-light dark:text-text-secondary-dark">简单介绍一下你自己。</p>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark">头像</label>
+<div class="mt-2 flex items-center space-x-5">
+<img alt="Current user avatar" class="h-16 w-16 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCbrb1iMiE1nW4fXi9ho0FZqEkffLllkk5nFsZdniknGfbwoo4qaYif1WRnHGCZZEQwcfYU5wm8dd58QNBysdyxyaM1nPgfThjyI3Qi0oTUHV3XHduzE4Y8lApVAfTXlM1MBqOQbFXF8YQqLdeZlYd5mrDXJI8Tx1rWzmq3XhlQjLScSFZeQiKo8ddLgJKhEM6nnxwDot4KxVmhYUlCKUulGYFX1J5TXV512BtSS_PkJFa4Q3J9rkQDNoLvcRDu8i1TVyiSCS5UOwP"/>
+<button class="rounded-md border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark py-2 px-3 text-sm font-medium leading-4 text-text-secondary-light dark:text-text-secondary-dark shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="button">更换</button>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="email">邮箱地址</label>
+<div class="mt-1">
+<input class="block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark" id="email" name="email" type="email" value="user@example.com"/>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="phone">手机号码</label>
+<div class="mt-1">
+<input class="block w-full rounded-md border-border-light dark:border-border-dark shadow-sm focus:border-primary focus:ring-primary bg-background-light dark:bg-background-dark text-text-light dark:text-text-dark" id="phone" name="phone" type="tel" value="+86 123 4567 8901"/>
+</div>
+</div>
+<div class="col-span-2">
+<label class="block text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark" for="style-preference">风格偏好</label>
+<div class="mt-2 flex flex-wrap gap-2">
+<span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">简约</span>
+<span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">休闲</span>
+<span class="inline-flex items-center rounded-full bg-primary/10 px-3 py-1 text-sm font-medium text-primary">通勤</span>
+<button class="inline-flex items-center rounded-full border border-dashed border-border-light dark:border-border-dark px-3 py-1 text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:border-primary hover:text-primary">
+<span class="material-icons text-base mr-1">add</span>
+<span>添加</span>
+</button>
+</div>
+</div>
+</div>
+<div class="pt-8 flex justify-end">
+<button class="rounded-md border border-border-light dark:border-border-dark bg-card-light dark:bg-card-dark py-2 px-4 text-sm font-medium text-text-light dark:text-text-dark shadow-sm hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="button">取消</button>
+<button class="ml-3 inline-flex justify-center rounded-md border border-transparent bg-primary py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary" type="submit">保存</button>
+</div>
+</form>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto py-8 text-center text-text-secondary-light dark:text-text-secondary-dark">
+<p>©2024 StyleSense. All rights reserved.</p>
+</footer>
+</div>
+
+</body></html>

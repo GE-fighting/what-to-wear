@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html class="dark" lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>登录 - StyleSense</title>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <style type="text/tailwindcss">
+    :root {
+      --primary-color: #000000;
+      --background-dark: #1a1a1a;
+      --card-dark: #2a2a2a;
+      --text-dark: #ffffff;
+      --text-secondary-dark: #b0b0b0;
+      --border-dark: #4a4a4a;
+    }
+  </style>
+  <link href="https://fonts.googleapis.com" rel="preconnect"/>
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    .material-icons {
+      font-family: 'Material Icons';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    #svg-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      z-index: -1;
+      overflow: hidden;
+    }
+    #svg-background svg {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    body > div:not(#svg-background) {
+      position: relative;
+      z-index: 1;
+    }
+  </style>
+</head>
+<body class="bg-[var(--background-dark)] text-[var(--text-dark)]">
+  <div id="svg-background">
+    <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <radialGradient id="gradient1" cx="20%" cy="30%">
+          <stop offset="0%" style="stop-color:#4a4a4a;stop-opacity:1">
+            <animate attributeName="stop-color" values="#4a4a4a;#5a5a5a;#4a4a4a" dur="8s" repeatCount="indefinite"></animate>
+          </stop>
+          <stop offset="100%" style="stop-color:#1a1a1a;stop-opacity:1"></stop>
+        </radialGradient>
+        <radialGradient id="gradient2" cx="80%" cy="70%">
+          <stop offset="0%" style="stop-color:#383838;stop-opacity:1">
+            <animate attributeName="stop-color" values="#383838;#484848;#383838" dur="10s" repeatCount="indefinite"></animate>
+          </stop>
+          <stop offset="100%" style="stop-color:#151515;stop-opacity:1"></stop>
+        </radialGradient>
+        <filter id="glow">
+          <feGaussianBlur stdDeviation="40" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
+      </defs>
+      
+      <rect width="100%" height="100%" fill="#1a1a1a"/>
+      <rect width="100%" height="100%" fill="url(#gradient1)"/>
+      <rect width="100%" height="100%" fill="url(#gradient2)" opacity="0.6"/>
+      
+      <circle cx="30%" cy="40%" r="300" fill="#4a4a4a" opacity="0.4" filter="url(#glow)">
+        <animate attributeName="cx" values="30%;35%;30%" dur="15s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="40%;35%;40%" dur="12s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="300;350;300" dur="10s" repeatCount="indefinite"/>
+      </circle>
+      
+      <circle cx="70%" cy="60%" r="250" fill="#3a3a3a" opacity="0.5" filter="url(#glow)">
+        <animate attributeName="cx" values="70%;65%;70%" dur="18s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="60%;65%;60%" dur="14s" repeatCount="indefinite"/>
+        <animate attributeName="r" values="250;300;250" dur="12s" repeatCount="indefinite"/>
+      </circle>
+      
+      <circle cx="50%" cy="50%" r="200" fill="#5a5a5a" opacity="0.3" filter="url(#glow)">
+        <animate attributeName="r" values="200;280;200" dur="16s" repeatCount="indefinite"/>
+        <animate attributeName="opacity" values="0.2;0.3;0.2" dur="8s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
+  <div class="relative min-h-screen flex items-center justify-center isolate py-12">
+    <div class="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10"></div>
+    <main class="w-full max-w-md px-4 z-10 my-auto">
+      <div class="bg-[var(--card-dark)]/80 backdrop-blur-lg p-8 sm:p-10 rounded-2xl border border-[var(--border-dark)] shadow-2xl shadow-black/50">
+        <div class="text-center mb-8">
+          <a class="text-3xl font-black text-white drop-shadow-lg" href="#">StyleSense</a>
+          <h1 class="text-3xl font-bold text-white mt-6">欢迎回来</h1>
+          <p class="text-[var(--text-secondary-dark)] mt-2">登录以继续您的时尚之旅。</p>
+        </div>
+        <form action="#" class="space-y-6" method="POST">
+          <div>
+            <label class="block text-sm font-medium text-[var(--text-secondary-dark)]" for="email">用户名或邮箱</label>
+            <div class="mt-1">
+              <input autocomplete="email" class="block w-full rounded-md border-[var(--border-dark)] shadow-sm focus:border-white focus:ring-white bg-zinc-800/50 text-white placeholder-[var(--text-secondary-dark)] py-3 px-4" id="email" name="email" placeholder="you@example.com" required="" type="email"/>
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-[var(--text-secondary-dark)]" for="password">密码</label>
+            <div class="mt-1">
+              <input autocomplete="current-password" class="block w-full rounded-md border-[var(--border-dark)] shadow-sm focus:border-white focus:ring-white bg-zinc-800/50 text-white placeholder-[var(--text-secondary-dark)] py-3 px-4" id="password" name="password" placeholder="••••••••" required="" type="password"/>
+            </div>
+          </div>
+          <div class="flex items-center justify-end">
+            <div class="text-sm">
+              <a class="font-medium text-[var(--text-secondary-dark)] hover:text-white" href="#">忘记密码？</a>
+            </div>
+          </div>
+          <div>
+            <button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[var(--primary-color)] hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-zinc-900 transition-all duration-300 transform hover:scale-105" type="submit">
+              登录
+            </button>
+          </div>
+        </form>
+        <div class="mt-6">
+          <div class="relative">
+            <div class="absolute inset-0 flex items-center">
+              <div class="w-full border-t border-[var(--border-dark)]"></div>
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-[var(--card-dark)] text-[var(--text-secondary-dark)]">还没有账户？</span>
+            </div>
+          </div>
+          <div class="mt-6">
+            <a class="w-full inline-flex justify-center py-3 px-4 border border-[var(--border-dark)] rounded-md shadow-sm bg-transparent text-sm font-medium text-white hover:bg-zinc-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-zinc-900 transition-colors" href="../register/index.html">
+              注册
+            </a>
+          </div>
+        </div>
+      </div>
+      <footer class="mt-8 text-center text-[var(--text-secondary-dark)]">
+        <p class="text-xs">©2024 StyleSense. All rights reserved.</p>
+      </footer>
+    </main>
+  </div>
+</body>
+</html>

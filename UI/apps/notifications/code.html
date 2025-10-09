@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>通知中心</title>
+<link href="https://fonts.googleapis.com/css2?family=Material+Icons" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#111827",
+                        "background-light": "#F9FAFB",
+                        "background-dark": "#1F2937",
+                        "card-light": "#FFFFFF",
+                        "card-dark": "#374151",
+                        "text-light": "#111827",
+                        "text-dark": "#F9FAFB",
+                        "text-secondary-light": "#6B7280",
+                        "text-secondary-dark": "#9CA3AF",
+                        "border-light": "#E5E7EB",
+                        "border-dark": "#4B5563",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+<div class="min-h-screen flex flex-col">
+<header class="bg-card-light dark:bg-card-dark shadow-sm sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+<div class="flex items-center space-x-8">
+<a class="text-xl font-bold text-text-light dark:text-text-dark" href="#">StyleSense</a>
+<nav class="hidden md:flex space-x-8">
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">记录穿搭</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">我的衣橱</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">风格灵感</a>
+<a class="text-text-secondary-light dark:text-text-secondary-dark hover:text-text-light dark:hover:text-text-dark" href="#">穿搭分析</a>
+</nav>
+</div>
+<div class="flex items-center space-x-4">
+<div class="relative hidden md:block">
+<span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-text-secondary-light dark:text-text-secondary-dark">search</span>
+<input class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full py-2 pl-10 pr-4 focus:outline-none focus:ring-2 focus:ring-primary/50 text-text-light dark:text-text-dark w-64" placeholder="搜索衣物" type="text"/>
+</div>
+<button class="text-primary dark:text-white relative">
+<span class="material-icons">notifications</span>
+<span class="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-card-light dark:ring-card-dark"></span>
+</button>
+<button>
+<img alt="User avatar" class="h-8 w-8 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDUZrQ70mFuE94RZbqBza4cjKL55KSGqqN473iO43esR3GiQh8n5RxwtaohdLBuSLV5xqrSzkaeWiKobpKNjXtSNtJA4IqaswkZMT4bXDa5laBbWJp4hNdjEo24Tvh9wB8zk7cAQ2nNKhorjoN_JSFsZJK4QLd6yiA99c0l2dOYF0eK56jRMgRo3A5j3m8R4JYGdYTq34SKldjEBQ3a5yUMA9sg_dLbxatb4crcOQZijGPIho_bidIgOoR-sJpZwmRKlfeEGKmTjd8J"/>
+</button>
+</div>
+</div>
+</div>
+</header>
+<main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="max-w-3xl mx-auto">
+<div class="bg-card-light dark:bg-card-dark p-6 sm:p-8 rounded-lg shadow-sm">
+<div class="flex justify-between items-center mb-6 border-b border-border-light dark:border-border-dark pb-4">
+<h1 class="text-2xl font-bold text-text-light dark:text-text-dark">通知中心</h1>
+<button class="text-sm font-medium text-primary hover:underline dark:text-text-dark dark:hover:text-text-secondary-dark">全部标记为已读</button>
+</div>
+<div class="flex mb-6 space-x-2">
+<button class="px-4 py-2 text-sm font-medium rounded-full bg-primary text-white">全部</button>
+<button class="px-4 py-2 text-sm font-medium rounded-full text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700">未读</button>
+<button class="px-4 py-2 text-sm font-medium rounded-full text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700">评论</button>
+<button class="px-4 py-2 text-sm font-medium rounded-full text-text-secondary-light dark:text-text-secondary-dark hover:bg-gray-100 dark:hover:bg-gray-700">促销</button>
+</div>
+<div class="space-y-4">
+<div class="flex items-start space-x-4 p-4 rounded-lg bg-primary/5 dark:bg-primary/10 border-l-4 border-primary">
+<div class="flex-shrink-0">
+<span class="material-icons text-primary dark:text-white mt-1">campaign</span>
+</div>
+<div class="flex-grow">
+<p class="font-medium text-text-light dark:text-text-dark">夏季大促现已开始！</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">全场商品低至5折，快来选购你的夏日新装吧。优惠活动将于7月31日结束。</p>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-2">2小时前</p>
+</div>
+<div class="flex-shrink-0 self-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+</div>
+</div>
+<div class="flex items-start space-x-4 p-4 rounded-lg bg-primary/5 dark:bg-primary/10 border-l-4 border-primary">
+<div class="flex-shrink-0">
+<img alt="user avatar" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDW2h2swZVkdE7STqWc-jkdffI2IZ8Yur5SXhOl3qkQgywypBMxrNrXsm6aQMnwGZGhnVGDFVvmH1Vg_k9s79o7UirWPfftrTwUnFm8bzL1ATxOSR1IEuSvRpXQtSCmOGIbIvOIxPKE2C9x717vnaNJcZWBWC9Ie73UvQRwan97YIRtq9njFBMzK9rRq_JHUSPGBXPLQb0CDp79XOR8BfDYJurWXMfmQXHlvQcl81y47F-CgvehizHWHoOn9c3nUzZbp1aJvllMnaQj"/>
+</div>
+<div class="flex-grow">
+<p class="text-text-light dark:text-text-dark"><span class="font-medium">时尚小达人</span> 评论了你的穿搭 <a class="font-medium text-primary hover:underline" href="#">“夏日海滩风情”</a></p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1 bg-gray-100 dark:bg-gray-700 p-2 rounded-md">“这套搭配太棒了！请问这顶草帽在哪里买的？”</p>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-2">昨天 18:32</p>
+</div>
+<div class="flex-shrink-0 self-center">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+</div>
+</div>
+<div class="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50">
+<div class="flex-shrink-0">
+<span class="material-icons text-text-secondary-light dark:text-text-secondary-dark mt-1">favorite_border</span>
+</div>
+<div class="flex-grow">
+<p class="text-text-light dark:text-text-dark"><span class="font-medium">设计师精选</span> 喜欢了你的穿搭 <a class="font-medium text-primary hover:underline dark:text-text-secondary-dark dark:hover:text-white" href="#">“都市通勤风”</a></p>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-2">3天前</p>
+</div>
+</div>
+<div class="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50">
+<div class="flex-shrink-0">
+<span class="material-icons text-text-secondary-light dark:text-text-secondary-dark mt-1">inventory_2</span>
+</div>
+<div class="flex-grow">
+<p class="font-medium text-text-light dark:text-text-dark">你的订单已发货！</p>
+<p class="text-sm text-text-secondary-light dark:text-text-secondary-dark mt-1">订单 #20240520-001 已从仓库发出，预计3天内送达。 <a class="text-primary hover:underline dark:text-text-secondary-dark dark:hover:text-white" href="#">查看物流详情</a></p>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-2">2024年5月20日</p>
+</div>
+</div>
+<div class="flex items-start space-x-4 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800/50">
+<div class="flex-shrink-0">
+<img alt="user avatar" class="w-10 h-10 rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbimqKaSrURF6dCDH2oCz2w0cTTCWxtWWSwuBvev7mxt87rSQZNkpeBVNDrOvBEKJknt0htMZR5y44MIn7bCmFKFyI-ZccqzEPtcbyertPAsQnI1A4oXB8gkogMx-3UE-OO6JSIzg41hViTfDCdEVRnhtFbVDIe3zmMUYVE6zbmE6nZmtyip_ppKBi3qeeuw5xH2ab2owQdKW2kQUnBsvGf5XuyYEpCSt8DDb_-oZd5xrmltnGMDRRATOkR3xzNV6RwQja6iwtqqFJ"/>
+</div>
+<div class="flex-grow">
+<p class="text-text-light dark:text-text-dark"><span class="font-medium">潮流先锋</span> 开始关注你了。</p>
+<p class="text-xs text-text-secondary-light dark:text-text-secondary-dark mt-2">2024年5月18日</p>
+</div>
+</div>
+</div>
+<div class="mt-8 text-center">
+<button class="text-sm font-medium text-text-secondary-light dark:text-text-secondary-dark hover:text-primary dark:hover:text-white">
+                            加载更多
+                        </button>
+</div>
+</div>
+</div>
+</main>
+<footer class="mt-auto py-8 text-center text-text-secondary-light dark:text-text-secondary-dark">
+<p>©2024 StyleSense. All rights reserved.</p>
+</footer>
+</div>
+
+</body></html>

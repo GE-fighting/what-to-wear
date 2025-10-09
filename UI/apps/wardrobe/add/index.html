@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>添加衣物 - StyleSense</title>
+  
+  <!-- 统一主题配置 -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Icons+Outlined" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet"/>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+  <script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            primary: "#000000",
+            "primary-hover": "#333333",
+            "background-light": "#F8F9FA",
+            "background-dark": "#121212",
+            "card-light": "#FFFFFF",
+            "card-dark": "#1E1E1E",
+            "text-light-primary": "#1F2937",
+            "text-dark-primary": "#F9FAFB",
+            "text-light-secondary": "#6B7280",
+            "text-dark-secondary": "#9CA3AF",
+            "border-light": "#E5E7EB",
+            "border-dark": "#374151"
+          },
+          fontFamily: {
+            display: ["'Noto Sans SC'", "sans-serif"],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    body {
+      font-family: 'Noto Sans SC', sans-serif;
+    }
+  </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display">
+  <div class="flex flex-col min-h-screen">
+    <!-- 统一导航栏 -->
+    <header class="bg-card-light dark:bg-card-dark shadow-sm sticky top-0 z-20">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex justify-between items-center h-16">
+          <div class="flex items-center space-x-8">
+            <h1 class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">StyleSense</h1>
+            <nav class="hidden md:flex space-x-8">
+              <a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary" href="../../recordStyle/my-outfit/index.html">记录穿搭</a>
+              <a class="text-sm font-medium text-primary border-b-2 border-primary" href="../index.html">我的衣橱</a>
+              <a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary" href="#">风格灵感</a>
+              <a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary" href="#">穿搭分析</a>
+            </nav>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="relative hidden md:block">
+              <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light-secondary dark:text-text-dark-secondary">search</span>
+              <input class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full py-2 pl-10 pr-4 text-sm w-48 focus:ring-primary focus:border-primary text-text-light-primary dark:text-text-dark-primary" placeholder="搜索衣物" type="text"/>
+            </div>
+            <div class="relative">
+              <button class="p-2 rounded-full text-text-light-secondary dark:text-text-dark-secondary hover:bg-gray-100 dark:hover:bg-gray-800">
+                <span class="material-icons-outlined">notifications_none</span>
+              </button>
+            </div>
+            <button>
+              <img alt="User avatar" class="h-8 w-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_qyQReAQqPnp4kLTe4O7X0yHidcXaj2eUnJyZ1VtAgg8kmw6iegfQgMEs2lGGO6nBxZos29reVGCsOSVzLa_LURh9KLREupnhZs9zsi-1CrBrM6Bbf25eIXlGpazovZNI0Xg8J37PVviC-gd0qT2Uj-SQJkN1ihlAb4-fBjEAKwYzFHMXFyHzL6MYZ1pI67jUsw6c5uJ1qqU3-_RZfPsnAu6JWFwAPVgKBP68lF2jyBKS-XrxKrL-9AEOHcFatvQEO6sOzYQxggKL"/>
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+    <main class="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div class="max-w-4xl mx-auto">
+        <div class="flex items-center justify-between mb-8">
+          <h1 class="text-3xl font-bold text-gray-900 dark:text-white">添加新衣物</h1>
+          <div class="flex space-x-2">
+            <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-background-light dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" href="../index.html">取消</a>
+            <a href="../index.html" class="px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-gray-700 dark:hover:bg-gray-600 rounded-lg flex items-center space-x-2">
+              <span class="material-icons-outlined text-base">save</span>
+              <span>保存衣物</span>
+            </a>
+          </div>
+        </div>
+        <div class="space-y-10">
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">衣物图片</h2>
+            <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-4">
+              <div class="relative group aspect-square">
+                <img alt="黑色T恤" class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBfXUvHl_ZjPaWqqe58_4LD2RTGeU0QaJQXmf-JXkC1CUK2IM0-qXg_PxwTTiB49YHlMZBJ-CGpgLaBdOD6iqe7UX6l8iKOk58ZGfvHD1lrETWOcx1VGe444V67KwXbT8aSX-nGa7FSGUCfsSJB97IHcyea9ChEmdS0bvu5L3fWa6fc6LI71zJbm60d5mcBC9sne0S2Lvm6Q2mlpokzTOaFnOx2QbwwLvtBdFq00Mp-4vdF9ET2xPk0P8pNU6ae8LWWGmsCkO0AX26T"/>
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                  <button class="text-white">
+                    <span class="material-icons-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+              <div class="relative group aspect-square">
+                <img alt="黑色T恤背面" class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCykmBlONpG_g9Jsqom6b9elDQa4cHB4aMEoUiaPGLskaNa-kiYQx1p-egTA78yaoqGw11kHmzrqgnsWOPmtmahIjcvvv8kU5GJpziLdv4Jhb2kIMjH5_p3jklc86CXYZefBTWu1bDT6oOGpYG8OYjrA4BFcTygNB_1VoXEQUxQqClgVkzvIh201YOX5EDHVT09aO7xy-EptNCLtE9KFqjK0jyIJy1VY6XIaUygg4n7Nba8KNjcFsw4j-LwbmxWG7jPEx9zr4Po738g"/>
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                  <button class="text-white">
+                    <span class="material-icons-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+              <div class="relative group aspect-square">
+                <img alt="黑色T恤细节" class="w-full h-full object-cover rounded-lg" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhPzMq0rTN8DW9qnYZMrborfQ_SOLL6LmC5Wa6IB0qQMdVNbCQoC_iw60TZI0zgYxRWeOzM-Ge1g53uLCVyUN_e4XKslWpOEp4u22TAYrCSiySlKBPsJAWztC0_5XrqImr_Je-ScWbW0t0nftQsSK8LVoJEBCqpY1y-HRwE9Bs8HEfC9aI_9YmuuZq95sqLmbzZgT1ZQdU7tZQwOTS0fZ4-X41tZpx2CBty7_jZ2Lov8JWKxZEZ1NEB8Thkl5nAXhmio63LKkd4h1K"/>
+                <div class="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                  <button class="text-white">
+                    <span class="material-icons-outlined">delete</span>
+                  </button>
+                </div>
+              </div>
+              <div class="aspect-square flex items-center justify-center border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg text-gray-400 hover:border-blue-500 hover:text-blue-500 cursor-pointer">
+                <div class="text-center">
+                  <span class="material-icons-outlined text-4xl">add_photo_alternate</span>
+                  <p class="text-xs mt-1">添加图片</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-green-100/50 dark:bg-green-900/20 p-4 rounded-lg border border-green-500/30">
+            <div class="flex items-start space-x-3">
+              <div class="flex-shrink-0">
+                <span class="material-icons-outlined text-green-500">auto_awesome</span>
+              </div>
+              <div class="flex-grow">
+                <h3 class="text-base font-semibold text-green-800 dark:text-green-300">AI 标签建议</h3>
+                <p class="text-sm text-green-700 dark:text-green-400 mt-1">根据您上传的图片，我们为您推荐了以下标签。您可以直接使用或进行修改。</p>
+                <div class="mt-4">
+                  <div class="flex flex-wrap gap-2">
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">颜色: 黑色 <button class="ml-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"><span class="material-icons-outlined text-sm">close</span></button></span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">款式: T恤 <button class="ml-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"><span class="material-symbols-outlined text-sm">close</span></button></span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">材质: 棉 <button class="ml-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"><span class="material-symbols-outlined text-sm">close</span></button></span>
+                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">风格: 简约 <button class="ml-1.5 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"><span class="material-symbols-outlined text-sm">close</span></button></span>
+                  </div>
+                </div>
+                <div class="mt-4 flex items-center space-x-3">
+                  <button class="px-3 py-1.5 text-xs font-medium text-white bg-green-500 hover:bg-green-600 rounded-md flex items-center space-x-1.5">
+                    <span class="material-icons-outlined text-base">done</span>
+                    <span>全部应用</span>
+                  </button>
+                  <button class="px-3 py-1.5 text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md hover:bg-gray-50 dark:hover:bg-gray-600 flex items-center space-x-1.5">
+                    <span class="material-icons-outlined text-base">edit</span>
+                    <span>编辑</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">基本信息</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="name">衣物名称</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="name" name="name" placeholder="例如：纯棉白色T恤" type="text" value="黑色T恤"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="category">分类</label>
+                <select class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="category" name="category">
+                  <option selected="">上装</option>
+                  <option>下装</option>
+                  <option>鞋履</option>
+                  <option>配饰</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="brand">品牌</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="brand" name="brand" placeholder="例如：Uniqlo" type="text"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="color">颜色</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="color" name="color" placeholder="例如：白色" type="text" value="黑色"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="material">材质</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="material" name="material" placeholder="例如：100%纯棉" type="text" value="棉"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="style">风格</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="style" name="style" placeholder="例如：简约、休闲" type="text" value="简约"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="size">尺码</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="size" name="size" placeholder="例如：M / 170" type="text"/>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">适用场景</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="season">季节</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="season" name="season" placeholder="例如：春夏" type="text"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="occasion">场合</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="occasion" name="occasion" placeholder="例如：日常通勤、周末出游" type="text"/>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">购买信息</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-x-6 gap-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="price">价格</label>
+                <div class="relative mt-1">
+                  <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span class="text-gray-500 sm:text-sm">¥</span>
+                  </div>
+                  <input class="block w-full rounded-md border-gray-300 dark:border-gray-600 pl-7 pr-12 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="price" name="price" placeholder="0.00" type="text"/>
+                </div>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="store">商店</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="store" name="store" placeholder="例如：淘宝官方旗舰店" type="text"/>
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300" for="purchase_date">购买日期</label>
+                <input class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700 text-gray-500 dark:text-gray-400" id="purchase_date" name="purchase_date" type="date"/>
+              </div>
+            </div>
+          </div>
+          <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
+            <h2 class="text-lg font-semibold mb-4 text-gray-900 dark:text-white">其他备注</h2>
+            <div>
+              <textarea class="block w-full rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-primary focus:ring-primary sm:text-sm bg-gray-50 dark:bg-gray-700" id="notes" name="notes" placeholder="可以记录洗护方式、搭配建议等..." rows="4"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-end mt-8">
+          <a class="px-4 py-2 text-sm font-medium text-gray-700 bg-background-light dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-600" href="../index.html">取消</a>
+          <a href="../index.html" class="ml-2 px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-gray-700 dark:hover:bg-gray-600 rounded-lg flex items-center space-x-2">
+            <span class="material-icons-outlined text-base">save</span>
+            <span>保存衣物</span>
+          </a>
+        </div>
+      </div>
+    </main>
+    <footer class="bg-gray-100 dark:bg-gray-900 mt-auto">
+      <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
+        <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+          ©2024 StyleSense. All rights reserved.
+        </p>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

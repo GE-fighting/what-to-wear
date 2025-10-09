@@ -1,0 +1,46 @@
+<!-- StyleSense 统一顶部导航栏 -->
+<!-- 使用方式: 复制到页面的 <body> 开头 -->
+
+<header class="bg-card-light dark:bg-card-dark shadow-sm sticky top-0 z-20">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo 和主导航 -->
+      <div class="flex items-center space-x-8">
+        <h1 class="text-xl font-bold text-text-light-primary dark:text-text-dark-primary">StyleSense</h1>
+        <nav class="hidden md:flex space-x-8">
+          <a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary" href="/UI/recordStyle/my-outfit/index.html">记录穿搭</a>
+          <a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary" href="/UI/wardrobe/index.html">我的衣橱</a>
+          <a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary" href="#">风格灵感</a>
+          <a class="text-sm font-medium text-text-light-secondary dark:text-text-dark-secondary hover:text-primary" href="#">穿搭分析</a>
+        </nav>
+      </div>
+      
+      <!-- 右侧操作区 -->
+      <div class="flex items-center space-x-4">
+        <!-- 搜索框 -->
+        <div class="relative hidden md:block">
+          <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-text-light-secondary dark:text-text-dark-secondary">search</span>
+          <input 
+            class="bg-background-light dark:bg-background-dark border border-border-light dark:border-border-dark rounded-full py-2 pl-10 pr-4 text-sm w-48 focus:ring-primary focus:border-primary text-text-light-primary dark:text-text-dark-primary" 
+            placeholder="搜索衣物" 
+            type="text"/>
+        </div>
+        
+        <!-- 通知 -->
+        <div class="relative">
+          <button class="p-2 rounded-full text-text-light-secondary dark:text-text-dark-secondary hover:bg-gray-100 dark:hover:bg-gray-800">
+            <span class="material-icons-outlined">notifications_none</span>
+          </button>
+        </div>
+        
+        <!-- 用户头像 -->
+        <button>
+          <img 
+            alt="User avatar" 
+            class="h-8 w-8 rounded-full object-cover" 
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_qyQReAQqPnp4kLTe4O7X0yHidcXaj2eUnJyZ1VtAgg8kmw6iegfQgMEs2lGGO6nBxZos29reVGCsOSVzLa_LURh9KLREupnhZs9zsi-1CrBrM6Bbf25eIXlGpazovZNI0Xg8J37PVviC-gd0qT2Uj-SQJkN1ihlAb4-fBjEAKwYzFHMXFyHzL6MYZ1pI67jUsw6c5uJ1qqU3-_RZfPsnAu6JWFwAPVgKBP68lF2jyBKS-XrxKrL-9AEOHcFatvQEO6sOzYQxggKL"/>
+        </button>
+      </div>
+    </div>
+  </div>
+</header>
