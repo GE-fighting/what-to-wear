@@ -362,7 +362,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_sleeve_length" 
-                  value={formData.specific_attributes.sleeve_length || ''}
+                  value={(formData.specific_attributes as any)?.sleeve_length || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -377,7 +377,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_neckline" 
-                  value={formData.specific_attributes.neckline || ''}
+                  value={(formData.specific_attributes as any)?.neckline || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -392,7 +392,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_fit" 
-                  value={formData.specific_attributes.fit || ''}
+                  value={(formData.specific_attributes as any)?.fit || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -416,7 +416,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_length" 
-                  value={formData.specific_attributes.length || ''}
+                  value={(formData.specific_attributes as any)?.length || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -431,7 +431,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_waist_type" 
-                  value={formData.specific_attributes.waist_type || ''}
+                  value={(formData.specific_attributes as any)?.waist_type || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -445,7 +445,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_closure" 
-                  value={formData.specific_attributes.closure || ''}
+                  value={(formData.specific_attributes as any)?.closure || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -469,7 +469,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_heel_height" 
-                  value={formData.specific_attributes.heel_height || ''}
+                  value={(formData.specific_attributes as any)?.heel_height || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -484,7 +484,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_shoe_type" 
-                  value={formData.specific_attributes.shoe_type || ''}
+                  value={(formData.specific_attributes as any)?.shoe_type || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -499,7 +499,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_toe_shape" 
-                  value={formData.specific_attributes.toe_shape || ''}
+                  value={(formData.specific_attributes as any)?.toe_shape || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -523,7 +523,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_accessory_material" 
-                  value={formData.specific_attributes.accessory_material || ''}
+                  value={(formData.specific_attributes as any)?.accessory_material || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -538,7 +538,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_accessory_size" 
-                  value={formData.specific_attributes.accessory_size || ''}
+                  value={(formData.specific_attributes as any)?.accessory_size || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>
@@ -553,7 +553,7 @@ export function AddClothingItem({ onSubmit, onCancel }: AddClothingItemProps) {
                 <select 
                   className="form-select" 
                   name="attr_accessory_function" 
-                  value={formData.specific_attributes.accessory_function || ''}
+                  value={(formData.specific_attributes as any)?.accessory_function || ''}
                   onChange={handleInputChange}
                 >
                   <option value="">请选择</option>

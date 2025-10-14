@@ -1,22 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Noto_Sans_SC } from "next/font/google";
 import "./globals.css";
-import "@/styles/modern.css";
 import { ToastProvider } from "@/components/ToastProvider";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+const notoSansSC = Noto_Sans_SC({
   subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+  weight: ["400", "500", "700"],
+  variable: "--font-noto-sans-sc",
 });
 
 export const metadata: Metadata = {
-  title: "今天穿什么 | What to Wear",
-  description: "Next.js Web App",
+  title: "StyleSense | 智能服饰管理平台",
+  description: "基于黑白极简主义设计的智能服饰管理平台",
 };
 
 export default function RootLayout({
@@ -25,12 +20,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="zh-CN">
+      <head>
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined"
+          rel="stylesheet"
+        />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap"
+          rel="stylesheet"
+        />
+      </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${notoSansSC.variable} font-display antialiased bg-background-light text-text-light-primary dark:bg-background-dark dark:text-dark-primary`}
       >
-        {children}
-        <ToastProvider />
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );

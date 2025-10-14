@@ -15,7 +15,7 @@ export interface ClothingItemData {
   status: ClothingStatus;
   is_favorite: boolean;
   purchase_info?: PurchaseInfo | null;
-  specific_attributes: Record<string, any>;
+  specific_attributes: Record<string, unknown>;
 }
 
 export interface PurchaseInfo {

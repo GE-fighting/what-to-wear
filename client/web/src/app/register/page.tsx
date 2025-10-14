@@ -1,261 +1,209 @@
-"use client";
-import React, { useState } from "react";
-import "@/styles/modern.css";
-import { useRouter } from "next/navigation";
-import { register as registerApi } from "@/lib/api/auth";
-import type { RegisterRequest } from "@/types/auth";
+'use client';
 
 export default function RegisterPage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    nickname: '',
-    gender: '',
-    birthDate: '',
-    height: '',
-    weight: ''
-  });
-  const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const validateForm = () => {
-    if (!formData.username.trim()) { setMessage('请输入用户名'); return false; }
-    if (formData.username.length < 3) { setMessage('用户名至少需要3个字符'); return false; }
-    if (!formData.email.trim()) { setMessage('请输入邮箱地址'); return false; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) { setMessage('请输入有效的邮箱地址'); return false; }
-    if (!formData.password.trim()) { setMessage('请输入密码'); return false; }
-    if (formData.password.length < 6) { setMessage('密码至少需要6个字符'); return false; }
-    if (formData.password !== formData.confirmPassword) { setMessage('两次输入的密码不一致'); return false; }
-    return true;
-  };
-
-  const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validateForm()) return;
-    try {
-      setIsLoading(true);
-      setMessage('注册中...');
-      const body: RegisterRequest = {
-        username: formData.username,
-        password: formData.password,
-        email: formData.email,
-        nickname: formData.nickname || formData.username,
-        gender: formData.gender,
-        birth_date: formData.birthDate ? `${formData.birthDate}T00:00:00Z` : undefined,
-        height: formData.height ? parseInt(formData.height) : null,
-        weight: formData.weight ? parseInt(formData.weight) : null
-      };
-      await registerApi(body);
-      setMessage('注册成功！请登录');
-      setTimeout(() => { router.replace('/login'); }, 1200);
-    } catch (error: any) {
-      setMessage(`注册失败: ${error?.message || '未知错误'}`);
-      console.error('Registration failed:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   return (
-    <div className="app-container">
-      <div className="auth-container">
-        <h1 className="app-title">今天穿什么</h1>
-        <p className="page-subtitle">🎨 创建账号，开启个性化穿搭</p>
+    <div className="register-page dark">
+      <style>
+        {`
+          .register-page {
+            --primary-color: #000000;
+            --background-dark: #1a1a1a;
+            --card-dark: #2a2a2a;
+            --text-dark: #ffffff;
+            --text-secondary-dark: #b0b0b0;
+            --border-dark: #4a4a4a;
+            background-color: var(--background-dark);
+            color: var(--text-dark);
+            font-family: 'Inter', sans-serif;
+          }
+          .register-page .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+          }
+          .register-page #svg-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+          }
+          .register-page #svg-background svg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+          .register-page > div:not(#svg-background) {
+            position: relative;
+            z-index: 1;
+          }
+        `}
+      </style>
 
-        <form onSubmit={handleRegister}>
-          <div className="form-section">
-            <h3 className="section-title">基本信息</h3>
+      <div id="svg-background">
+        <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <radialGradient id="gradient1" cx="20%" cy="30%">
+              <stop offset="0%" stopColor="#4a4a4a" stopOpacity="1">
+                <animate attributeName="stop-color" values="#4a4a4a;#5a5a5a;#4a4a4a" dur="8s" repeatCount="indefinite" />
+              </stop>
+              <stop offset="100%" stopColor="#1a1a1a" stopOpacity="1" />
+            </radialGradient>
+            <radialGradient id="gradient2" cx="80%" cy="70%">
+              <stop offset="0%" stopColor="#383838" stopOpacity="1">
+                <animate attributeName="stop-color" values="#383838;#484848;#383838" dur="10s" repeatCount="indefinite" />
+              </stop>
+              <stop offset="100%" stopColor="#151515" stopOpacity="1" />
+            </radialGradient>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="40" result="coloredBlur" />
+              <feMerge>
+                <feMergeNode in="coloredBlur" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
+          </defs>
 
-            <div className="form-group">
-              <div className="form-input-wrapper">
-                <input
-                  type="text"
-                  name="username"
-                  value={formData.username}
-                  onChange={handleInputChange}
-                  placeholder=" "
-                  className="form-input"
-                  disabled={isLoading}
-                  required
-                  id="reg-username"
-                />
-                <label className="form-label" htmlFor="reg-username">用户名 *</label>
-              </div>
+          <rect width="100%" height="100%" fill="#1a1a1a" />
+          <rect width="100%" height="100%" fill="url(#gradient1)" />
+          <rect width="100%" height="100%" fill="url(#gradient2)" opacity="0.6" />
+
+          <circle cx="30%" cy="40%" r="300" fill="#4a4a4a" opacity="0.4" filter="url(#glow)">
+            <animate attributeName="cx" values="30%;35%;30%" dur="15s" repeatCount="indefinite" />
+            <animate attributeName="cy" values="40%;35%;40%" dur="12s" repeatCount="indefinite" />
+            <animate attributeName="r" values="300;350;300" dur="10s" repeatCount="indefinite" />
+          </circle>
+
+          <circle cx="70%" cy="60%" r="250" fill="#3a3a3a" opacity="0.5" filter="url(#glow)">
+            <animate attributeName="cx" values="70%;65%;70%" dur="18s" repeatCount="indefinite" />
+            <animate attributeName="cy" values="60%;65%;60%" dur="14s" repeatCount="indefinite" />
+            <animate attributeName="r" values="250;300;250" dur="12s" repeatCount="indefinite" />
+          </circle>
+
+          <circle cx="50%" cy="50%" r="200" fill="#5a5a5a" opacity="0.3" filter="url(#glow)">
+            <animate attributeName="r" values="200;280;200" dur="16s" repeatCount="indefinite" />
+            <animate attributeName="opacity" values="0.2;0.3;0.2" dur="8s" repeatCount="indefinite" />
+          </circle>
+        </svg>
+      </div>
+
+      <div className="relative min-h-screen flex items-center justify-center isolate py-12">
+        <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10"></div>
+        <main className="w-full max-w-md px-4 z-10 my-auto">
+          <div className="bg-[var(--card-dark)]/80 backdrop-blur-lg p-8 sm:p-10 rounded-2xl border border-[var(--border-dark)] shadow-2xl shadow-black/50">
+            <div className="text-center mb-8">
+              <a className="text-3xl font-black text-white drop-shadow-lg" href="#">StyleSense</a>
+              <h1 className="text-3xl font-bold text-white mt-6">创建您的账户</h1>
+              <p className="text-[var(--text-secondary-dark)] mt-2">开启您的时尚之旅</p>
             </div>
-
-            <div className="form-group">
-              <div className="form-input-wrapper">
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleInputChange}
-                  placeholder=" "
-                  className="form-input"
-                  disabled={isLoading}
-                  required
-                  id="reg-email"
-                />
-                <label className="form-label" htmlFor="reg-email">邮箱 *</label>
+            <form className="space-y-6" action="#" method="POST">
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary-dark)]" htmlFor="username">
+                  用户名
+                </label>
+                <div className="mt-1">
+                  <input
+                    className="block w-full rounded-md border-[var(--border-dark)] shadow-sm focus:border-white focus:ring-white bg-zinc-800/50 text-white placeholder-[var(--text-secondary-dark)] py-3 px-4"
+                    id="username"
+                    name="username"
+                    placeholder="输入您的用户名"
+                    required
+                    type="text"
+                  />
+                </div>
               </div>
-            </div>
-
-            <div className="form-group">
-              <div className="form-input-wrapper">
-                <input
-                  type="text"
-                  name="nickname"
-                  value={formData.nickname}
-                  onChange={handleInputChange}
-                  placeholder=" "
-                  className="form-input"
-                  disabled={isLoading}
-                  id="reg-nickname"
-                />
-                <label className="form-label" htmlFor="reg-nickname">昵称</label>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary-dark)]" htmlFor="email">
+                  邮箱地址
+                </label>
+                <div className="mt-1">
+                  <input
+                    autoComplete="email"
+                    className="block w-full rounded-md border-[var(--border-dark)] shadow-sm focus:border-white focus:ring-white bg-zinc-800/50 text-white placeholder-[var(--text-secondary-dark)] py-3 px-4"
+                    id="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    required
+                    type="email"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3 className="section-title">密码设置</h3>
-
-            <div className="form-group">
-              <div className="form-input-wrapper">
-                <input
-                  type="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleInputChange}
-                  placeholder=" "
-                  className="form-input"
-                  disabled={isLoading}
-                  required
-                  id="reg-password"
-                />
-                <label className="form-label" htmlFor="reg-password">密码 *</label>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary-dark)]" htmlFor="password">
+                  密码
+                </label>
+                <div className="mt-1">
+                  <input
+                    autoComplete="new-password"
+                    className="block w-full rounded-md border-[var(--border-dark)] shadow-sm focus:border-white focus:ring-white bg-zinc-800/50 text-white placeholder-[var(--text-secondary-dark)] py-3 px-4"
+                    id="password"
+                    name="password"
+                    placeholder="输入您的密码"
+                    required
+                    type="password"
+                  />
+                </div>
               </div>
-            </div>
-
-            <div className="form-group">
-              <div className="form-input-wrapper">
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  placeholder=" "
-                  className="form-input"
-                  disabled={isLoading}
-                  required
-                  id="reg-confirm-password"
-                />
-                <label className="form-label" htmlFor="reg-confirm-password">确认密码 *</label>
+              <div>
+                <label className="block text-sm font-medium text-[var(--text-secondary-dark)]" htmlFor="confirm-password">
+                  确认密码
+                </label>
+                <div className="mt-1">
+                  <input
+                    autoComplete="new-password"
+                    className="block w-full rounded-md border-[var(--border-dark)] shadow-sm focus:border-white focus:ring-white bg-zinc-800/50 text-white placeholder-[var(--text-secondary-dark)] py-3 px-4"
+                    id="confirm-password"
+                    name="confirm-password"
+                    placeholder="再次输入您的密码"
+                    required
+                    type="password"
+                  />
+                </div>
               </div>
-            </div>
-          </div>
-
-          <div className="form-section">
-            <h3 className="section-title">个人信息（可选）</h3>
-
-            <div className="form-row">
-              <div className="form-group-special">
-                <label className="form-label-special">性别</label>
-                <select
-                  name="gender"
-                  value={formData.gender}
-                  onChange={handleInputChange}
-                  className="form-input-special"
-                  disabled={isLoading}
+              <div>
+                <button
+                  className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[var(--primary-color)] hover:bg-zinc-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-zinc-900 transition-all duration-300 transform hover:scale-105"
+                  type="submit"
                 >
-                  <option value="">请选择</option>
-                  <option value="male">男</option>
-                  <option value="female">女</option>
-                  <option value="other">其他</option>
-                </select>
+                  注册
+                </button>
               </div>
-
-              <div className="form-group-special">
-                <label className="form-label-special">生日</label>
-                <input
-                  type="date"
-                  name="birthDate"
-                  value={formData.birthDate}
-                  onChange={handleInputChange}
-                  className="form-input-special"
-                  disabled={isLoading}
-                />
+            </form>
+            <div className="mt-6">
+              <div className="relative">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-[var(--border-dark)]"></div>
+                </div>
+                <div className="relative flex justify-center text-sm">
+                  <span className="px-2 bg-[var(--card-dark)] text-[var(--text-secondary-dark)]">已经有账户了？</span>
+                </div>
               </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group-special">
-                <label className="form-label-special">身高 (cm)</label>
-                <input
-                  type="number"
-                  name="height"
-                  value={formData.height}
-                  onChange={handleInputChange}
-                  placeholder="如：170"
-                  min="100"
-                  max="250"
-                  className="form-input-special"
-                  disabled={isLoading}
-                />
-              </div>
-
-              <div className="form-group-special">
-                <label className="form-label-special">体重 (kg)</label>
-                <input
-                  type="number"
-                  name="weight"
-                  value={formData.weight}
-                  onChange={handleInputChange}
-                  placeholder="如：65"
-                  min="30"
-                  max="200"
-                  className="form-input-special"
-                  disabled={isLoading}
-                />
+              <div className="mt-6">
+                <a
+                  className="w-full inline-flex justify-center py-3 px-4 border border-[var(--border-dark)] rounded-md shadow-sm bg-transparent text-sm font-medium text-white hover:bg-zinc-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-zinc-900 transition-colors"
+                  href="/login"
+                >
+                  返回登录
+                </a>
               </div>
             </div>
           </div>
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="btn btn-primary"
-          >
-            {isLoading ? '注册中...' : '创建账号 🎉'}
-          </button>
-        </form>
-
-        <div className="switch-page">
-          <span>已有账号？</span>
-          <button
-            onClick={() => router.push('/login')}
-            className="link-btn"
-          >
-            立即登录
-          </button>
-        </div>
-
-        {message && (
-          <div className={`message ${message.includes('成功') ? 'message-success' : 'message-error'}`}>
-            {message}
-          </div>
-        )}
+          <footer className="mt-8 text-center text-[var(--text-secondary-dark)]">
+            <p className="text-xs">©2024 StyleSense. All rights reserved.</p>
+          </footer>
+        </main>
       </div>
     </div>
   );
