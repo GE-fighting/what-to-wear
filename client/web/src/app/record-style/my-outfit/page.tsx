@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Footer } from '@/components/Footer';
 
 export default function MyOutfitPage() {
   const [activeTab, setActiveTab] = useState('my-room');
@@ -319,9 +320,7 @@ export default function MyOutfitPage() {
           </div>
         )}
 
-        <footer className="text-center py-6 text-sm text-text-light-secondary dark:text-text-dark-secondary border-t border-border-light dark:border-border-dark mt-12">
-          @2024 StyleSense. All rights reserved.
-        </footer>
+        <Footer />
       </div>
     </>
   );

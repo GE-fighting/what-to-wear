@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Footer } from '@/components/Footer';
 
 const IMAGES = [
   'https://lh3.googleusercontent.com/aida-public/AB6AXuAXLlX9_wDDbI1JL-XWOD2ZzHctF1C2qgXOKY6rFySp-D5_oW7il56harRlIlVMm03T2AmlAh8Opr3WV5KOtTzA7XaxBZ1r3elJ4tt44AQeoBxntu0L1FNKNk4svMzRDsiLL5Fs37HdiM20WXgZBVxn2yHjDnsrb_4alz15IzpFel9by6Jd-mPwKwGaShtyXUhiGfUNOMeypYitGpQettbrOOG94YqlwmHen3dRw02omW7iMLy8yZPCIid6LErstr7BlzPXsbFSx6M',
@@ -161,7 +162,7 @@ export default function WardrobeDetailPage() {
         </div>
       )}
 
-      <footer className="mt-16 pb-8 text-center text-xs text-text-light-secondary dark:text-text-dark-secondary">@2024 StyleSense. All rights reserved.</footer>
+      <Footer />
     </div>
   );
 }

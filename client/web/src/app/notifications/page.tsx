@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { Footer } from '@/components/Footer';
 
 export default function NotificationsPage() {
   const [activeFilter, setActiveFilter] = useState('all');
@@ -140,10 +141,8 @@ export default function NotificationsPage() {
           </div>
         </div>
       </main>
-      
-      <footer className="mt-auto py-8 text-center text-text-secondary-light dark:text-text-secondary-dark">
-        <p>©2024 StyleSense. All rights reserved.</p>
-      </footer>
+
+      <Footer />
     </div>
   );
 }

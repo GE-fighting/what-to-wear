@@ -1,4 +1,5 @@
 'use client';
+import { Footer } from '@/components/Footer';
 
 export default function WardrobeEditPage() {
   return (
@@ -175,11 +176,7 @@ export default function WardrobeEditPage() {
         </div>
       </main>
 
-      <footer className="bg-card-light dark:bg-card-dark mt-auto">
-        <div className="container mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-text-light-secondary dark:text-text-secondary-dark">©2024 StyleSense. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer variant="card" />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { Footer } from '@/components/Footer';
 
 export default function SettingsLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -93,10 +94,8 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
           </div>
         </div>
       </main>
-      
-      <footer className="mt-auto py-8 text-center text-text-secondary-light dark:text-text-secondary-dark">
-        <p>©2024 StyleSense. All rights reserved.</p>
-      </footer>
+
+      <Footer />
     </div>
   );
 }

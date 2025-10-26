@@ -1,4 +1,5 @@
 'use client';
+import { Footer } from '@/components/Footer';
 
 export default function MainPage() {
   return (
@@ -318,9 +319,7 @@ export default function MainPage() {
               </div>
             </div>
           </div>
-          <footer className="mt-auto pt-8 text-center text-subtext-light dark:text-subtext-dark text-sm">
-            @2024 StyleSense. All rights reserved.
-          </footer>
+          <Footer variant="dark" />
         </section>
       </main>
     </div>

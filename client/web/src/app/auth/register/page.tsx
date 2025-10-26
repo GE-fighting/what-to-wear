@@ -1,103 +1,13 @@
 'use client';
 
+import AuthBackground from '@/components/AuthBackground';
+import { Footer } from '@/components/Footer';
+import '@/styles/auth.css';
+
 export default function RegisterPage() {
   return (
-    <div className="register-page dark">
-      <style>
-        {`
-          .register-page {
-            --primary-color: #000000;
-            --background-dark: #1a1a1a;
-            --card-dark: #2a2a2a;
-            --text-dark: #ffffff;
-            --text-secondary-dark: #b0b0b0;
-            --border-dark: #4a4a4a;
-            background-color: var(--background-dark);
-            color: var(--text-dark);
-            font-family: 'Inter', sans-serif;
-          }
-          .register-page .material-icons {
-            font-family: 'Material Icons';
-            font-weight: normal;
-            font-style: normal;
-            font-size: 24px;
-            line-height: 1;
-            letter-spacing: normal;
-            text-transform: none;
-            display: inline-block;
-            white-space: nowrap;
-            word-wrap: normal;
-            direction: ltr;
-            -webkit-font-feature-settings: 'liga';
-            -webkit-font-smoothing: antialiased;
-          }
-          .register-page #svg-background {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100vh;
-            z-index: -1;
-            overflow: hidden;
-          }
-          .register-page #svg-background svg {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-          }
-          .register-page > div:not(#svg-background) {
-            position: relative;
-            z-index: 1;
-          }
-        `}
-      </style>
-
-      <div id="svg-background">
-        <svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <radialGradient id="gradient1" cx="20%" cy="30%">
-              <stop offset="0%" stopColor="#4a4a4a" stopOpacity="1">
-                <animate attributeName="stop-color" values="#4a4a4a;#5a5a5a;#4a4a4a" dur="8s" repeatCount="indefinite" />
-              </stop>
-              <stop offset="100%" stopColor="#1a1a1a" stopOpacity="1" />
-            </radialGradient>
-            <radialGradient id="gradient2" cx="80%" cy="70%">
-              <stop offset="0%" stopColor="#383838" stopOpacity="1">
-                <animate attributeName="stop-color" values="#383838;#484848;#383838" dur="10s" repeatCount="indefinite" />
-              </stop>
-              <stop offset="100%" stopColor="#151515" stopOpacity="1" />
-            </radialGradient>
-            <filter id="glow">
-              <feGaussianBlur stdDeviation="40" result="coloredBlur" />
-              <feMerge>
-                <feMergeNode in="coloredBlur" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          <rect width="100%" height="100%" fill="#1a1a1a" />
-          <rect width="100%" height="100%" fill="url(#gradient1)" />
-          <rect width="100%" height="100%" fill="url(#gradient2)" opacity="0.6" />
-
-          <circle cx="30%" cy="40%" r="300" fill="#4a4a4a" opacity="0.4" filter="url(#glow)">
-            <animate attributeName="cx" values="30%;35%;30%" dur="15s" repeatCount="indefinite" />
-            <animate attributeName="cy" values="40%;35%;40%" dur="12s" repeatCount="indefinite" />
-            <animate attributeName="r" values="300;350;300" dur="10s" repeatCount="indefinite" />
-          </circle>
-
-          <circle cx="70%" cy="60%" r="250" fill="#3a3a3a" opacity="0.5" filter="url(#glow)">
-            <animate attributeName="cx" values="70%;65%;70%" dur="18s" repeatCount="indefinite" />
-            <animate attributeName="cy" values="60%;65%;60%" dur="14s" repeatCount="indefinite" />
-            <animate attributeName="r" values="250;300;250" dur="12s" repeatCount="indefinite" />
-          </circle>
-
-          <circle cx="50%" cy="50%" r="200" fill="#5a5a5a" opacity="0.3" filter="url(#glow)">
-            <animate attributeName="r" values="200;280;200" dur="16s" repeatCount="indefinite" />
-            <animate attributeName="opacity" values="0.2;0.3;0.2" dur="8s" repeatCount="indefinite" />
-          </circle>
-        </svg>
-      </div>
+    <div className="auth-page dark">
+      <AuthBackground />
 
       <div className="relative min-h-screen flex items-center justify-center isolate py-12">
         <div className="absolute inset-0 bg-gradient-to-br from-black/10 via-transparent to-black/10"></div>
@@ -187,22 +97,20 @@ export default function RegisterPage() {
                   <div className="w-full border-t border-[var(--border-dark)]"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-[var(--card-dark)] text-[var(--text-secondary-dark)]">已经有账户了？</span>
+                  <span className="px-2 bg-[var(--card-dark)] text-[var(--text-secondary-dark)]">已经有账户了吗？</span>
                 </div>
               </div>
               <div className="mt-6">
                 <a
                   className="w-full inline-flex justify-center py-3 px-4 border border-[var(--border-dark)] rounded-md shadow-sm bg-transparent text-sm font-medium text-white hover:bg-zinc-800/50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-white focus:ring-offset-zinc-900 transition-colors"
-                  href="/login"
+                  href="/auth/login"
                 >
                   返回登录
                 </a>
               </div>
             </div>
           </div>
-          <footer className="mt-8 text-center text-[var(--text-secondary-dark)]">
-            <p className="text-xs">©2024 StyleSense. All rights reserved.</p>
-          </footer>
+          <Footer variant="auth" />
         </main>
       </div>
     </div>

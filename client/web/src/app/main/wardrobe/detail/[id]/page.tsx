@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button, Card, CardHeader, CardContent, Badge, Avatar } from '@/components/ui';
 import { useToast } from '@/components/ToastProvider';
+import { Footer } from '@/components/Footer';
 
 // 模拟衣物详情数据
 const mockClothingDetail = {
@@ -518,9 +519,7 @@ export default function ClothingDetailPage() {
         </>
       )}
 
-      <footer className="mt-16 pb-8 text-center text-xs text-text-secondary-light dark:text-text-secondary-dark">
-        @2024 StyleSense. All rights reserved.
-      </footer>
+      <Footer />
     </div>
   );
 }

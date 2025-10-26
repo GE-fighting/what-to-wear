@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import { Footer } from '@/components/Footer';
 
 export default function WardrobePage() {
   const [activeTab, setActiveTab] = useState<'list' | 'overview'>('list');
@@ -393,11 +394,7 @@ export default function WardrobePage() {
         </div>
       </aside>
 
-      <footer className="bg-card-light dark:bg-card-dark mt-auto">
-        <div className="max-w-7xl mx-auto py-4 px-4 sm:px-6 lg:px-8">
-          <p className="text-center text-sm text-text-light-secondary dark:text-text-dark-secondary">@2024 StyleSense. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer variant="card" />
     </div>
   );
 }
