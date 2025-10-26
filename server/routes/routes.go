@@ -35,5 +35,8 @@ func setupProtectedRoutes(api *gin.RouterGroup, container *container.Container) 
 
 		// 衣服相关路由
 		SetupClothingRoutes(api, container.GetClothingController())
+
+		// OSS相关路由
+		setupOSSRoutes(api, container.GetOSSController())
 	}
 }

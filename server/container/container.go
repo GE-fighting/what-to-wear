@@ -1,6 +1,9 @@
 package container
 
 import (
+	"log"
+
+	"what-to-wear/server/config"
 	"what-to-wear/server/controllers"
 	"what-to-wear/server/repositories"
 	"what-to-wear/server/services"
@@ -10,6 +13,8 @@ import (
 
 // Container 依赖注入容器
 type Container struct {
+	Config                *config.Config
+	DB                    *gorm.DB
 	// Repositories
 	UserRepo             repositories.UserRepository
 	OutfitRepo           repositories.OutfitRepository
@@ -27,15 +32,17 @@ type Container struct {
 	PurchaseRecordService services.PurchaseRecordService
 	WearRecordService     services.WearRecordService
 	ClothingItemService   services.ClothingItemService
+	OSSService            services.OSSService
 
 	// Controllers
 	AuthController     *controllers.AuthController
 	UserController     *controllers.UserController
 	ClothingController *controllers.ClothingController
+	OSSController      *controllers.OSSController
 }
 
 // NewContainer 创建容器实例
-func NewContainer(db *gorm.DB) *Container {
+func NewContainer(cfg *config.Config, db *gorm.DB) *Container {
 	// 创建 Repositories
 	userRepo := repositories.NewUserRepository(db)
 	outfitRepo := repositories.NewOutfitRepository(db)
@@ -76,6 +83,12 @@ func NewContainer(db *gorm.DB) *Container {
 	clothingCategoryService := services.NewCategoryService(clothingCategoryRepo)
 	clothingTagService := services.NewClothingTagService(clothingTagRepository)
 
+	// 创建 OSS Service（传入 config）
+	ossService, err := services.NewOSSService(cfg)
+	if err != nil {
+		log.Fatalf("Failed to initialize OSS service: %v", err)
+	}
+
 	// 创建 Controllers
 	authController := controllers.NewAuthController(authService)
 	userController := controllers.NewUserController(userService)
@@ -85,8 +98,11 @@ func NewContainer(db *gorm.DB) *Container {
 		clothingTagService,
 		wearRecordService,
 	)
+	ossController := controllers.NewOSSController(ossService)
 
 	return &Container{
+		Config:              cfg,
+		DB:                  db,
 		// Repositories
 		UserRepo:             userRepo,
 		OutfitRepo:           outfitRepo,
@@ -104,11 +120,13 @@ func NewContainer(db *gorm.DB) *Container {
 		PurchaseRecordService: purchaseRecordService,
 		WearRecordService:     wearRecordService,
 		ClothingItemService:   clothingItemService,
+		OSSService:            ossService,
 
 		// Controllers
 		AuthController:     authController,
 		UserController:     userController,
 		ClothingController: clothingController,
+		OSSController:      ossController,
 	}
 }
 
@@ -140,4 +158,9 @@ func (c *Container) GetWearRecordService() services.WearRecordService {
 // GetClothingItemService 获取衣物服务
 func (c *Container) GetClothingItemService() services.ClothingItemService {
 	return c.ClothingItemService
+}
+
+// GetOSSController 获取OSS控制器
+func (c *Container) GetOSSController() *controllers.OSSController {
+	return c.OSSController
 }
